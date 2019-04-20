@@ -819,7 +819,7 @@ class dataelm_05(dataPosInt):
 class dataethnicity(dataChoice):
     def __init__(self):
         super(dataethnicity, self).__init__()
-		#TODO: a better classification
+        #TODO: a better classification
         self.numIMap = {'na': 0, '7': 7, '6': 6, 'arab': 8, 'asian': 8, 'biracial': 7, '2': 2, '1': 1, 'mixed, half filipina': 7, '4': 4, 
                         'white & hispanic': 4, 'middle eastern': 8, 'pakistani canadian': 8, '3': 3, 'filipino': 8, 'white & east indian': 8, 'bosnian/iranian': 8, 
                         'caucasian & spanish': 8, '5': 5, 'caymanian': 8, 'european/african': 8, 'african': 8, 'asia': 8, 'haitian-american': 8, 'west indian': 8,
@@ -865,12 +865,363 @@ class datahighpower(dataNaturalLanguage):
         super(datahighpower, self).__init__()
         return
 
-#46 @test4
+#46 ~@test4
 class datainstructbig5(dataBool):
     def __init__(self):
         super(datainstructbig5, self).__init__()
         self.validStr = '1'
+        return
+
+#47 ~@all
+class datainstructintrinsic(dataBool):
+    def __init__(self):
+        super(datainstructintrinsic, self).__init__()
+        self.validStr = '1'
+        return
+
+#48 @? maybe related to mood?
+class datainstructmli(dataBool):
+    def __init__(self):
+        super(datainstructmli, self).__init__()
+        self.validStr = '1'
+        return
+
+#49 ~@all 
+class datainstructnfc(dataBool):
+    def __init__(self):
+        super(datainstructnfc, self).__init__()
+        self.validStr = '1'
+        return
+
+#50 @all
+class dataintrinsic_01(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_01, self).__init__()
+        return
+
+#51 @all
+class dataintrinsic_02(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_02, self).__init__()
+        return
+
+#52 @all
+class dataintrinsic_03(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_03, self).__init__()
+        return
+
+#53 @all
+class dataintrinsic_04(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_04, self).__init__()
+        return
+
+#54 @all
+class dataintrinsic_05(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_05, self).__init__()
+        return
+
+#55 @all
+class dataintrinsic_06(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_06, self).__init__()
+        return
+
+#56 @all
+class dataintrinsic_07(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_07, self).__init__()
+        return
+
+#57 @all
+class dataintrinsic_08(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_08, self).__init__()
+        return
+
+#58 @all
+class dataintrinsic_09(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_09, self).__init__()
+        return
+
+#59 @all
+class dataintrinsic_10(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_10, self).__init__()
+        return
+
+#60 @all
+class dataintrinsic_11(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_11, self).__init__()
+        return
+
+#61 @all
+class dataintrinsic_12(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_12, self).__init__()
+        return
+
+#62 @all
+class dataintrinsic_13(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_13, self).__init__()
+        return
+
+#63 @all
+class dataintrinsic_14(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_14, self).__init__()
+        return
+
+#64 @all
+class dataintrinsic_15(dataPosInt):
+    def __init__(self):
+        super(datintrinsic_15, self).__init__()
+        return
+
+#65 @test3
+class datakposition(dataChoice):
+    def __init__(self):
+        super(datakposition, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+
+#66 @test3
+class datakratio(dataCol):
+    def __init__(self):
+        super(datakratio, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
+                        '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
+                        'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
+                        '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
+                        'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
+                        '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        return
+
+    def numFore(self, iData):
+        if iData.isdigit():
+            return iData
+        elif iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+#67 @test5
+class datalowpower(dataNaturalLanguage):
+    def __init__(self):
+        super(datalowpower, self).__init__()
+        return
+
+#68 @test3
+class datalposition(dataChoice):
+    def __init__(self):
+        super(datalposition, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+
+#69 @test3
+class datalratio(dataCol):
+    def __init__(self):
+        super(datalratio, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
+                        '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
+                        'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
+                        '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
+                        'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
+                        '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        return
+
+    def numFore(self, iData):
+        if iData.isdigit():
+            return iData
+        elif iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+class datamajor(dataChoice):
+    def __init__(self):
+        super(datamajor, self).__init__()
+        #refer to https://www.ets.org/s/gre/pdf/dept_major_field_codes.pdf
+        self.numIMap = {'na': 0, 'exercise science': 1, 'nursing': 1, 'psychology': 4, 'chemistry': 2, 'pre-med': 2, 'early childhood education': 6, 
+                        'intervention specialist k-12': 6, 'biolgy': 1, 'integrated social studies': 4, 'athletic training': 1, 'integrated mathematics education': 6, 
+                        'business management': 7, 'education- middle grades': 6, 'sports management': 7, 'psychology and religion': 4, 'dietetics': 1, 'undecided': 8, 
+                        'environmental science, geology': 2, 'social work': 4, 'education': 6, 'finance': 7, 'criminal justice': 4, 'social work and psychology': 4, 
+                        'toxicology': 1, 'english': 5, 'forensic biology': 1, 'marketing': 7, 'nusring': 1, 'business administration': 7, 'public relations': 8, 
+                        'early childhood': 6, 'marketing and graphic design': 7, 'commercial art': 5, 'political science & public relations': 4, 'elementary/special ed.': 6, 
+                        'business management and leadership': 7, 'electrical engineering': 3, 'cis': 2, 'biology': 1, 'sports communication and psychology': 4, 
+                        'business management and leadership with a concentration in hr': 7, 'mechanical engineering': 3, 'health science': 1, 'hospitality leadership': 7, 
+                        'undecided but leaning towards education': 6, 'civil engineering': 3, 'accounting': 7, 'manufacturing engineering technology': 3, 
+                        'advertising, graphic design, spanish': 8, 'business marketing': 7, 'hospitality and leadership': 7, 'communications': 3, 'religion': 8, 
+                        'sports communication': 8, 'psychology, general': 4, 'aep': 3, 'animation and visual effects': 5, 'elementary education': 6, 'entrepreneurship': 7, 
+                        'physics': 2, 'computer science': 2, 'm e': 3, 'business': 7, 'computer information systems': 2, 'retail merchandising': 7, 'television arts': 4, 
+                        'management information systems': 7, 'chemistry preprofessional (pre-pharmacy)': 2, 'community wellness': 8, 'undecided-aep': 3, 
+                        'mechanical engineer': 3, 'health science, religious studies': 1, 'health science/ physical therapy': 1, 'bcom - marketing w/ co op': 7, 
+                        'bahon.': 0, 'criminology': 4, 'neuroscience': 1, 'cognitive science': 4, 'criminology & criminal justice': 4, 'it': 2, 
+                        'neuroscience & mental health': 4, 'linguistics': 5, 'criminology and criminal justice': 4, 'journalism': 8, 'biology, minor in chemistry': 1, 
+                        'biology (ba)': 1, 'history': 5, 'philosophy': 5, 'english ba': 5, 'child studies': 4, 'communication studies': 8, 'neuroscience and mental health': 4, 
+                        'political science: international relations': 4, 'undeclared major': 8, 'criminal justice and criminology': 4, 'commerce': 7, 'exploratory': 8, 
+                        'applied psychology and imc': 4, 'physical therapy': 1, 'ot': 1, 'cinema & photography': 5, 'film and photography visual arts': 5, 'occupational therapy': 1, 
+                        'applied psychology': 4, 'sports studies': 7, 'cinema and photograpghy': 5, 'psyhology': 4, 'cmd': 8, 'speech pathology': 1, 'clinical health studies/pt': 1, 
+                        'public health': 1, 'television/radio': 8, 'acting': 8, 'therapeutic recreation': 1, 'integrated marketing communications': 7, 'biochemistry': 1, 'tv-r': 8, 
+                        'undeclared': 8, 'business administration, but switching to accouting': 7, 'economics': 7, 'cinema and photography': 5, 'television and radio': 8, 
+                        'pre-professional program': 8, 'environmental studies major, nutrition promotion minor': 1, 'math education': 6, 'film, photography, visual arts': 5, 
+                        'zoology': 1, 'art education': 6, 'iternational studies': 4, 'psych': 4, 'bio/pre med': 1, 'kinesiology': 1, 'business economics': 7, 'nutrition': 1, 
+                        'mathematics': 2, 'supply chain management': 7, 'psychology with a minor in neuroscience': 4, 'interactive media studies': 8, 
+                        'biology and premedical studies': 1, 'sports leadership and management': 7, 'special education': 6, 'business isa': 7, 'university studies': 8, 
+                        'business undecided': 7, 'sports medicine': 1, 'bioengineering': 3, 'political science': 4, 'finance, political science': 7, 
+                        'strategic communication': 8, 'universal studies': 8, 'kiniesology': 1, 'art and pre med': 5, 'microbiology/ pre-medicine': 1, 
+                        'strategic communications': 8, 'finance and math': 7, 'human biology': 1, 'biomedical laboratory diagnostics': 1, 'art ed and english': 6, 
+                        'arts and humanities': 5, 'advertising': 7, 'pre-medical': 1, 'pre med': 1, 'public policy': 4, 'pyschology': 4, 'uud': 8, 'human resource management': 7, 
+                        'biomedical laboratory science': 1, 'human development and family studies': 4, 'vet tech': 1, 'genomics and molecular genetics': 1, 
+                        'pre- dental (undeclared major)': 1, 'human biology and spanish': 1, 'social science education': 6, 'microbiology': 1, 'ec': 7, 'media and information': 8, 
+                        'professional writing': 4, 'human bio': 1, 'sociology, minor in bioethics': 4, 'molecular genetics and genomics': 1, 'animal science': 1, 
+                        'lyman briggs human biology': 1, 'psychology & studio art': 4, 'actuarial science/economics double major': 2, 'physiology': 1, 
+                        'criminal justice specialization design': 4, 'special education and learning disabilities': 6, 'criminal justice and psychology': 4, 
+                        'hospitality business': 1, 'psy': 4, 'child development': 4, 'cognitive neuroscience': 4, 'human biology, pre-med': 1, 'no preference': 8, 
+                        'bus': 7, 'international business': 7, 'biotechnology': 3, 'architecture': 8, 'pre-nursing': 1, 'film': 5, 'earth sciences': 2, 'chemical engineering': 3, 
+                        'pre nursing': 1, 'pre medicine': 1, 'business, finance': 7, 'sociology': 4, 'engineering': 3, 'community  health': 1, 'wildlife management': 1, 
+                        'cell biology and neuroscience': 1, 'food and nutrition': 1, 'premed': 1, 'cell biology': 1, 'pre-physical therapy': 1, 'buisiness marketing': 7, 
+                        'community health': 1, 'chemical and biological engineering': 3, 'pre-veterinary': 1, 'health and human development': 1, 'sociology/criminology': 4, 
+                        'psychology and kinesiology': 4, 'music technology': 5, 'exersize science': 1, 'psych and philanthropic business': 4, 'pre-comm': 7, 'pre-commerce': 7, 
+                        'undecided: maybe statistics': 2, 'biology and music': 1, 'marine biology': 1, 'english/political science': 5, 'legal studies': 8, 'exercise and sport science': 1, 
+                        'busines': 7, 'studio art/art administration': 5, 'theatre': 5, 'exercise and sports science': 1, 'pychology': 4, 'biology (pre-medicine)': 1, 
+                        'theater and music': 5, 'biology (pre-med)': 1, 'medical sonography': 2, 'exceptional education': 6, 'bio': 1, 'deciding': 8, 'exercise & sports science': 1, 
+                        'dance': 4, 'information technology': 2, 'environmental science': 2, 'pschology': 4, 'radiologic sciences and therapy': 1, 'psycology': 4, 'mls': 1, 'japanese': 5, 
+                        'computer science & engineering': 2, 'computer science and engineering': 2, 'cse': 2, "if i knew i'd tell you": 0, 'bio-medical engineering': 3, 
+                        'biomedical engineering/bio engineering': 3, 'business finance': 7, 'radiology': 2, 'buisness': 7, 'biology: pre-med': 1, 'pre-medicine': 1, 
+                        'health and rehabilitation': 1, 'art, illustration / animation': 5, 'business administration and management': 7, 'sports industry': 7, 'neonatal nurse': 1, 
+                        'sports nutrition': 1, 'psyhcology': 4, 'exercise science and nutrition': 1, 'bioloogy': 1, 'culinary arts': 5, 'business- human resources': 7, 
+                        'business (marketing)': 7, 'business-marketing': 7, 'human nutrition': 1, 'mathematics education': 6, 'medical laboratory science': 1, 
+                        'pharmaceutical sciences': 1, 'exploring': 8, 'undiceded': 8, 'dental hygiene': 1, 'medical lab science': 1, 'radiological sciences and therapy': 1, 
+                        'hospital administration': 7, 'sports industries': 7, 'biological studies': 1, 'health sciences': 1, 'medical lab sciences': 1, 'speech-language pathology': 1, 
+                        'athletic training too personal therapy': 1, 'hospitality managemnet': 7, 'industrial design': 5, 'pharmacy': 1, 'no idea yet.': 8, 
+                        'business/accounting and finance': 7, 'kiniesiology': 1, 'chemistry or kinesiology or physics': 2, 'intended nursing': 1, 'kineseology': 1, 
+                        'mathematics and art': 2, 'graphic design': 5, 'math': 2, 'psychology & english': 4, 'accouting': 7, 'undecided (possibly psychology)': 4, 
+                        'intended psychology': 4, 'phd in psychology': 4, 'pssbs': 4, 'wildlife and fisheries science': 1, 'life science (pre-physical therapy)': 1, 
+                        'life science': 1, 'business accountant': 7, 'psych and soc': 4, 'integrative arts': 5, 'business accounting': 7, 'pre-business': 7, 
+                        'environmental engineering': 3, 'administration of justice': 8, 'kinesology': 1, 'psychological and social sciences': 4, 'corporate communications': 8, 
+                        'non degree': 0, 'communications science and disorders': 1, 'psychology and social sciences': 4, 'broadcast journalism': 8, 'engineerin': 3, 
+                        'letters, arts, and sciences': 5, 'psychological social sciences': 4, 'psyh': 4, 'integrative arts: music and psychology': 5, 
+                        'psychological and social science b.a.': 4, 'pediatric nurse': 1, 'enineering': 3, 'none yet': 8, 'mechanical egineering': 3, 'communication': 2, 
+                        'ist': 2, 'cj': 4, 'undecided- it': 2, 'psychology & social sciences': 4, 'science': 2, 'child and family development': 4, 'child & family develpoment': 4, 
+                        'kinesiology with an emphasis in pre-physical therapy': 1, 'pre-child development': 4, 'biology bs': 1, 'journalism with an emphasis in media studies': 8, 
+                        'speech, language, and hearing sciences': 8, 'biology with emphasis in cell and molecular biology': 1, 'health communication': 1, 'biology/ predental': 1, 
+                        'communications and economics': 7, 'civil engineer': 3, 'foods and nutrition': 1, "i don't have one": 8, 'not applicable': 8, 'management': 7, 
+                        'hospitality & tourism management hotels emphasis': 7, 'human resources management': 7, 'speech language and hearing sciences': 8, 'liberal studies': 5, 
+                        'kinesiology-pre physical therapy': 1, 'business admin': 7, 'gerontology': 4, 'speech,language, and hearing sciences': 8, 'speech language pathology': 1, 
+                        'computer engineering': 3, 'social work, minor in sociology': 4, 'general business': 7, 'kines- pre pt': 1, 'aerospace engineering': 3, 'allied health': 1, 
+                        'theatre arts': 5, 'bims': 1, 'biomedical science': 1, 'general studies': 8, 'biol': 1, 'agbusiness': 1, 'bussniness administration': 7, 
+                        'international relations': 4, 'nutritional sciences': 1, 'human resource development': 7, 'sport management': 7, 'engr': 3, 'ag leadeship and development': 7, 
+                        'biomedical engineering': 3, 'unspecified business': 7, 'music': 5, 'kine': 1, 'business administration, accounting': 7, 'business honors': 7, 
+                        'english (literature)': 5, 'international studies': 4, 'pre-med bep': 1, 'telecommunications and media studies': 2, 'ee': 3, 'agg': 0, 'exercise physiology': 1, 
+                        'health': 1, 'bio medical science': 1, 'biochemistry and genetics': 1, 'kinesiology (aep)': 1, 'anthropology': 4, 'telecommunication': 2, "i don't know": 0, 
+                        'biomedical sciences': 1, 'school health': 1, 'molecular and cell biology': 1, 'general engineering': 3, 'geophysics': 2, 'economy': 7, 'man econ': 7, 
+                        'sociology and economics': 7, 'linguistic': 5, 'human development': 4, 'npb': 1, 'native american studies': 4, 'english/psychology': 5, 'economic': 7, 
+                        'nutritional biology': 1, 'nutrition science': 1, 'biological science': 1, 'biological sciences': 1, 'design': 5, 'biochemistry and molecular biology': 1, 
+                        'genetics': 1, 'neurology physiology and behavior': 4, 'music, psychology (mathematics emphasis)': 5, 'psychology and chinese': 5, 
+                        'neurobiology, physiology and behavior': 5, 'psychology and communications': 5, 'nutrition sciences': 1, 'managerial economics': 7, 
+                        'psychology and human development': 4, 'neurobiology, physiology, and behavior': 4, 'pscyhology': 4, 'neurobiology, physiology, behavior': 4, 
+                        'psychology and economics': 4, 'cell biology but switching to managerical economics': 1, 'community and regional development': 4, 
+                        'materials science and engineering': 2, 'undeclared life science': 1, 'political science and psychology': 4, 'natural science': 2, 'exercise bio': 1, 
+                        'linguistics and human development': 4, 'pharmaceutical chemistry': 2, 'econ/admin': 7, 'undeclared - chass': 8, 'law and society/sociology': 4, 
+                        'undecided in chass': 8, 'history/law and society': 4, 'pre-businees': 7, 'chass undeclared': 8, 'sociology law/soceity': 4, 'theater': 5, 
+                        'undeclared chass': 8, 'business economic': 4, 'psych/bio (pre-med)': 4, 'global studies': 4, 'psychology and philosophy': 4, 
+                        'asian studies (comparative track)': 4, 'bio-chemistry': 1, 'art': 5, 'pre business': 7, 'cultural anthropology': 4, 'economics/administrative studies': 7, 
+                        'language': 5, 'statistics': 2, 'language and literature': 5, 'undelcared': 8, 'soc/ law and society': 4, 'undeclared-focus on psychology': 4, 
+                        'french ba': 5, 'biological anthropology': 4, 'apk': 1, 'pre-public health': 1, 'behavioral and cognitive neuroscience': 2, 'health and human performance': 1, 
+                        'applied physiology and kinesiology': 1, 'electrical/computer engineering': 3, 'human health and behavior': 1, 'anthropology/health science': 1, 
+                        'exploratory humanities': 4, 'family, youth, and community sciences': 4, 'communication sciences and disorders': 1, 'wildlife conservation and management': 1, 
+                        'tourism, recreation, and event management': 7, 'microbiology and cell science': 1, 'pre professional health sciences': 1, 'preprofessional': 8, 
+                        'visual art studies and premed': 5, 'biology/anthropology': 1, 'health sciences pre-law': 1, 'psychology premed': 4, 'telecommunications': 2, 'event management': 7, 
+                        'parks, recreation and tourism': 1, 'food science & human nutrition': 1, 'biology and history': 1, 'psychology and criminology': 4,
+                        'computer/electrical engineering': 3, 'communication sciences & disorders': 1, 'health science, pre-physical therapy': 1, 'biology and health science': 1, 
+                        'family, youth and community science': 4, 'general health sciences': 1, 'family youth and community sciences': 4, 'hospitality and tourism managemnet': 7, 
+                        'health science - preprofessional': 1, 'dual degree education and sports coaching minor in child and family studies': 6, 'polymer science and engineering': 2, 
+                        'ids': 8, 'psychology.': 4, 'education of the deaf': 6, 'recording industry production': 7, 'speech pathology and audiology': 1, 
+                        'business administration management': 7, 'forensic science': 2, 'mass communications': 8, 'communications(bs)': 8, 'kinesiotherapy': 1, 
+                        'life sciences': 1, 'computer science specialist': 2, 'public accounting': 7, 'life science first year': 1, 'i have not decided yet.': 8, 
+                        'statistics and physics': 2, 'ecology and evolutionary biology, and biological anthropology': 1, 'mathmetics': 2, 'immunology and human biology': 1, 
+                        'neuroscience specialist': 1, 'biochemistry and molecular genetics and microbiology': 1, 
+                        'life science is my program, i choose a major at the end of first year. will probably choose physiology and something else': 1, 
+                        'hummanities': 4, 'mathematics and economics': 2, 'actuarial science': 2, 'poli sci': 2, 'molecular genetics and microbiology': 1, 
+                        'pharmacology specialist program': 1, 'rotman commerce': 7, 'animal physiology and neuroscience': 1, 'life science (psychology)': 1, 
+                        'linguistics and spanish': 5, 'actuarial sciences': 2, 'computer sciences': 2, 'computer science, economics(minor)': 2, 'life sci- unsure major': 1, 
+                        'history.': 5, 'molecular genetics': 1, 'planning to major in psychology': 4, 'immunology': 1, 'economics and finance math.': 7, 'pharmacology (?)': 1, 
+                        'econ': 7, 'global health (undecided)': 1, 'mathematical application in finance and economics': 7, 
+                        "i don't have one yet since i'm in first year but i'd like to major in nutrition science": 1, 'first year life science': 1, 'probably biology': 1, 
+                        'computer science / music': 2, 'systems and information engineering': 3, 'biochemistry or nuerobiology': 1, 'chemistry with biochemistry specialization': 1, 
+                        'computer science & pre-commerce': 2, 'undecided!': 8, 'cs/studio art': 2, 'n/a': 0, 'systems engineering': 3, 'global development studies': 4, 
+                        'biology/spanish': 1, 'poetry writing': 5, 'chemistry or biology': 1, 'american govt': 4, 'mechanical or bme': 3, 'biology b.s.': 1, 'precomm': 8, 
+                        'youth and social innovations': 4, 'environmental sciences': 1, 'spanish and music': 5, 'civil and environmental engineering': 3, 'engineering undecided': 3, 
+                        'batten school of leadership and public policy': 7, 'media studies': 8, 'global health': 1, 'economics / foreign affairs': 7, 'foreign affairs': 7, 
+                        'global commerce': 7, 'pre-med, undecided': 1, 'medicine': 1, 'mathematics, business': 2, 'college': 0, 'pre comm': 8, 'engr and econ': 3, 'drama': 5, 
+                        'psychology/pre-med': 4, 'economics/spanish; pre-comm': 7, 'biochemistry, but i will change': 1, 'neuroscience (intended)': 1, 
+                        'undecided, but probably either psychology or biology': 1, 'history and hopefully finance': 5, 'engineering, undecided': 3, 'linguistics and psychology': 4, 
+                        'pre-dental': 1, 'art history': 5, 'french, pre-med': 5, 'information systems': 2, 'biology major': 1, 'biology pre-med': 1, 'pre-radiation science': 1, 
+                        'undecided working toward egineering': 3, 'illustration': 8, 'undeclared (considering psychology)': 4, 'costume design bfa': 5, 'kinetic imaging': 1, 
+                        'business marketing and mass communications (public relations)': 7, 'health sciences on a pre-nursing track': 1, 'bio (pre-med)': 1, 
+                        'health, physical education & exercise science, concentration in health science': 1, 'psychology on a pre-radiation science track': 4, 
+                        'chemical and life science engineering': 3, 'biology;pre-med': 1, 'music education': 6, 'hsep/ poli sci conc: intl relations': 4, 'bio track to nursing': 1, 
+                        "i'm double majoring in criminal justice & homeland security & emergency preparedness.": 4, 'technical theatre: lighting design': 5, 'general science': 2, 'bio (pre-nursing)': 1}
+        self.numOMap = {0: 'NA', 1: 'life sciences', 2: 'physical sciences', 3: 'engineering', 4: 'social and behavioral sciences', 5: 'humanities and arts', 6: 'education', 7: 'business', 8: 'others'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        self.iMapSize = 9
+        self.defaultNum = 0
+        self.mapLowerCase = True
+        return
+
+
 
 if __name__ == '__main__':
-    a = datainstructbig5()
-    print(a.formatFore('NA'))
+    a = datakratio()
+    print(a.formatFore('1.8'))
