@@ -140,6 +140,7 @@ class dataTrueAnswer(dataCol):
         else:
             return -1
 
+#natural language
 class dataNaturalLanguage(dataCol):
     def __init__(self):
         super(dataCol, self).__init__()
@@ -162,6 +163,7 @@ class dataNaturalLanguage(dataCol):
         return int(oData)
 
 
+#NA or valid
 class dataBool(dataCol):
     def __init__(self):
         super(dataBool, self).__init__()
@@ -183,6 +185,26 @@ class dataBool(dataCol):
 
     def codeBack(self, oData):
         return int(oData)
+
+#int choice
+class dataInt(dataPosInt):
+    def __init__(self):
+        super(dataInt, self).__init__()
+        self.minInt = 0
+        self.invalid = ''
+        return
+
+    def numFore(self, iData):
+        if iData == self.invalid:
+            return -1
+        else:
+            return int(iData) - self.minInt
+
+    def numBack(self, oData):
+        if oData == -1:
+            return self.invalid
+        else:
+            return str(oData + self.minInt)
 
 
 
@@ -305,7 +327,6 @@ class dataanagrams4(dataTrueAnswer):
 class dataattention(dataChoice):
     def __init__(self):
         self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5}
-
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5'}
         return
 
@@ -1046,6 +1067,7 @@ class datalposition(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        return
 
 #69 @test3
 class datalratio(dataCol):
@@ -1087,6 +1109,7 @@ class datalratio(dataCol):
         else:
             return -1
 
+#70 @all
 class datamajor(dataChoice):
     def __init__(self):
         super(datamajor, self).__init__()
@@ -1220,8 +1243,418 @@ class datamajor(dataChoice):
         self.mapLowerCase = True
         return
 
+#71 @test10
+class datamcdv1(dataInt):
+    def __init__(self):
+        super(datamcdv1, self).__init__()
+        self.minInt = -3
+        self.invalid = 'NA'
+        return
 
+#72 @test10
+class datamcdv2(dataInt):
+    def __init__(self):
+        super(datamcdv2, self).__init__()
+        self.minInt = -3
+        self.invalid = 'NA'
+        return
+
+#73 @test10
+class datamcfiller1(dataPosInt):
+    def __init__(self):
+        super(datamcfiller1, self).__init__()
+        return
+
+#74 @test10
+class datamcfiller2(dataPosInt):
+    def __init__(self):
+        super(datamcfiller2, self).__init__()
+        return
+
+#75 @test10
+class datamcfiller3(dataPosInt):
+    def __init__(self):
+        super(datamcfiller3, self).__init__()
+        return
+
+#76 @test10
+class datamcmost1(dataChoice):
+    def __init__(self):
+        super(datamcmost1, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#77 @test10
+class datamcmost2(dataChoice):
+    def __init__(self):
+        super(datamcmost2, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#78 @test10
+class datamcmost3(dataChoice):
+    def __init__(self):
+        super(datamcmost3, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#79 @test10
+class datamcmost4(dataChoice):
+    def __init__(self):
+        super(datamcmost4, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#80 @test10
+class datamcmost5(dataChoice):
+    def __init__(self):
+        super(datamcmost5, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#81 @test10
+class datamcsome1(dataChoice):
+    def __init__(self):
+        super(datamcsome1, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#82 @test10
+class datamcsome2(dataChoice):
+    def __init__(self):
+        super(datamcsome2, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#83 @test10
+class datamcsome3(dataChoice):
+    def __init__(self):
+        super(datamcsome3, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#84 @test10
+class datamcsome4(dataChoice):
+    def __init__(self):
+        super(datamcsome4, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#85 @test10
+class datamcsome5(dataChoice):
+    def __init__(self):
+        super(datamcsome5, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, False]
+        else:
+            return [True, bool(iData)]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return int(iData)
+        else:
+            return -1
+
+#86 @all
+class datamood_01(dataChoice):
+    def __init__(self):
+        super(datamood_01, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#87 @all
+class datamood_02(dataChoice):
+    def __init__(self):
+        super(datamood_02, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#88 @all
+class datanfc_01(dataPosInt):
+    def __init__(self):
+        super(datanfc_01, self).__init__()
+        return
+
+#89 @all
+class datanfc_02(dataPosInt):
+    def __init__(self):
+        super(datanfc_02, self).__init__()
+        return
+
+#90 @all
+class datanfc_03(dataPosInt):
+    def __init__(self):
+        super(datanfc_03, self).__init__()
+        return
+
+#91 @all
+class datanfc_04(dataPosInt):
+    def __init__(self):
+        super(datanfc_04, self).__init__()
+        return
+
+#92 @all
+class datanfc_05(dataPosInt):
+    def __init__(self):
+        super(datanfc_05, self).__init__()
+        return
+
+#93 @all
+class datanfc_06(dataPosInt):
+    def __init__(self):
+        super(datanfc_06, self).__init__()
+        return
+
+#94 @test3
+class datanposition(dataChoice):
+    def __init__(self):
+        super(datanposition, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#95 @test3
+class datanratio(dataCol):
+    def __init__(self):
+        super(datanratio, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
+                        '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
+                        'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
+                        '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
+                        'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
+                        '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        return
+
+    def numFore(self, iData):
+        if iData.isdigit():
+            return iData
+        elif iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+#96 @all
+class datapate_01(dataPosInt):
+    def __init__(self):
+        super(datapate_01, self).__init__()
+        return
+
+#97 @all
+class datapate_02(dataPosInt):
+    def __init__(self):
+        super(datapate_02, self).__init__()
+        return
+
+#98 @all
+class datapate_03(dataChoice):
+    def __init__(self):
+        super(datapate_03, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#99 @all
+class datapate_04(dataChoice):
+    def __init__(self):
+        super(datapate_04, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#100 @all
+class datapate_05(dataChoice):
+    def __init__(self):
+        super(datapate_05, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
 
 if __name__ == '__main__':
-    a = datakratio()
-    print(a.formatFore('1.8'))
+    a = datamcdv1()
+    print(a.formatFore('-4'))
