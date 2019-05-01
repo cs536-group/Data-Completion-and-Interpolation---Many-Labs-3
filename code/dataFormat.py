@@ -1,3 +1,5 @@
+import re
+
 class dataCol(object):
     def __init__(self):
         # self.numIMap = dict()
@@ -859,9 +861,6 @@ class dataethnicity(dataChoice):
         self.mapLowerCase = True
         return
 
-    def numBack(self, oData):
-        return self.numOMap[oData]
-
 #43 @test1
 class datafeedback(dataBool):
     def __init__(self):
@@ -1028,7 +1027,7 @@ class datakratio(dataCol):
 
     def numFore(self, iData):
         if iData.isdigit():
-            return iData
+            return int(iData)
         elif iData in self.numIMap:
             return self.numIMap[iData]
         else:
@@ -1084,7 +1083,7 @@ class datalratio(dataCol):
 
     def numFore(self, iData):
         if iData.isdigit():
-            return iData
+            return int(iData)
         elif iData in self.numIMap:
             return self.numIMap[iData]
         else:
@@ -1507,7 +1506,7 @@ class datamcsome5(dataChoice):
         else:
             return -1
 
-#86 @all
+#86 @~test9
 class datamood_01(dataChoice):
     def __init__(self):
         super(datamood_01, self).__init__()
@@ -1517,7 +1516,7 @@ class datamood_01(dataChoice):
         self.iMapSize, self.oMapSize = self._getMapSize()
         return
 
-#87 @all
+#87 @~test9
 class datamood_02(dataChoice):
     def __init__(self):
         super(datamood_02, self).__init__()
@@ -1655,6 +1654,589 @@ class datapate_05(dataChoice):
         self.iMapSize, self.oMapSize = self._getMapSize()
         return
 
+#101 @test3
+class datarposition(dataChoice):
+    def __init__(self):
+        super(datarposition, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#102 @test3
+class datarratio(dataCol):
+    def __init__(self):
+        super(datarratio, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
+                        '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
+                        'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
+                        '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
+                        'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
+                        '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        return
+
+    def numFore(self, iData):
+        if iData.isdigit():
+            return int(iData)
+        elif iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+#103 @test5
+class datasarcasm(dataPosInt):
+    def __init__(self):
+        super(datasarcasm, self).__init__()
+        return
+
+#104 @test9
+class dataselfesteem_01(dataPosInt):
+    def __init__(self):
+        super(dataselfesteem_01, self).__init__()
+        return
+
+#105 @~test9
+class datastress_01(dataPosInt):
+    def __init__(self):
+        super(datastress_01, self).__init__()
+        return
+
+#106 @~test9
+class datastress_02(dataPosInt):
+    def __init__(self):
+        super(datastress_02, self).__init__()
+        return
+
+#107 @~test9
+class datastress_03(dataPosInt):
+    def __init__(self):
+        super(datastress_03, self).__init__()
+        return
+
+#108 @~test9
+class datastress_04(dataPosInt):
+    def __init__(self):
+        super(datastress_04, self).__init__()
+        return
+
+#109 @test7
+class datatempest1(dataCol):
+    def __init__(self):
+        super(datatempest1, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        self.numIMap = {'NA': -1, 'room temperature': -1, '75': 75, '72 degrees F': 72, '70': 70, '25 degrees': 77, '76': 76, '78': 78,
+                        '45': -1, '65': 65, '72': 72, '68': 68, '74': 74, '60': 60, '75 degrees': 75, '70 degrees': 70, '69': 69, '69-70 degrees': 70,
+                        '73': 73, '68F': 68, '63': 63, '67': 67, '70 degrees F': 70, '50': -1, '66': 66, '72 degrees': 72, '60-65': 63, '80': 80, '82': 82,
+                        'I do not know': -1, '76 degrees fahrenheit': 76, '61': 61, '64 degrees': 64, '34': 93, '68 degrees Fahrenheit': 68, '71': 71,
+                        '65 degrees': 65, '55': 55, 'room temp': -1, '67 degrees': 67, '70ish': 70, '79': 79, 'room temp.': -1, '~70 degrees': 70,
+                        'comfortable, ~73deg': 73, '70 degrees fahrenheit': 70, '~75 degrees': 75, '62': 62, '64': 64, '59': 59, '69.8': 70, '66.2': 66,
+                        '62.6': 63, '53.6': 54, '46.4': -1, '77': 77, '64.4': 64, '35.6': -1, '57.2': -1, '71.6': 72, '78.8': 79, '80.6': 81, '39.2': -1,
+                        '58': -1, 'Unknown': -1, '~70': 70, 'no idea': -1, '40': -1, 'maybe 67': 67, '150': -1, '65 degrees F': 65, '68 degrees': 68,
+                        'normal? like 68?': 68, 'room': -1, '85': 85, '70-ish': 70, 'about 72 degrees': 72, 'about 70': 70, '70?': 70, '55f': 55,
+                        '298': -1, '98.6': 99, '70*F': 70, '72 F': 72, '70 F': 70, '68 Degrees': 68, 'between 65-75': 70, '65-70': 68, '68.3': 68,
+                        '73 F': 73, '75-85': 80, '75.2': 75, 'Room Temperture': -1, '32': 89, '78F': 78, '54': -1, '70-75': 73, '20': 68, '35': 95,
+                        "In the mid to upper 70's": 78, 'around 65-70 degrees': 68, '97': 97, '72.3': 72, '60-70': 65,
+                        'Chilly. I have no idea what the exact  temperature is.': -1, '57': 57, 'normal': -1, '22F': -1, '56': 56, '86': 86,
+                        'somewhere between 68 and 72': 70, 'Very warm': -1, 'idk': -1, 'i dont know': -1, '98': 98, '89': 89, '39': 102,
+                        'Room Temperature': -1, '90': 90, 'cool': -1, 'Hot': -1, 'yes': -1, 'good': -1, '81': 81, '78 degrees': 78, '88': 88, '100': 100,
+                        '73 degrees': 73, '30': 86, '80 degrees Fahrenheit': 80, '38': 100, 'May be about 70': 70, '~72': 72, 'room temp. 71': 71, '28': 82,
+                        '~74': 74, '80 Fahrenheit': 80, '72F': 72, "I don't know": -1, '75F': 75, '74 degrees': 74, 'Room temperature': -1,
+                        '80 degrees': 80, "I'm not sure": -1, '84': 84, '73 degrees F': 73, '70F': 70, '73.4': 73, '424.4': -1, '25': 77, 'Warm': -1,
+                        'about 75 degrees': 75, '83': 83, '87': 87, 'warm, maybe 70 degrees Fahrenheit': 70, 'the temperature feels around 78 fahrenheit': 78,
+                        '60 degrees?': 60, 'THE ENVIRONMENT IS PRETTY WARM, AND STABLE.': -1, 'no idea, slightly cool though': -1}
+        return
+
+    def numFore(self, iData):
+        if iData.isdigit():
+            iData = int(iData)
+            if iData > 100: #[100, inf]
+                return -1
+            elif iData <= 40:
+                if iData < 15: #[-inf, 15]
+                    return -1
+                else: #[15, 40]
+                    return int(iData * 1.8) + 32
+            elif iData < 55: #[40, 55]
+                return -1
+            else: #[55, 100]
+                return iData
+        elif iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+#110 @test7
+class datatempest2(dataPosInt):
+    def __init__(self):
+        super(datatempest2, self).__init__()
+        return
+
+#111 @test7
+class datatempest3(dataPosInt):
+    def __init__(self):
+        super(datatempest3, self).__init__()
+        return
+
+#112 @test7
+class datatempfollowup1(dataPosInt):
+    def __init__(self):
+        super(datatempfollowup1, self).__init__()
+        return
+
+#113 @test7
+class datatempfollowup2(dataPosInt):
+    def __init__(self):
+        super(datatempfollowup2, self).__init__()
+        return
+
+#114 @test7
+class datatempfollowup3(dataPosInt):
+    def __init__(self):
+        super(datatempfollowup3, self).__init__()
+        return
+
+#115 @test3
+class datarvposition(dataChoice):
+    def __init__(self):
+        super(datarposition, self).__init__()
+        self.numIMap = {'NA': 0, '1': 1, '2': 2}
+        self.numOMap = {0: 'NA', 1: '1', 2: '2'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        return
+
+#116 @test3
+class datavratio(dataCol):
+    def __init__(self):
+        super(datarratio, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
+                        '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
+                        'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
+                        '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
+                        'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
+                        '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        return
+
+    def numFore(self, iData):
+        if iData.isdigit():
+            return int(iData)
+        elif iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+#117 @test9
+class dataworstgrade1(dataCol):
+    def __init__(self):
+        super(dataworstgrade1, self).__init__()
+        self.type = 'str / (int, int) / [bool, (int, int)]'
+        #refer to stanford
+        self.numIMap = {'NA': (-1, -1), 'Spring 2014': (2014, 6), '14-May': (2014, 5), 'spring 2014': (2014, 6), 'spring 2013': (2014, 6), 'Winter 2008': (2008, 3), 'Fall 2013': (2013, 12),
+                        'Winter 2014': (2014, 3), 'Senior in High School': (-1, -1), 'Spring 2013': (2013, 6), 'Sping 2014': (2014, 3), 'Spring 2012': (2012, 6), 'Winter 2013': (2013, 3),
+                        'Fall 2014': (2014, 12), 'High school senior': (-1, -1), 'Summer 2014': (2014, 8), 'fall 2014': (2014, 12), 'spring 2005': (2005, 6), 'winter 2013': (2013, 3),
+                        'Before starting at Bradley, Spring 2014': (2014, 6), 'summer of 2014': (2014, 8), '14-Jun': (2014, 6), 'summer 2014': (2014, 8), 'winter 3013': (2013, 3),
+                        'summer 2013': (2013, 8), 'winter 2014': (2014, 3), 'spring 14': (2014, 6), 'Prior to the current term? Spring 2014': (2014, 6), 'fall 2010': (2010, 12),
+                        'NA (First term)': (-1, -1), 'highschool 2014': (-1, -1), 'Summer, 2014': (2014, 8), 'Summer 2013': (2013, 8), 'Winter 2012': (2012, 3),
+                        'Winter and Fall 2014 (present)': (2014, 3), 'fall 2011': (2011, 12), 'winter2014': (2014, 3), 'winter 2014 (high school)': (2014, 3),
+                        'June 2014 (High School)': (2014, 6), 'summer 4014': (2014, 8), 'Current - so last term was Spring 2014': (2014, 6),
+                        "Spring 2014 (if you don't count the current term)": (2014, 6), 'spring of 2014': (2014, 6), 'high school 21014': (-1, -1), 'Spring 2014.': (2014, 6),
+                        'Fall, 2014': (2014, 12), 'Currently still in school. Last full term was High School Fall of 2013-Spring 2014.': (2014, 6),
+                        'sping 2014': (2014, 3), 'Fall 2017': (-1, -1), 'Spring 2015': (-1, -1), 'Now: Fall 2014': (2014, 12), 'Now (Fall 2014)': (2014, 12),
+                        'currently in school so, Fall 2014': (2014, 12), "Fall '14": (2014, 12), 'currently': (-1, -1), '(High School) Spring 2014': (2014, 6), 'Fall 2015': (-1, -1),
+                        'currently in school, last completed term Spring 2014': (2014, 6), 'Spring  2013': (2013, 6), 'spring2014': (2014, 6),
+                        'This is my first semester at MSU. So my last term would my senior year of high school': (-1, -1),
+                        'currently in school (Fall 2014)': (2014, 12), 'Spring2014': (2014, 6), 'Summer 2014#': (2014, 8), 'WINTER2012': (2012, 3), 'High school Spring 2014': (2014, 6),
+                        'Spring 14': (2014, 6), 'Winter 2011': (2011, 3), 'spring 2011': (2011, 6), 'fall 2013': (2013, 12), 'Senior year - final semester': (-1, -1), 'spring 2010': (2010, 6),
+                        '2014': (-1, -1), 'sophmore': (-1, -1), 'winter 2007': (2007, 3), 'Spring 2011': (2011, 6), 'FALL 2014': (2014, 12), 'fall 2008': (2008, 12), 'Spring 2014 (High School)': (2014, 6),
+                        'SPRING 2014': (2014, 6), 'Fa;; 2-14': (2014, 12), 'winter2013': (2013, 3), 'winter 2008': (2008, 3), 'High school': (-1, -1), 'summer2014': (2014, 8), '13-May': (2013, 5),
+                        'winter 2103': (2013, 3), 'current': (-1, -1), 'Fall 2014 (freshman)': (2014, 12), 'I am currently in school.': (-1, -1), 'fall2012': (2012, 12),
+                        'Fall 2014(current)': (2014, 12), '5': (-1, -1), 'this is my first semester i graduated high school in 2012': (-1, -1), 'Autumn 2014': (2014, 12),
+                        'Autum 2014': (2014, 12), 'currently in school. autum 2014': (2014, 12), 'autumn 2014': (2014, 12), 'Currently': (-1, -1), 'spring 2104': (2014, 6),
+                        'high school': (-1, -1), 'This year:Winter 2014. Before that, Summer 2010': (2014, 3), 'High School 2012': (-1, -1),
+                        'winter 2013, high school, i am a freshman at Newark': (2013, 3), 'Autum 14': (2014, 12), 'this is my first term': (-1, -1),
+                        'spring 2014 for high school': (2014, 6), '14-Aug': (2014, 8), 'n/a': (-1, -1), '20 minutes ago.': (-1, -1), 'AUTUMN 2014': (2014, 12), '2013': (-1, -1),
+                        'i was still in high school': (-1, -1), 'fall': (-1, -1), "I finished high school in June of 2014, so I haven't completed a whole term yet.": (-1, -1),
+                        'Autumn 13': (2013, 12), 'now...': (-1, -1), 'may,spring 2014': (2014, 5), '26 hours ago': (-1, -1), 'WINTER 2014': (2014, 5), '14-Sep': (2014, 9), 'fall 20143': (-1, -1),
+                        'Spring 2014 and currently': (2014, 6), 'High School so N/A?': (-1, -1), "I'm in school right now..": (-1, -1), 'spirng 2014': (2014, 6),
+                        'Spring Semester 2014': (2014, 6), '(Spring 2014)': (2014, 6), 'Spring 2014 (High school)': (2014, 6), 'Spring 2014 (Currently in Fall 2014)': (2014, 6),
+                        'Fall': (-1, -1), 'Spring': (-1, -1), '2010': (-1, -1), 'Spring 2014 (not including this term)': (2014, 6), 'spring 1997': (-1, -1), 'Fall 14': (2014, 12),
+                        'Spring 204': (2014, 6), 'FAll 2014': (2014, 12), 'high school 2012': (-1, -1), 'high school 2014': (-1, -1), 'LAST SEMESTER': (-1, -1), '12th Grade': (-1, -1),
+                        'sping2013': (2013, 3), 'Summer of 2013': (2013, 8), 'sep. 2013- jun. 2014': (2014, 6), 'Summer 2012': (2012, 8), 'spin 2014': (2014, 6), 'Summer 1 & 2 2014': (2014, 8),
+                        'Spring 2001': (-1, -1), 'spring 201': (-1, -1), 'Summer & Fall 2014': (2014, 12), 'spring 2014 (high school)': (2014, 6), 'Fall2014': (2014, 12), 'Winter 1998': (-1, -1),
+                        'FAll 2011': (2011, 12), 'Fall 2014 (Currently in school)': (2014, 12), 'Winter 2009': (2009, 3), 'The last term I was in school was the Spring of 2014': (2014, 6),
+                        '13-Mar': (2013, 3), 'High School, Spring 2014': (2014, 6), 'Currently enrolled': (-1, -1), 'sPRING 2014': (2014, 6), 'winter 2013 - high school': (2013, 3),
+                        'FALL2014': (2014, 12), 'This term, Fall 2014': (2014, 12), 'SPRING  2014': (2014, 6), 'Spring 201A': (-1, -1), 'Currently in school': (-1, -1),
+                        'Spring 2013, last year - high school': (2013, 6), 'Summer Session 2 2014': (2014, 8), 'High School': (-1, -1), 'summer 2018': (-1, -1),
+                        'spring 2015': (-1, -1), '2014 summer': (2014, 8), 'Summer Session II 2014': (2014, 8), 'Summer Session 1': (2014, 8), 'high school spring semester 2014': (2014, 6),
+                        'Summer session 2 2014': (2014, 8), '2013 Fall': (2013, 12), 'Second Semester (High School, Senior Year)': (-1, -1), 'Summer Session 1 2014': (2014, 8),
+                        'Summer session II': (-1, -1), 'SUMMER 2014': (2014, 8), 'Summer Session 2': (-1, -1), 'summer 14': (2014, 8), 'Summer2014': (2014, 8), 'summer': (-1, -1),
+                        'Spring Quarter 2014': (2014, 6), 'Semester 2 2014': (2014, 6), 'Spring 2104': (2014, 6), 'fall 2014 is my first term': (2014, 12), 'SPRING 20114': (2014, 6),
+                        "This is my first quarter. I'm a freshman": (-1, -1), 'Fall 2012': (2012, 12), 'This is my first term. Fall 2014.': (2014, 12), 'Summer B 2014': (2014, 8),
+                        "I'm a freshman now so Highschool spring 2014": (2014, 6), "spring'14": (2014, 6), 'WINTER 2013': (2013, 3), 'Spring 2014 (Last Semester of High school)': (2014, 6),
+                        'Fall 2010': (2010, 12), '41760': (-1, -1), '(spring14)': (2014, 6), 'spring': (-1, -1), 'spring 2012': (2012, 6), 'High school 2013-2014': (-1, -1), 'winter 2012': (2012, 3),
+                        'Winter/Spring 2014': (2014, 6), 'Spring/Summer 2014 in Highschool': (2014, 8), 'February-July 2014': (2014, 7), '41852': (-1, -1), 'high school, June 2014': (2014, 6),
+                        'Spring/Summer 2014': (2014, 8), "If you don't count now - fall 2014, then spring 2014.": (2014, 6), 'Winter 2013 (High School)': (2013, 3),
+                        'Not counting this current semester, Spring 2014': (2014, 6), 'currently in school': (-1, -1), 'Currently in school.': (-1, -1),
+                        'senior year of high school': (-1, -1), 'Spring 2014-present': (2014, 12), 'not counting this term, Spring 2013': (2013, 6),
+                        'Fall 2014 (First year student)': (2014, 12), 'Srping 2014': (2014, 6), 'Winter 2013-2014': (2014, 3), '2013-2014 highschool': (-1, -1),
+                        'Fall, 2014 (still in session), if this means last full term: Spring, 2014': (2014, 6), 'sring 2014': (2014, 6),
+                        'winter of 2014 in high school': (2014, 3), 'Spring/Summer 2013': (2013, 8), '1 hour ago': (-1, -1), 'Fall 2013?': (2013, 12), 'an hour ago': (-1, -1)}
+        return
+
+    def numFore(self, iData):
+        if iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return (-1, -1)
+
+    def numBack(self, oData):
+        if oData == (-1, -1):
+            return 'NA'
+        else:
+            return '%d %d' %(oData[1], oData[0])
+
+    def codeFore(self, iData):
+        if iData == (-1, -1):
+            return [False, (0, 0)]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return (-1, -1)
+
+#118 ~@test9
+class dataworstgrade2(dataCol):
+    def __init__(self):
+        super(dataworstgrade2, self).__init__()
+        self.type = 'str / int / [bool, int]'
+        #refer to https://www.rapidtables.com/calc/grade/gpa-to-letter-grade-calculator.html
+        self.numIMap = {'na': -1, 'a - 97%': 97, 'c': 76, 'c-': 72, 'b': 86, 'a': 96, '94': 94, 'a+': 100, '98': 98, 'b+': 89, '99%': 99, 'c+': 79, '98%': 98, 'gpa was a 3.2': 89, 'b-': 82,
+                        'a plus': 100, '100%': 100, '88%': 88, 'psychology': -1, 'a-': 92, '93': 93, '87% b': 87, 'physics': -1, '92%': 92, 'pre-calculus, with a low d': 66, 'f': 59,
+                        '83': 83,'math': -1, '90%': 90, 'd': 66, '80': 80, '82%': 82, '100': 100, '86': 86, '90': 90, '91%': 91, '103%': 103, '67%': 67, '75': 75, 'withdrawn': -1, '72%': 72,
+                        'na (first term)': -1, '88': 88, '60%': 60, '78': 78, '92': 92, '91': 91, '68': 68, '89%': 89, '85': 85, 'competent (c)': 73, '78%': 78, '60': 60, '79%': 79,
+                        '70%': 70, '70': 70, '107': 107, '75%': 75, '89': 89, '104': 104, '3.5': 92, '74': 74, '84': 84, '81': 81, '96': 96, '103': 103, '97%': 97, '76': 76, '95%': 95, '3.33': 89,
+                        'for spring 2014: 98%': 98, '105%': 105, 'chemistry- 88%': 88, '97': 97, '2': 76, '77%': 77, '74%': 74, '80%': 80, '2.5': 82, '4': 96, '4.0-a': 96, '1.5': 72,
+                        'i have not received grades yet for fall 2014 but in the past the worst grade i had gotten would have been a b+.': 89, 'cse iss mth stt  3.0': 86,
+                        'e': 59, '69%': 69, 'general business b+': 89, '79': 79, '3': 86, '86%': 86, '3.5 (85%)': 85, 'gpa 3.5': 92, '85%': 85, '96%': 96, '4.0- a': 96, '94%': 94,
+                        '112.98%': 113, 'a (95%)': 95, '93%': 93, '71%': 71, '0': 59, 'withdraw': -1, 'b+ 88%': 88, 'chemistry,90': 90, '#name?': -1, '83%': 83, '87': 87, '76%': 76, '101.5': 102,
+                        '95': 95, '57%': 57, 'high school (a+)': 100, '82': 82, 'd-': 62, '66%': 66, '99': 99, '2.8': 86, 'like a 85': 85, '90% english': 90,
+                        'had to pass/fail a math course, 61%': 61, 'c mabye?': 76, 'government': -1, 'my best final grade was a 100%': 100, '3.3': 89, "a's": 96, 'n/a': -1,
+                        '108%': 108, 'freshman': -1, 'b, in ap english.': 86, '90 percent': 90, '58%': 58, 'c 78%': 78, 'w': -1,
+                        'the best grade i got last year my senior year was an a': 96, '72': 72, 'educational psychology': -1, 'freshman this semester': -1, 'english 97': 97,
+                        '73': 73, 'my best final grade was an 92% in psychology': 92, "as'": 96, 'summer: a': 96, '84%': 84, 'i believe it was a 64': 64, '65%': 65, '1': 66,
+                        '65': 65, 'my best final grade was an a-': 92, 'a-97%': 97, '+c': 79, 'history': -1, 'high scool 97%': 97, 'a-92': 92,
+                        'still on my first semester, but so far chemistry': -1, 'havent yet': -1, 'med micro': -1, '0.83': 83, '89.9': 90, '0.32': 32, 'd+': 69, '3.9': 96, '0.91': 91,
+                        '0.75': 75, '0.98': 98, '0.76': 76, '0.82': 82, '0.95': 95, '0.79': 79, '0.88': 88, '0.86': 86, '0.9': 90, '0.56': 56, '~90%': 90, '0.85': 85,
+                        'my best grade was an 89%.': 89, 'a (94%)': 94, '0.5': 50, '0.87': 87, 'n/a in high school, b.': 86, 'c 70%': 70, '0.94': 94, '0.65': 65, 'b +': 89, '0.7': 70,
+                        '3.83': 96, '0.93': 93, 'a- to b+': 89, '0.99': 99, '100% a': 100, "n/a i'm an incoming freshman": -1, '85 b': 85, '3.2': 89, '0.798': 80, '105': 105, '0.6': 60,
+                        '66': 66, '0.92': 92, '0.68': 68, '0.89': 89, '77': 77, '0.8': 80, '0.96': 96, '49': 49, '67': 67, '42104': -1, '0.45': 45, '0.23': 23, '63': 63, '0.78': 78, '0.77': 77,
+                        'this is my first semester': -1, '90% in ap statiscs': 90, '87%': 87, 'economics a-': 92, 'politics of the middle east': -1, 'n/a (first year student)': -1,
+                        '0.905': 91, '0.97': 97, '1.02': 102, 'got an a on my voice jury.': 96}
+        return
+
+    def numFore(self, iData):
+        iData = iData.lower()
+        if iData in self.numIMap:
+            return self.numIMap[iData]
+        else:
+            return -1
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(oData)
+
+    def codeFore(self, iData):
+        if iData == -1:
+            return [False, 0]
+        else:
+            return [True, iData]
+
+    def codeBack(self, oData):
+        flag, iData = oData
+        if flag is True:
+            return iData
+        else:
+            return -1
+
+#119 @test9
+class dataworstgrade3(dataPosInt):
+    def __init__(self):
+        super(dataworstgrade3, self).__init__()
+        return
+
+#120 @test9
+class dataworstgrade4(dataPosInt):
+    def __init__(self):
+        super(dataworstgrade4, self).__init__()
+        return
+
+#121 @test9
+class dataworstgrade5(dataPosInt):
+    def __init__(self):
+        super(dataworstgrade5, self).__init__()
+        return
+
+#122 @all
+class datayear(dataChoice):
+    def __init__(self):
+        super(datayear, self).__init__()
+        #TODO: a better classification
+        self.numIMap = {'na': 0, '2': 2, '1': 1, '3': 3, '4': 4, 'fifth year senior': 5, 'junior by credits': 3, 'fifth-year': 5,
+                        'working on second bachelors degree': 6, 'post-bac': 6, 'sophmore credit wise but first year': 1, 'post bacc': 6,
+                        'transfer': 6, '7': 6, 'senior year of highschool': 6, 'second/3rd': 2, 'with junior standing (running start)': 3,
+                        'first year, but because of foreign credits from high-school, it counts at second year.': 1,
+                        'has credits of junior': 3, 'professor': 6, 'continuing studies': 6, 'senior 5th year': 5, 'super senior 5+': 5,
+                        'open university, post-bacc': 6, 'not applicable': 0, 'ali': 0, '6th year': 5, 'fifth year': 5, 'sixth year': 5,
+                        '5th year': 5, 'transferred here this year': 6, '4th,but transfer': 4, 'super senior (fifth-year)': 5,
+                        'with junior credits': 3, 'senior (fifth-year)': 5, 'transfer student; 4th year in college': 4, 'seniuor fifth year': 5,
+                        '5th, after 16 month work term': 5, 'second degree': 6, '5th (but on exchange)': 5}
+        self.numOMap = {0: 'NA', 1: 'first', 2: 'second', 3: 'third', 4: 'forth', 5: 'fifth or more', 6: 'others'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        self.iMapSize = 7
+        self.defaultNum = 0
+        self.mapLowerCase = True
+        return
+
+#123 @all
+class dataStation(dataNaturalLanguage):
+    def __init__(self):
+        super(dataStation, self).__init__()
+        return
+
+#124 @all #WARN: NEED str.replace('.', '_')
+class dataDate_x(dataCol):
+    def __init__(self):
+        super(dataDate_x, self).__init__()
+        self.type = 'str / (int, int, int) / (bool, int, int, int)'
+        self.form = re.compile(r'(\d+)/(\d+)/(\d+)')
+        return
+
+    def numFore(self, iData):
+        res = self.form.match(iData)
+        if res is None:
+            return (-1, -1, -1)
+        else:
+            d = int(res.group(1))
+            m = int(res.group(2))
+            y = int(res.group(3))
+            if d > 31:
+                d = d - 2000
+            if y > 100:
+                y = y - 190
+            return (d, m, y)
+
+
+    def numBack(self, oData):
+        if oData != (-1, -1, -1):
+            return '%d/%d/%d' %oData
+        else:
+            return 'NA'
+
+    def codeFore(self, iData):
+        if iData[0] == -1:
+            return [False, 0, 0, 0]
+        else:
+            return [True, iData[0], iData[1], iData[2]]
+
+    def codeBack(self, oData):
+        if oData[0] is True:
+            return (oData[1], oData[2], oData[3])
+        else:
+            return (-1, -1, -1)
+
+#125 @all
+class dataExperimenter(dataNaturalLanguage):
+    def __init__(self):
+        super(dataExperimenter, self).__init__()
+        return
+
+#126 @test7
+class dataTemperatureinlab(dataPosInt):
+    def __init__(self):
+        super(dataTemperatureinlab, self).__init__()
+        return
+
+    def numFore(self, iData):
+        if iData == 'N/A':
+            return -1
+        else:
+            iData = float(iData)
+            if iData > 35:
+                return int(iData)
+            else:
+                return int(iData * 1.8 + 32)
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'N/A'
+        else:
+            return str(oData)
+
+#127 @test2 test6
+class dataOrderofTasks(dataChoice):
+    def __init__(self):
+        super(dataOrderofTasks, self).__init__()
+        self.numIMap = {'II-SR': 1, 'SR-II': 2, 'NA': 0, 'II, SR': 1, 'SR, II': 2}
+        self.numOMap = {0: 'NA', 1: 'II-SR', 2: 'SR-II'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        self.iMapSize = 3
+        return
+
+#128 @test6
+class dataClipboardWeight(dataChoice):
+    def __init__(self):
+        super(dataClipboardWeight, self).__init__()
+        self.numIMap = {'20': 2, '10': 1, 'NA': 0}
+        self.numOMap = {0: 'NA', 1: '10', 2: '20'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        self.iMapSize = 3
+        return
+
+#129 @test6
+class dataIIResponse(dataPosInt):
+    def __init__():
+        super(dataIIResponse, self).__init__()
+        return
+
+#130 @test2
+class dataSRCondition(dataChoice):
+    def __init__(self):
+        super(dataSRCondition, self).__init__()
+        self.numIMap = {'B': 2, 'C': 3, 'A': 1, 'NA': 0, 'b': 2, 'c': 3, 'a': 1, ' b': 2, '': 0}
+        self.numOMap = {0: 'NA', 1: 'A', 2: 'B', 3: 'C'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        self.iMapSize = 4
+        return
+
+#131 @test2
+class dataSRMeetingResponse(dataChoice):
+    def __init__(self):
+        super(dataSRMeetingResponse, self).__init__()
+        self.numIMap = {'Friday': 1, 'Monday': 2, 'Sunday': 3, 'P Skipped this page': 0, 'NA': 0, 'mon': 2, 'saturday': 3, 'Wednesday': 3,
+                        'Thursday': 3, 'Saturday': 3,'Tuesday': 3, 'N/A': 0, 'monday': 2, 'Firday': 1, 'Monday ': 2, '': 0}
+        self.numOMap = {0: 'NA', 1: 'Friday', 2: 'Monday', 3: 'others'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
+        self.iMapSize = 4
+        return
+
+#132 @test2
+class dataSRConfidenceResponse(dataPosInt):
+    def __init__(self):
+        super(dataSRConfidenceResponse, self).__init__()
+        self.numIMap = {'5': 5, '4': 4, '3': 3, '2': 2, '1': 1, '...': -1, 'NA': -1, 'N/A': -1, '4.5': 4}
+        return
+
+    def numFore(self, iData):
+        return self.numIMap[iData]
+
+#133 @test2
+class dataSRTFCorrect(dataPosInt):
+    def __init__(self):
+        super(dataSRTFCorrect, self).__init__()
+        self.numIMap = {'Yes': 0, 'N/A': -1, 'No (4 Missed)': 4, 'No (3 missed)': 3, 'No (1 missed)': 1, 'No (2 missed)': 2,
+                        'NA': -1, 'n/a': -1, 'No [1]': 1, 'No(3)': 3, 'No(1)': 1, 'No(4)': 4, 'No (2)': 2, 'No (1)': 1, 'No (4)': 4,
+                        'N/a': -1, 'No (missed 2)': 2, 'No (missed 1)': 1, 'No (missed 3)': 3, 'No (missed No (missed 3))': 3,
+                        'No (missed 4)': 4, 'No (3)': 3, 'No, 2': 2, 'No,4': 4, 'No( 2)': 2, 'No': 1, 'no (2)': 2, 'no respone': -1,
+                        'no (3)': 3, 'no response': -1, 'no (1)': 1, 'no (4)': 4, 'no (2 missed)': 2, 'no (1 missed)': 1,
+                        'no (4 missed)': 4, 'No (4 missed)': 4, 'no (missed one)': 1, 'no (missed 4)': 4, 'No (missed one)': 1,
+                        'No (Missed 2)': 2, 'No (Missed 1)': 1, 'No (Missed 3)': 3, 'No (Missed 4)': 4, 'No; missed #1, #2,and #4': 3,
+                        'No, missed #1': 1, 'No, missed #1 & #4': 2, 'No, missed #1 & #2': 2, 'No, missed #1, #3, and #4': 3,
+                        'No; missed #1, #2, #3, and #4': 4, 'No, missed #2': 1, 'No, missed #1 and #2': 2, 'No, missed #3 & #4': 2,
+                        'No, missed #2 & #3': 2, 'No, missed #2, #3, and #4': 3, 'No, 2/4': 2, 'No, 3/4': 1, 'No, 0/4': 4, 'No, 1/4': 3,
+                        'No (2/4 incorect)': 2, 'No (4/4 incorrect)': 4, 'No (1/4 incorrect)': 1, 'No (3/4 incorrect)': 3,
+                        'No (2/4 incorrect)': 2, 'No,1 missed': 1, 'No, 1 missed': 1, 'yes': 0, 'No, 2 missed': 2, 'No, 4 missed': 4,
+                        'No, 1 Missed': 1, 'No,4 missed': 4, 'No. 2 wrong': 2, 'No, missed 1': 1, 'No. 1 missed': 1, 'No missed 4': 4,
+                        'No, 3 missed': 3, 'No(2)': 2, 'No, 3 Wrong': 3, 'No, 1 wrong': 1, 'No, 4 wrong': 4, 'No, 2 Wrong': 2,
+                        'No, 2 wrong': 2, '': -1, 'No, 3 wrong': 3, 'No, 4 Wrong': 4, 'No, 1 Wrong': 1, 'no, all wrong': 4, 'No, 1': 1,
+                        '2 wrong': 2, 'no, 2': 2, 'all wrong': 4, 'no, 1': 1, 'all but 2 wrong': 2, 'no, 4': 4, 'no, two wrong': 2}
+
+    def numFore(self, iData):
+        return self.numIMap[iData]
+
+    def numBack(self, oData):
+        if oData == -1:
+            return 'NA'
+        else:
+            return str(4 - oData)
+
+#134 @all
+class dataNotes(dataNaturalLanguage):
+    def __init__(self):
+        super(dataNotes, self).__init__()
+        return
+
+
 if __name__ == '__main__':
-    a = datamcdv1()
-    print(a.formatFore('-4'))
+    a = dataTemperatureinlab()
+    print(a.formatFore('45'))
