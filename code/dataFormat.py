@@ -16,10 +16,11 @@ class dataCol(object):
         return oData
 
     def codeFore(self, iData):
-        return iData
+        return (iData, iData)
 
     def codeBack(self, oData):
-        return oData
+        flag, data = oData
+        return data
 
     def formatFore(self, iData):
         return self.codeFore(self.numFore(iData))
@@ -61,23 +62,34 @@ class dataChoice(dataCol):
         return self.numOMap[oData]
 
     def codeFore(self, iData):
-        oData = [False for i in range(self.iMapSize)]
-        oData[iData] = True
-        return oData
+        size = self.iMapSize
+        data = [False for i in range(size)]
+        if iData == 0:
+            flag = [False for i in range(size)]
+        else:
+            flag = [True for i in range(size)]
+            data[iData - 1] = True
+        return (flag, data)
 
     def codeBack(self, oData):
-        for i in range(self.oMapSize):
-            if oData[i]:
-                return i
-        else:
-            print('E: ' + repr(self) + ', codeBack: invalid oData.')
-            return None
+        flag, data = oData
+        size = self.oMapSize - 1
+        for i in range(size):
+            if data[i]:
+                return i+1
+        else: #no valid data
+            for i in range(size):
+                if flag[i]: #flag is valid
+                    print('E: ' + repr(self) + ', codeBack: invalid oData.')
+                    return None
+            else:
+                return 0
 
 #positive int for ID
 class dataPosInt(dataCol):
     def __init__(self):
         super(dataPosInt, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         return
 
     def numFore(self, iData):
@@ -94,14 +106,14 @@ class dataPosInt(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
+        flag, data = oData
         if flag is True:
-            return iData
+            return data
         else:
             return -1
 
@@ -109,7 +121,7 @@ class dataPosInt(dataCol):
 class dataTrueAnswer(dataCol):
     def __init__(self):
         super(dataTrueAnswer, self).__init__()
-        self.type = 'str / int / [bool, bool]'
+        self.type = 'str / int / bool'
         self.iAns = ''
         self.oAns = ''
 
@@ -131,12 +143,12 @@ class dataTrueAnswer(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
+        flag, data = oData
         if flag is True:
             return int(iData)
         else:
@@ -159,10 +171,17 @@ class dataNaturalLanguage(dataCol):
             return 'someString'
 
     def codeFore(self, iData):
-        return bool(iData)
+        if iData == 0:
+            return (False, False)
+        else:
+            return (True, True)
 
     def codeBack(self, oData):
-        return int(oData)
+        flag, data = oData
+        if flag:
+            return int(data)
+        else:
+            return 0
 
 
 #NA or valid
@@ -183,10 +202,17 @@ class dataBool(dataCol):
             return self.validStr
 
     def codeFore(self, iData):
-        return bool(iData)
+        if iData == 0:
+            return (False, False)
+        else:
+            return (True, True)
 
     def codeBack(self, oData):
-        return int(oData)
+        flag, data = oData
+        if flag:
+            return int(data)
+        else:
+            return 0
 
 #int choice
 class dataInt(dataPosInt):
@@ -254,7 +280,7 @@ class datasession_id(dataPosInt):
 class dataage(dataCol):
     def __init__(self):
         super(dataage, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
 
         self.numIMap = {'NA': -1, '18 almost 19': 19, '22 years': 22, 'almost 19': 19, 'Too Old (18)': 18, '18 years': 18,
                         '19.5': 19, '20`': 20, 'we': -1, '-2': -1, 'almost 18': 18, '17 (18 in one month)': 18}
@@ -281,14 +307,14 @@ class dataage(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -328,8 +354,11 @@ class dataanagrams4(dataTrueAnswer):
 #anyway, maybe it reflects some traits about this person
 class dataattention(dataChoice):
     def __init__(self):
+        super(dataattention, self).__init__()
         self.numIMap = {'NA': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5}
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5'}
+
+        self.iMapSize, self.oMapSize = self._getMapSize()
         return
 
 #10 ~@test3
@@ -372,14 +401,14 @@ class dataattentioncorrect(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
+        flag, data = oData
         if flag is True:
-            return int(iData)
+            return int(data)
         else:
             return -1
 
@@ -467,7 +496,7 @@ class databackcount9(dataTrueAnswer):
 class databestgrade1(dataCol):
     def __init__(self):
         super(databestgrade1, self).__init__()
-        self.type = 'str / (int, int) / [bool, (int, int)]'
+        self.type = 'str / (int, int) / (int, int)'
         #refer to stanford
         self.numIMap = {'NA': (-1, -1), 'Spring 2014': (2014, 6), '14-May': (2014, 5), 'spring 2014': (2014, 6), 'spring 2013': (2014, 6), 'Winter 2008': (2008, 3), 'Fall 2013': (2013, 12),
                         'Winter 2014': (2014, 3), 'Senior in High School': (-1, -1), 'Spring 2013': (2013, 6), 'Sping 2014': (2014, 3), 'Spring 2012': (2012, 6), 'Winter 2013': (2013, 3),
@@ -535,14 +564,14 @@ class databestgrade1(dataCol):
 
     def codeFore(self, iData):
         if iData == (-1, -1):
-            return [False, (0, 0)]
+            return (False, (0, 0))
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return (-1, -1)
 
@@ -591,14 +620,14 @@ class databestgrade2(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -684,7 +713,7 @@ class databig5_10(dataPosInt):
 class datadiv3filler(dataCol):
     def __init__(self):
         super(datadiv3filler, self).__init__()
-        self.type = 'str / int / [bool, bool]'
+        self.type = 'str / int / bool'
         #16 = 10 = 1 mod 3
         self.numIMap = {'NA': -1, '3 9 6 9 6 3 3 9': 1, '1,3,6,9': 0, '3 9 6 9 3 3 9': 1, '3,9,6': 1, '3 9 6': 1, '3,9,6,9,6,3,3,9': 1, '3,6,9': 1,
                         '6,9': 1, '3,9,6,1': 0, '3, 9, 6, 63': 1, '3, 9, 6, 9, 6, 3, 3, 9': 1, '3 9 6 9 4 3 3 9': 0, '3,9,6,96,3,3,9': 1,
@@ -797,14 +826,14 @@ class datadiv3filler(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -916,91 +945,91 @@ class datainstructnfc(dataBool):
 #50 @all
 class dataintrinsic_01(dataPosInt):
     def __init__(self):
-        super(datintrinsic_01, self).__init__()
+        super(dataintrinsic_01, self).__init__()
         return
 
 #51 @all
 class dataintrinsic_02(dataPosInt):
     def __init__(self):
-        super(datintrinsic_02, self).__init__()
+        super(dataintrinsic_02, self).__init__()
         return
 
 #52 @all
 class dataintrinsic_03(dataPosInt):
     def __init__(self):
-        super(datintrinsic_03, self).__init__()
+        super(dataintrinsic_03, self).__init__()
         return
 
 #53 @all
 class dataintrinsic_04(dataPosInt):
     def __init__(self):
-        super(datintrinsic_04, self).__init__()
+        super(dataintrinsic_04, self).__init__()
         return
 
 #54 @all
 class dataintrinsic_05(dataPosInt):
     def __init__(self):
-        super(datintrinsic_05, self).__init__()
+        super(dataintrinsic_05, self).__init__()
         return
 
 #55 @all
 class dataintrinsic_06(dataPosInt):
     def __init__(self):
-        super(datintrinsic_06, self).__init__()
+        super(dataintrinsic_06, self).__init__()
         return
 
 #56 @all
 class dataintrinsic_07(dataPosInt):
     def __init__(self):
-        super(datintrinsic_07, self).__init__()
+        super(dataintrinsic_07, self).__init__()
         return
 
 #57 @all
 class dataintrinsic_08(dataPosInt):
     def __init__(self):
-        super(datintrinsic_08, self).__init__()
+        super(dataintrinsic_08, self).__init__()
         return
 
 #58 @all
 class dataintrinsic_09(dataPosInt):
     def __init__(self):
-        super(datintrinsic_09, self).__init__()
+        super(dataintrinsic_09, self).__init__()
         return
 
 #59 @all
 class dataintrinsic_10(dataPosInt):
     def __init__(self):
-        super(datintrinsic_10, self).__init__()
+        super(dataintrinsic_10, self).__init__()
         return
 
 #60 @all
 class dataintrinsic_11(dataPosInt):
     def __init__(self):
-        super(datintrinsic_11, self).__init__()
+        super(dataintrinsic_11, self).__init__()
         return
 
 #61 @all
 class dataintrinsic_12(dataPosInt):
     def __init__(self):
-        super(datintrinsic_12, self).__init__()
+        super(dataintrinsic_12, self).__init__()
         return
 
 #62 @all
 class dataintrinsic_13(dataPosInt):
     def __init__(self):
-        super(datintrinsic_13, self).__init__()
+        super(dataintrinsic_13, self).__init__()
         return
 
 #63 @all
 class dataintrinsic_14(dataPosInt):
     def __init__(self):
-        super(datintrinsic_14, self).__init__()
+        super(dataintrinsic_14, self).__init__()
         return
 
 #64 @all
 class dataintrinsic_15(dataPosInt):
     def __init__(self):
-        super(datintrinsic_15, self).__init__()
+        super(dataintrinsic_15, self).__init__()
         return
 
 #65 @test3
@@ -1016,7 +1045,7 @@ class datakposition(dataChoice):
 class datakratio(dataCol):
     def __init__(self):
         super(datakratio, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
                         '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
                         'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
@@ -1041,14 +1070,14 @@ class datakratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -1072,7 +1101,7 @@ class datalposition(dataChoice):
 class datalratio(dataCol):
     def __init__(self):
         super(datalratio, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
                         '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
                         'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
@@ -1097,14 +1126,14 @@ class datalratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -1288,14 +1317,14 @@ class datamcmost1(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1311,14 +1340,14 @@ class datamcmost2(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1334,14 +1363,14 @@ class datamcmost3(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1357,14 +1386,14 @@ class datamcmost4(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1380,14 +1409,14 @@ class datamcmost5(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1403,14 +1432,14 @@ class datamcsome1(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1426,14 +1455,14 @@ class datamcsome2(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1449,14 +1478,14 @@ class datamcsome3(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1472,14 +1501,14 @@ class datamcsome4(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1495,14 +1524,14 @@ class datamcsome5(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, False]
+            return (False, False)
         else:
-            return [True, bool(iData)]
+            return (True, bool(iData))
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return int(iData)
+        flag, data = oData
+        if flag:
+            return int(data)
         else:
             return -1
 
@@ -1601,14 +1630,14 @@ class datanratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -1693,14 +1722,14 @@ class datarratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -1794,14 +1823,14 @@ class datatempest1(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -1836,9 +1865,9 @@ class datatempfollowup3(dataPosInt):
         return
 
 #115 @test3
-class datarvposition(dataChoice):
+class datavposition(dataChoice):
     def __init__(self):
-        super(datarposition, self).__init__()
+        super(datavposition, self).__init__()
         self.numIMap = {'NA': 0, '1': 1, '2': 2}
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
@@ -1848,7 +1877,7 @@ class datarvposition(dataChoice):
 #116 @test3
 class datavratio(dataCol):
     def __init__(self):
-        super(datarratio, self).__init__()
+        super(datavratio, self).__init__()
         self.type = 'str / int / [bool, int]'
         self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
                         '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
@@ -1874,14 +1903,14 @@ class datavratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -1889,7 +1918,7 @@ class datavratio(dataCol):
 class dataworstgrade1(dataCol):
     def __init__(self):
         super(dataworstgrade1, self).__init__()
-        self.type = 'str / (int, int) / [bool, (int, int)]'
+        self.type = 'str / (int, int) / (int, int)'
         #refer to stanford
         self.numIMap = {'NA': (-1, -1), 'Spring 2014': (2014, 6), '14-May': (2014, 5), 'spring 2014': (2014, 6), 'spring 2013': (2014, 6), 'Winter 2008': (2008, 3), 'Fall 2013': (2013, 12),
                         'Winter 2014': (2014, 3), 'Senior in High School': (-1, -1), 'Spring 2013': (2013, 6), 'Sping 2014': (2014, 3), 'Spring 2012': (2012, 6), 'Winter 2013': (2013, 3),
@@ -1957,9 +1986,9 @@ class dataworstgrade1(dataCol):
 
     def codeFore(self, iData):
         if iData == (-1, -1):
-            return [False, (0, 0)]
+            return (False, (0, 0))
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
         flag, iData = oData
@@ -1972,7 +2001,7 @@ class dataworstgrade1(dataCol):
 class dataworstgrade2(dataCol):
     def __init__(self):
         super(dataworstgrade2, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         #refer to https://www.rapidtables.com/calc/grade/gpa-to-letter-grade-calculator.html
         self.numIMap = {'na': -1, 'a - 97%': 97, 'c': 76, 'c-': 72, 'b': 86, 'a': 96, '94': 94, 'a+': 100, '98': 98, 'b+': 89, '99%': 99, 'c+': 79, '98%': 98, 'gpa was a 3.2': 89, 'b-': 82,
                         'a plus': 100, '100%': 100, '88%': 88, 'psychology': -1, 'a-': 92, '93': 93, '87% b': 87, 'physics': -1, '92%': 92, 'pre-calculus, with a low d': 66, 'f': 59,
@@ -2013,14 +2042,14 @@ class dataworstgrade2(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return [False, 0]
+            return (False, 0)
         else:
-            return [True, iData]
+            return (True, iData)
 
     def codeBack(self, oData):
-        flag, iData = oData
-        if flag is True:
-            return iData
+        flag, data = oData
+        if flag:
+            return data
         else:
             return -1
 
@@ -2101,13 +2130,14 @@ class dataDate_x(dataCol):
 
     def codeFore(self, iData):
         if iData[0] == -1:
-            return [False, 0, 0, 0]
+            return (False, (0, 0, 0))
         else:
-            return [True, iData[0], iData[1], iData[2]]
+            return (True, (iData[0], iData[1], iData[2]))
 
     def codeBack(self, oData):
-        if oData[0] is True:
-            return (oData[1], oData[2], oData[3])
+        flag, data = oData
+        if flag:
+            return data
         else:
             return (-1, -1, -1)
 
@@ -2125,6 +2155,8 @@ class dataTemperatureinlab(dataPosInt):
 
     def numFore(self, iData):
         if iData == 'N/A':
+            return -1
+        if iData == 'NA':
             return -1
         else:
             iData = float(iData)
@@ -2163,7 +2195,7 @@ class dataClipboardWeight(dataChoice):
 
 #129 @test6
 class dataIIResponse(dataPosInt):
-    def __init__():
+    def __init__(self):
         super(dataIIResponse, self).__init__()
         return
 
