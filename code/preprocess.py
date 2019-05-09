@@ -2,6 +2,7 @@ import codecs
 import csv
 import dataFormat as df
 import pickle as pkl
+import random
 
 def saveVar(var, path, name):
     saveFile = open(path+name, 'wb')
@@ -225,6 +226,28 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
     reDataList[117] = (int(year) + 2000, int(month))
     return reDataList
 
+
+def splitData(flagScaledMatrix, dataScaledMatrix):
+    trainFlagScaled = []
+    trainDataScaled = []
+    testFlagScaled = []
+    testDataScaled = []
+    validFlagScaled = []
+    validDataScaled = []
+    for row in range(len(flagScaledMatrix)):
+        setIndex = random.random()
+        if setIndex < 0.8:
+            trainFlagScaled.append(flagScaledMatrix[row])
+            trainDataScaled.append(dataScaledMatrix[row])
+        elif setIndex < 0.9:
+            testFlagScaled.append(flagScaledMatrix[row])
+            testDataScaled.append(dataScaledMatrix[row])
+        else:
+            validFlagScaled.append(flagScaledMatrix[row])
+            validDataScaled.append(dataScaledMatrix[row])
+    return  (trainFlagScaled, trainDataScaled, testFlagScaled, testDataScaled, validFlagScaled, validDataScaled)
+
+
 if __name__ == '__main__':
     formatFun, flagMatrix, dataMatrix = readData()
     formatFun, flagSortedMatrix, dataSortedMatrix = sortData(formatFun, flagMatrix, dataMatrix)
@@ -233,13 +256,16 @@ if __name__ == '__main__':
 
     flagMergedMatrix, dataMergedMatrix = mergeData(flagSortedMatrix, dataSortedMatrix)
     flagScaledMatrix, dataScaledMatrix, minDataMatrix, difDataMatrix = scaleData(flagMergedMatrix, dataMergedMatrix)
+    splitedData = splitData(flagScaledMatrix, dataScaledMatrix)
 
-    # saveVar(formatFun, 'D:/Users/endlesstory/Desktop/536/final/data/', 'formatFun.pkl')
-    # saveVar(flagScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'flagScaledMatrix.pkl')
-    # saveVar(dataScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'dataScaledMatrix.pkl')
-    # saveVar(deSortMap, 'D:/Users/endlesstory/Desktop/536/final/data/', 'deSortMap.pkl')
-    # saveVar(minDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'minDataMatrix.pkl')
-    # saveVar(difDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'difDataMatrix.pkl')
+    saveVar(formatFun, 'D:/Users/endlesstory/Desktop/536/final/data/', 'formatFun.pkl')
+    saveVar(flagScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'flagScaledMatrix.pkl')
+    saveVar(dataScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'dataScaledMatrix.pkl')
+    saveVar(deSortMap, 'D:/Users/endlesstory/Desktop/536/final/data/', 'deSortMap.pkl')
+    saveVar(minDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'minDataMatrix.pkl')
+    saveVar(difDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'difDataMatrix.pkl')
+    saveVar(splitedData, 'D:/Users/endlesstory/Desktop/536/final/data/', 'splitedData.pkl')
+
 
     # resData = restoreData(dataScaledMatrix[0], deSortMap, minDataMatrix, difDataMatrix)
     # print(resData)
