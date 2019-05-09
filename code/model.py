@@ -1,13 +1,13 @@
 import numpy as np
 from layers import DenseLayer
-from funcs import MSE, ReLu
+from funcs import MSE, ReLu, CrossEntropy, Sigmoid
 
 
 class NN:
-    def __init__(self, learning_rate = 0.01, loss_function = MSE()):
+    def __init__(self, learning_rate=0.004, loss_function=CrossEntropy()):
         self.layers = []
-        self.layers.append(DenseLayer(2, 3, activation = ReLu()))
-        self.layers.append(DenseLayer(3, 1, activation = ReLu()))
+        self.layers.append(DenseLayer(2, 3, activation=ReLu()))
+        self.layers.append(DenseLayer(3, 1, activation=Sigmoid()))
         self.loss_function = loss_function
         self.learning_rate = learning_rate
 
@@ -28,17 +28,21 @@ class NN:
     def epoch(self, X, y):
         loss_list = []
         for i in range(len(y)):
-            prediction = self.forward(X[i])
-            derivative, loss = self.loss_function(prediction, y[i])
+            prediction = self.forward(X[i:i+1])
+            derivative, loss = self.loss_function(prediction, y[i:i+1])
+            # print(derivative, loss)
             self.backward(self.learning_rate, derivative)
             loss_list.append(loss)
         print(np.average(loss_list))
 
     def train(self, X, y):
-        for epoch in range(100):
+        for epoch in range(10):
             self.epoch(X, y)
 
 def test():
+    # a = np.array([[-1], [3], [-2], [4]])
+    # print(ReLu().derivative(a))
+
     nn = NN()
 
     X = np.array(([2, 9], [1, 5], [3, 6], [0, 12], [12, 0], [5, 1], [9, 3]), dtype=float)
@@ -52,4 +56,5 @@ def test():
 
 
 if __name__ == '__main__':
+    np.random.seed(1145141919)
     test()

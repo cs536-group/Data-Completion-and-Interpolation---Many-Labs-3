@@ -21,26 +21,34 @@ class DenseLayer:
         return 'dense layer: ({}, {})'.format(self.in_size, self.out_size)
 
     def forward(self, input_data):
+        # print('input_data shape: {}, self.W shape: {}'.format(input_data.shape, self.W.shape))
         self.out = self.activation(np.dot(input_data, self.W) + self.bias)
+        # print('{} {} {}'.format(input_data, self.W, self.out))
         return self.out
 
     def backward(self, learning_rate, loss):
         # print(loss.shape, self.W.T.shape, np.dot(self.W, loss).shape)
-        self.delta = np.dot(loss, self.W.T) * self.activation.derivative(np.dot(self.out, self.W.T))
-        self.W -= learning_rate * np.dot(self.out.T, loss) / (loss.shape[0])
-        # for j in range(self.in_size):
-        #     self.delta[j] = 0
-        #     for k in range(self.out_size):
-        #         print(j, k, self.W.shape, self.delta[j], self.out, self.W[k], self.W[j, k])
-        #         self.delta[j] = self.delta[j] + loss[k] * self.activation.derivative(np.dot(self.out, self.W[k])) \
-        #                         * self.W[j, k]
-                # self.delta[j] = self.delta[j] + loss[k] * self.activation.derivative(np.dot(self.W[k], self.out)) * self.W[j, k]
+        self.z = np.dot(self.out, self.W.T) + self.bias
+        # print('loss.shape {} z.shape {}, w.shape {}'.format(loss.shape, self.z.shape, self.W.shape))
+        # if loss.shape == (1, 1):
+        #     loss = loss.item()
+        # self.delta = loss * self.activation.derivative(self.z) * self.W.T
+        self.delta = (loss @ self.W.T) * self.activation.derivative(self.z)
+        # print(loss, self.delta)
+        # print('out.shape {} delta.shape {}'.format(self.out.shape, self.delta.shape))
+        # print((learning_rate * loss * self.out).shape)
+        self.W -= ((learning_rate * loss * self.out).T @ self.activation.derivative(self.z)).T
 
-        # W_new = np.zeros(self.W.shape)
+        # self.delta2 = np.zeros(self.delta.shape)
+        # self.W2 = np.copy(self.W)
+        # for j in range(self.in_size):
+        #     for k in range(self.out_size):
+        #         print(j, k)
+        #         self.delta2[0, j] += loss[0, k] * self.activation.derivative(self.z[0, j]) * self.W[j, k]
+        #
         # for i in range(self.in_size):
         #     for j in range(self.out_size):
-        #         # print(i, j, self.W.shape)
-        #         W_new = self.W[i, j] - learning_rate * loss[j] * self.activation.derivative(np.dot(self.out, self.W[j])) * self.out[j]
-        #         # W_new = self.W[i][j] - learning_rate * loss[j] * self.activation.derivative(np.dot(self.W[j], self.out)) * self.out[j]
-        # self.W = W_new
+        #         self.W2[i, j] -= learning_rate * loss[0, j] * self.activation.derivative(self.z[0, i]) * self.out[0, j]
+        # print(self.delta, self.delta2)
+        # print(self.W, self.W2)
         return self.delta

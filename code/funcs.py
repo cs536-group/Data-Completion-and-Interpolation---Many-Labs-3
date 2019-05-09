@@ -22,13 +22,15 @@ class TanH:
 
 class ReLu:
     def __call__(self, z):
-        return max(0, z)
+        zeros = np.zeros(z.shape)
+        return np.maximum(zeros, z)
 
     def derivative(self, z):
-        if z < 0:
-            return 0
-        else:
-            return 1
+        zeros = np.zeros(z.shape)
+        ones = np.ones(z.shape)
+        ret = np.minimum(ones, z)
+        ret = np.maximum(zeros, ret)
+        return ret
 
 
 class Softmax:
@@ -56,5 +58,16 @@ class MSE:
 
 class CrossEntropy:
     def __call__(self, predict, y):
-        return
+        """
+
+        :param predict:
+        :param y:
+        :return: (derivative, loss)
+        """
+        m = y.shape[0]
+        # print(predict, y)
+        loss = -1.0 / m * (np.dot(y, np.log(predict)) + np.dot((1 - y), np.log(1 - predict)))
+        derivative = -1.0 / m * ((y - predict) / (predict - predict * predict))
+        return derivative, loss
+
 
