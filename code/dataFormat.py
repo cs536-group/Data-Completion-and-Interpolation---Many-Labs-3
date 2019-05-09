@@ -7,6 +7,10 @@ class dataCol(object):
         # self.codeIMap = dict()
         # self.codeOMap = dict()
         self.type = 'unknown'
+        self.oriCol = None
+        self.group = None
+        self.sCol = None
+        self.eCol = None
         return
 
     def numFore(self, iData):
@@ -256,27 +260,32 @@ class dataSite(dataChoice):
                         15: 'UCRiverside',  16: 'UniversityOfFlorida',  17: 'UniversityOfSouthernMississippi',
                         18: 'UniversityOfToronto',  19: 'UniversityOfVirginia',  20: 'VirginiaCommonwealthUniversity'}
         self.iMapSize, self.oMapSize = self._getMapSize()
+
+        self.group = 11
         return
 
 #1
 class dataParticipant_ID(dataPosInt):
     def __init__(self):
         super(dataParticipant_ID, self).__init__()
+        self.group = 11
         return
 
 #2
 class dataRowNumber(dataPosInt):
     def __init__(self):
         super(dataRowNumber, self).__init__()
+        self.group = 11
         return
 
 #3
 class datasession_id(dataPosInt):
     def __init__(self):
         super(datasession_id, self).__init__()
+        self.group = 11
         return
 
-#4
+#4 @all
 class dataage(dataCol):
     def __init__(self):
         super(dataage, self).__init__()
@@ -284,6 +293,8 @@ class dataage(dataCol):
 
         self.numIMap = {'NA': -1, '18 almost 19': 19, '22 years': 22, 'almost 19': 19, 'Too Old (18)': 18, '18 years': 18,
                         '19.5': 19, '20`': 20, 'we': -1, '-2': -1, 'almost 18': 18, '17 (18 in one month)': 18}
+        
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -324,6 +335,7 @@ class dataanagrams1(dataTrueAnswer):
         super(dataanagrams1, self).__init__()
         self.iAns = 'party'
         self.oAns = 'party'
+        self.group = 4
         return
 
 #6 @persistance @test4
@@ -332,6 +344,7 @@ class dataanagrams2(dataTrueAnswer):
         super(dataanagrams2, self).__init__()
         self.iAns = 'fatal'
         self.oAns = 'fatal'
+        self.group = 4
         return
 
 #7 @persistance @test4
@@ -340,6 +353,7 @@ class dataanagrams3(dataTrueAnswer):
         super(dataanagrams3, self).__init__()
         self.iAns = None
         self.oAns = 'notAWord'
+        self.group = 4
         return
 
 #8 @persistance @test4
@@ -348,6 +362,7 @@ class dataanagrams4(dataTrueAnswer):
         super(dataanagrams4, self).__init__()
         self.iAns = None
         self.oAns = 'notAWord'
+        self.group = 4
         return
 
 #9 ~@test3
@@ -359,7 +374,18 @@ class dataattention(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+
+        self.group = 0
         return
+
+    def codeBack(self, oData):
+        flag, data = oData
+        size = self.oMapSize - 1
+        for i in range(size):
+            if data[i]:
+                return i+1
+        else: #no valid data
+            return 0
 
 #10 ~@test3
 class dataattentioncorrect(dataChoice):
@@ -397,6 +423,8 @@ class dataattentioncorrect(dataChoice):
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 3
         self.defaultNum = 0
+
+        self.group = 3
         return
 
     def codeFore(self, iData):
@@ -418,6 +446,7 @@ class databackcount1(dataTrueAnswer):
         super(databackcount1, self).__init__()
         self.iAns = '357'
         self.oAns = '357'
+        self.group = 5
         return
 
 #12 @test5
@@ -426,6 +455,7 @@ class databackcount10(dataTrueAnswer):
         super(databackcount10, self).__init__()
         self.iAns = '330'
         self.oAns = '330'
+        self.group = 5
         return
 
 #13 @test5
@@ -434,6 +464,7 @@ class databackcount2(dataTrueAnswer):
         super(databackcount2, self).__init__()
         self.iAns = '354'
         self.oAns = '354'
+        self.group = 5
         return
 
 #14 @test5
@@ -442,6 +473,7 @@ class databackcount3(dataTrueAnswer):
         super(databackcount3, self).__init__()
         self.iAns = '351'
         self.oAns = '351'
+        self.group = 5
         return
 
 #15 @test5
@@ -450,6 +482,7 @@ class databackcount4(dataTrueAnswer):
         super(databackcount4, self).__init__()
         self.iAns = '348'
         self.oAns = '348'
+        self.group = 5
         return
 
 #16 @test5
@@ -458,6 +491,7 @@ class databackcount5(dataTrueAnswer):
         super(databackcount5, self).__init__()
         self.iAns = '345'
         self.oAns = '345'
+        self.group = 5
         return
 
 #17 @test5
@@ -466,6 +500,7 @@ class databackcount6(dataTrueAnswer):
         super(databackcount6, self).__init__()
         self.iAns = '342'
         self.oAns = '342'
+        self.group = 5
         return
 
 #18 @test5
@@ -474,6 +509,7 @@ class databackcount7(dataTrueAnswer):
         super(databackcount7, self).__init__()
         self.iAns = '339'
         self.oAns = '339'
+        self.group = 5
         return
 
 #19 @test5
@@ -482,6 +518,7 @@ class databackcount8(dataTrueAnswer):
         super(databackcount8, self).__init__()
         self.iAns = '336'
         self.oAns = '336'
+        self.group = 5
         return
 
 #20 @test5
@@ -490,6 +527,7 @@ class databackcount9(dataTrueAnswer):
         super(databackcount9, self).__init__()
         self.iAns = '333'
         self.oAns = '333'
+        self.group = 5
         return
 
 #21 @test9
@@ -548,6 +586,8 @@ class databestgrade1(dataCol):
                         'Fall 2014 (First year student)': (2014, 12), 'Srping 2014': (2014, 6), 'Winter 2013-2014': (2014, 3), '2013-2014 highschool': (-1, -1),
                         'Fall, 2014 (still in session), if this means last full term: Spring, 2014': (2014, 6), 'sring 2014': (2014, 6),
                         'winter of 2014 in high school': (2014, 3), 'Spring/Summer 2013': (2013, 8), '1 hour ago': (-1, -1), 'Fall 2013?': (2013, 12), 'an hour ago': (-1, -1)}
+        
+        self.group = 9
         return
 
     def numFore(self, iData):
@@ -579,7 +619,7 @@ class databestgrade1(dataCol):
 class databestgrade2(dataCol):
     def __init__(self):
         super(databestgrade2, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         #refer to https://www.rapidtables.com/calc/grade/gpa-to-letter-grade-calculator.html
         self.numIMap = {'na': -1, 'a - 97%': 97, 'c': 76, 'c-': 72, 'b': 86, 'a': 96, '94': 94, 'a+': 100, '98': 98, 'b+': 89, '99%': 99, 'c+': 79, '98%': 98, 'gpa was a 3.2': 89, 'b-': 82,
                         'a plus': 100, '100%': 100, '88%': 88, 'psychology': -1, 'a-': 92, '93': 93, '87% b': 87, 'physics': -1, '92%': 92, 'pre-calculus, with a low d': 66, 'f': 59,
@@ -603,6 +643,8 @@ class databestgrade2(dataCol):
                         '66': 66, '0.92': 92, '0.68': 68, '0.89': 89, '77': 77, '0.8': 80, '0.96': 96, '49': 49, '67': 67, '42104': -1, '0.45': 45, '0.23': 23, '63': 63, '0.78': 78, '0.77': 77,
                         'this is my first semester': -1, '90% in ap statiscs': 90, '87%': 87, 'economics a-': 92, 'politics of the middle east': -1, 'n/a (first year student)': -1,
                         '0.905': 91, '0.97': 97, '1.02': 102, 'got an a on my voice jury.': 96}
+        
+        self.group = 9
         return
 
     def numFore(self, iData):
@@ -635,78 +677,91 @@ class databestgrade2(dataCol):
 class databestgrade3(dataPosInt):
     def __init__(self):
         super(databestgrade3, self).__init__()
+        self.group = 9
         return
 
 #24 @test9
 class databestgrade4(dataPosInt):
     def __init__(self):
         super(databestgrade4, self).__init__()
+        self.group = 9
         return
 
 #25 @test9
 class databestgrade5(dataPosInt):
     def __init__(self):
         super(databestgrade5, self).__init__()
+        self.group = 9
         return
 
 #26 @test4
 class databig5_01(dataPosInt):
     def __init__(self):
         super(databig5_01, self).__init__()
+        self.group = 4
         return
 
 #27 @test4
 class databig5_02(dataPosInt):
     def __init__(self):
         super(databig5_02, self).__init__()
+        self.group = 4
         return
 
 #28 @test4
 class databig5_03(dataPosInt):
     def __init__(self):
         super(databig5_03, self).__init__()
+        self.group = 4
         return
 
 #29 @test4
 class databig5_04(dataPosInt):
     def __init__(self):
         super(databig5_04, self).__init__()
+        self.group = 4
         return
 
 #30 @test4
 class databig5_05(dataPosInt):
     def __init__(self):
         super(databig5_05, self).__init__()
+        self.group = 4
         return
 
 #31 @test4
 class databig5_06(dataPosInt):
     def __init__(self):
         super(databig5_06, self).__init__()
+        self.group = 4
         return
 
 #32 @test4
 class databig5_07(dataPosInt):
     def __init__(self):
         super(databig5_07, self).__init__()
+        self.group = 4
         return
 
 #33 @test4
 class databig5_08(dataPosInt):
     def __init__(self):
         super(databig5_08, self).__init__()
+        self.group = 4
         return
 
 #34 @test4
 class databig5_09(dataPosInt):
     def __init__(self):
         super(databig5_09, self).__init__()
+        self.group = 4
         return
 
 #35 @test4
 class databig5_10(dataPosInt):
     def __init__(self):
         super(databig5_10, self).__init__()
+        self.group = 4
         return
 
 #36 ~@test5
@@ -811,6 +866,8 @@ class datadiv3filler(dataCol):
                         '3 9  90 2268 6 891 9 6 63 633 33 9': 1, '3 89 63': 0, '9B': 0, '3 6 90 63 12 9 93 39': 1, '90 63 46': 0, '3,9,6,,90,': 1, '3 6 9 90': 1, '3,9,90,': 1,
                         '9 6 9 6 3 9': 1, '9,3,1,6': 0, '3,9,63,93,3213,8848': 1, '9, 6, 9, 9': 1, '3,9,226,89,63': 0}
         self.numOMap = {-1: 'NA', 1: 'numbersDivisibleBy3', 0:'worngAnswer'}
+
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -841,30 +898,35 @@ class datadiv3filler(dataCol):
 class dataelm_01(dataPosInt):
     def __init__(self):
         super(dataelm_01, self).__init__()
+        self.group = 8
         return
 
 #38 @test8
 class dataelm_02(dataPosInt):
     def __init__(self):
         super(dataelm_02, self).__init__()
+        self.group = 8
         return
 
 #39 @test8
 class dataelm_03(dataPosInt):
     def __init__(self):
         super(dataelm_03, self).__init__()
+        self.group = 8
         return
 
 #40 @test8
 class dataelm_04(dataPosInt):
     def __init__(self):
         super(dataelm_04, self).__init__()
+        self.group = 8
         return
 
 #41 @test8
 class dataelm_05(dataPosInt):
     def __init__(self):
         super(dataelm_05, self).__init__()
+        self.group = 8
         return
 
 #42 @demographics
@@ -888,6 +950,8 @@ class dataethnicity(dataChoice):
         self.iMapSize = 9
         self.defaultNum = 8
         self.mapLowerCase = True
+
+        self.group = 0
         return
 
 #43 @test1
@@ -895,6 +959,7 @@ class datafeedback(dataBool):
     def __init__(self):
         super(datafeedback, self).__init__()
         self.validStr = 'This Stroop task has no feedback'
+        self.group = 11
 
 #44 @demographics
 class datagender(dataChoice):
@@ -906,12 +971,15 @@ class datagender(dataChoice):
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 5
         self.defaultNum = 4
+
+        self.group = 0
         return
 
 #45 @test5
 class datahighpower(dataNaturalLanguage):
     def __init__(self):
         super(datahighpower, self).__init__()
+        self.group = 11
         return
 
 #46 ~@test4
@@ -919,6 +987,7 @@ class datainstructbig5(dataBool):
     def __init__(self):
         super(datainstructbig5, self).__init__()
         self.validStr = '1'
+        self.group = 11
         return
 
 #47 ~@all
@@ -926,6 +995,7 @@ class datainstructintrinsic(dataBool):
     def __init__(self):
         super(datainstructintrinsic, self).__init__()
         self.validStr = '1'
+        self.group = 11
         return
 
 #48 @? maybe related to mood?
@@ -933,6 +1003,7 @@ class datainstructmli(dataBool):
     def __init__(self):
         super(datainstructmli, self).__init__()
         self.validStr = '1'
+        self.group = 11
         return
 
 #49 ~@all 
@@ -940,96 +1011,112 @@ class datainstructnfc(dataBool):
     def __init__(self):
         super(datainstructnfc, self).__init__()
         self.validStr = '1'
+        self.group = 11
         return
 
 #50 @all
 class dataintrinsic_01(dataPosInt):
     def __init__(self):
         super(dataintrinsic_01, self).__init__()
+        self.group = 0
         return
 
 #51 @all
 class dataintrinsic_02(dataPosInt):
     def __init__(self):
         super(dataintrinsic_02, self).__init__()
+        self.group = 0
         return
 
 #52 @all
 class dataintrinsic_03(dataPosInt):
     def __init__(self):
         super(dataintrinsic_03, self).__init__()
+        self.group = 0
         return
 
 #53 @all
 class dataintrinsic_04(dataPosInt):
     def __init__(self):
         super(dataintrinsic_04, self).__init__()
+        self.group = 0
         return
 
 #54 @all
 class dataintrinsic_05(dataPosInt):
     def __init__(self):
         super(dataintrinsic_05, self).__init__()
+        self.group = 0
         return
 
 #55 @all
 class dataintrinsic_06(dataPosInt):
     def __init__(self):
         super(dataintrinsic_06, self).__init__()
+        self.group = 0
         return
 
 #56 @all
 class dataintrinsic_07(dataPosInt):
     def __init__(self):
         super(dataintrinsic_07, self).__init__()
+        self.group = 0
         return
 
 #57 @all
 class dataintrinsic_08(dataPosInt):
     def __init__(self):
         super(dataintrinsic_08, self).__init__()
+        self.group = 0
         return
 
 #58 @all
 class dataintrinsic_09(dataPosInt):
     def __init__(self):
         super(dataintrinsic_09, self).__init__()
+        self.group = 0
         return
 
 #59 @all
 class dataintrinsic_10(dataPosInt):
     def __init__(self):
         super(dataintrinsic_10, self).__init__()
+        self.group = 0
         return
 
 #60 @all
 class dataintrinsic_11(dataPosInt):
     def __init__(self):
         super(dataintrinsic_11, self).__init__()
+        self.group = 0
         return
 
 #61 @all
 class dataintrinsic_12(dataPosInt):
     def __init__(self):
         super(dataintrinsic_12, self).__init__()
+        self.group = 0
         return
 
 #62 @all
 class dataintrinsic_13(dataPosInt):
     def __init__(self):
         super(dataintrinsic_13, self).__init__()
+        self.group = 0
         return
 
 #63 @all
 class dataintrinsic_14(dataPosInt):
     def __init__(self):
         super(dataintrinsic_14, self).__init__()
+        self.group = 0
         return
 
 #64 @all
 class dataintrinsic_15(dataPosInt):
     def __init__(self):
         super(dataintrinsic_15, self).__init__()
+        self.group = 0
         return
 
 #65 @test3
@@ -1040,6 +1127,7 @@ class datakposition(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 3
 
 #66 @test3
 class datakratio(dataCol):
@@ -1052,6 +1140,8 @@ class datakratio(dataCol):
                         '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        
+        self.group = 3
         return
 
     def numFore(self, iData):
@@ -1085,6 +1175,7 @@ class datakratio(dataCol):
 class datalowpower(dataNaturalLanguage):
     def __init__(self):
         super(datalowpower, self).__init__()
+        self.group = 11
         return
 
 #68 @test3
@@ -1095,6 +1186,7 @@ class datalposition(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 3
         return
 
 #69 @test3
@@ -1108,6 +1200,8 @@ class datalratio(dataCol):
                         '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        
+        self.group = 3
         return
 
     def numFore(self, iData):
@@ -1269,6 +1363,8 @@ class datamajor(dataChoice):
         self.iMapSize = 9
         self.defaultNum = 0
         self.mapLowerCase = True
+
+        self.group = 0
         return
 
 #71 @test10
@@ -1277,6 +1373,7 @@ class datamcdv1(dataInt):
         super(datamcdv1, self).__init__()
         self.minInt = -3
         self.invalid = 'NA'
+        self.group = 10
         return
 
 #72 @test10
@@ -1285,24 +1382,28 @@ class datamcdv2(dataInt):
         super(datamcdv2, self).__init__()
         self.minInt = -3
         self.invalid = 'NA'
+        self.group = 10
         return
 
 #73 @test10
 class datamcfiller1(dataPosInt):
     def __init__(self):
         super(datamcfiller1, self).__init__()
+        self.group = 10
         return
 
 #74 @test10
 class datamcfiller2(dataPosInt):
     def __init__(self):
         super(datamcfiller2, self).__init__()
+        self.group = 10
         return
 
 #75 @test10
 class datamcfiller3(dataPosInt):
     def __init__(self):
         super(datamcfiller3, self).__init__()
+        self.group = 10
         return
 
 #76 @test10
@@ -1313,6 +1414,7 @@ class datamcmost1(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1336,6 +1438,7 @@ class datamcmost2(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1359,6 +1462,7 @@ class datamcmost3(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1382,6 +1486,7 @@ class datamcmost4(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1405,6 +1510,7 @@ class datamcmost5(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1428,6 +1534,7 @@ class datamcsome1(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1451,6 +1558,7 @@ class datamcsome2(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1474,6 +1582,7 @@ class datamcsome3(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1497,6 +1606,7 @@ class datamcsome4(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1520,6 +1630,7 @@ class datamcsome5(dataChoice):
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -1543,6 +1654,7 @@ class datamood_01(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
 #87 @~test9
@@ -1553,42 +1665,49 @@ class datamood_02(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
 #88 @all
 class datanfc_01(dataPosInt):
     def __init__(self):
         super(datanfc_01, self).__init__()
+        self.group = 0
         return
 
 #89 @all
 class datanfc_02(dataPosInt):
     def __init__(self):
         super(datanfc_02, self).__init__()
+        self.group = 0
         return
 
 #90 @all
 class datanfc_03(dataPosInt):
     def __init__(self):
         super(datanfc_03, self).__init__()
+        self.group = 0
         return
 
 #91 @all
 class datanfc_04(dataPosInt):
     def __init__(self):
         super(datanfc_04, self).__init__()
+        self.group = 0
         return
 
 #92 @all
 class datanfc_05(dataPosInt):
     def __init__(self):
         super(datanfc_05, self).__init__()
+        self.group = 0
         return
 
 #93 @all
 class datanfc_06(dataPosInt):
     def __init__(self):
         super(datanfc_06, self).__init__()
+        self.group = 0
         return
 
 #94 @test3
@@ -1599,24 +1718,26 @@ class datanposition(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 3
         return
 
 #95 @test3
 class datanratio(dataCol):
     def __init__(self):
         super(datanratio, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
                         '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
                         'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
                         '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        self.group = 0
         return
 
     def numFore(self, iData):
         if iData.isdigit():
-            return iData
+            return int(iData)
         elif iData in self.numIMap:
             return self.numIMap[iData]
         else:
@@ -1645,12 +1766,14 @@ class datanratio(dataCol):
 class datapate_01(dataPosInt):
     def __init__(self):
         super(datapate_01, self).__init__()
+        self.group = 0
         return
 
 #97 @all
 class datapate_02(dataPosInt):
     def __init__(self):
         super(datapate_02, self).__init__()
+        self.group = 0
         return
 
 #98 @all
@@ -1661,6 +1784,7 @@ class datapate_03(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
 #99 @all
@@ -1671,6 +1795,7 @@ class datapate_04(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
 #100 @all
@@ -1681,6 +1806,7 @@ class datapate_05(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
 #101 @test3
@@ -1691,19 +1817,21 @@ class datarposition(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 3
         return
 
 #102 @test3
 class datarratio(dataCol):
     def __init__(self):
         super(datarratio, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
                         '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
                         'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
                         '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        self.group = 3
         return
 
     def numFore(self, iData):
@@ -1737,43 +1865,49 @@ class datarratio(dataCol):
 class datasarcasm(dataPosInt):
     def __init__(self):
         super(datasarcasm, self).__init__()
+        self.group = 5
         return
 
 #104 @test9
 class dataselfesteem_01(dataPosInt):
     def __init__(self):
         super(dataselfesteem_01, self).__init__()
+        self.group = 9
         return
 
 #105 @~test9
 class datastress_01(dataPosInt):
     def __init__(self):
         super(datastress_01, self).__init__()
+        self.group = 0
         return
 
 #106 @~test9
 class datastress_02(dataPosInt):
     def __init__(self):
         super(datastress_02, self).__init__()
+        self.group = 0
         return
 
 #107 @~test9
 class datastress_03(dataPosInt):
     def __init__(self):
         super(datastress_03, self).__init__()
+        self.group = 0
         return
 
 #108 @~test9
 class datastress_04(dataPosInt):
     def __init__(self):
         super(datastress_04, self).__init__()
+        self.group = 0
         return
 
 #109 @test7
 class datatempest1(dataCol):
     def __init__(self):
         super(datatempest1, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         self.numIMap = {'NA': -1, 'room temperature': -1, '75': 75, '72 degrees F': 72, '70': 70, '25 degrees': 77, '76': 76, '78': 78,
                         '45': -1, '65': 65, '72': 72, '68': 68, '74': 74, '60': 60, '75 degrees': 75, '70 degrees': 70, '69': 69, '69-70 degrees': 70,
                         '73': 73, '68F': 68, '63': 63, '67': 67, '70 degrees F': 70, '50': -1, '66': 66, '72 degrees': 72, '60-65': 63, '80': 80, '82': 82,
@@ -1794,6 +1928,8 @@ class datatempest1(dataCol):
                         '80 degrees': 80, "I'm not sure": -1, '84': 84, '73 degrees F': 73, '70F': 70, '73.4': 73, '424.4': -1, '25': 77, 'Warm': -1,
                         'about 75 degrees': 75, '83': 83, '87': 87, 'warm, maybe 70 degrees Fahrenheit': 70, 'the temperature feels around 78 fahrenheit': 78,
                         '60 degrees?': 60, 'THE ENVIRONMENT IS PRETTY WARM, AND STABLE.': -1, 'no idea, slightly cool though': -1}
+
+        self.group = 7
         return
 
     def numFore(self, iData):
@@ -1838,30 +1974,35 @@ class datatempest1(dataCol):
 class datatempest2(dataPosInt):
     def __init__(self):
         super(datatempest2, self).__init__()
+        self.group = 7
         return
 
 #111 @test7
 class datatempest3(dataPosInt):
     def __init__(self):
         super(datatempest3, self).__init__()
+        self.group = 7
         return
 
 #112 @test7
 class datatempfollowup1(dataPosInt):
     def __init__(self):
         super(datatempfollowup1, self).__init__()
+        self.group = 7
         return
 
 #113 @test7
 class datatempfollowup2(dataPosInt):
     def __init__(self):
         super(datatempfollowup2, self).__init__()
+        self.group = 7
         return
 
 #114 @test7
 class datatempfollowup3(dataPosInt):
     def __init__(self):
         super(datatempfollowup3, self).__init__()
+        self.group = 7
         return
 
 #115 @test3
@@ -1872,19 +2013,21 @@ class datavposition(dataChoice):
         self.numOMap = {0: 'NA', 1: '1', 2: '2'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 3
         return
 
 #116 @test3
 class datavratio(dataCol):
     def __init__(self):
         super(datavratio, self).__init__()
-        self.type = 'str / int / [bool, int]'
+        self.type = 'str / int / int'
         self.numIMap = {'NA': -1, 'x': -1, '15-18': 17, 'oops': -1, '0.1': 1, 'Z': -1, '5.5': 6, '0.5': 1, '10:02': 2, '10:04': 4, 
                         '10:12': 12, '10:03': 3, '4, messed up on last 2 my b did the opposite': 4, '0.8': 1, '30?': 30, '1,000': 1000, 
                         'pp': -1, '45+66': 111, '3 times': 3, '2 times': 2, 'many': -1, 'severally': -1, 'twice': 2, 'three': 3, '4.6': 5, 
                         '6-Apr': -1, '5-Mar': -1, '8-Jun': -1, '8-Apr': -1, '0.2': 1, '0.3': 1, '0?': 0, "I'm not sure": -1, 
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
+        self.group = 3
         return
 
     def numFore(self, iData):
@@ -1970,6 +2113,7 @@ class dataworstgrade1(dataCol):
                         'Fall 2014 (First year student)': (2014, 12), 'Srping 2014': (2014, 6), 'Winter 2013-2014': (2014, 3), '2013-2014 highschool': (-1, -1),
                         'Fall, 2014 (still in session), if this means last full term: Spring, 2014': (2014, 6), 'sring 2014': (2014, 6),
                         'winter of 2014 in high school': (2014, 3), 'Spring/Summer 2013': (2013, 8), '1 hour ago': (-1, -1), 'Fall 2013?': (2013, 12), 'an hour ago': (-1, -1)}
+        self.group = 9
         return
 
     def numFore(self, iData):
@@ -2025,6 +2169,8 @@ class dataworstgrade2(dataCol):
                         '66': 66, '0.92': 92, '0.68': 68, '0.89': 89, '77': 77, '0.8': 80, '0.96': 96, '49': 49, '67': 67, '42104': -1, '0.45': 45, '0.23': 23, '63': 63, '0.78': 78, '0.77': 77,
                         'this is my first semester': -1, '90% in ap statiscs': 90, '87%': 87, 'economics a-': 92, 'politics of the middle east': -1, 'n/a (first year student)': -1,
                         '0.905': 91, '0.97': 97, '1.02': 102, 'got an a on my voice jury.': 96}
+        
+        self.group = 9
         return
 
     def numFore(self, iData):
@@ -2057,18 +2203,21 @@ class dataworstgrade2(dataCol):
 class dataworstgrade3(dataPosInt):
     def __init__(self):
         super(dataworstgrade3, self).__init__()
+        self.group = 9
         return
 
 #120 @test9
 class dataworstgrade4(dataPosInt):
     def __init__(self):
         super(dataworstgrade4, self).__init__()
+        self.group = 9
         return
 
 #121 @test9
 class dataworstgrade5(dataPosInt):
     def __init__(self):
         super(dataworstgrade5, self).__init__()
+        self.group = 9
         return
 
 #122 @all
@@ -2091,66 +2240,35 @@ class datayear(dataChoice):
         self.iMapSize = 7
         self.defaultNum = 0
         self.mapLowerCase = True
+        self.group = 0
         return
 
 #123 @all
 class dataStation(dataNaturalLanguage):
     def __init__(self):
         super(dataStation, self).__init__()
+        self.group = 11
         return
 
-#124 @all #WARN: NEED str.replace('.', '_')
-class dataDate_x(dataCol):
+#124 @all #moved to #222 and #224
+class dataDate_x(dataNaturalLanguage):
     def __init__(self):
         super(dataDate_x, self).__init__()
-        self.type = 'str / (int, int, int) / (int, int, int)'
-        self.form = re.compile(r'(\d+)/(\d+)/(\d+)')
+        self.group = 11
         return
-
-    def numFore(self, iData):
-        res = self.form.match(iData)
-        if res is None:
-            return (-1, -1, -1)
-        else:
-            d = int(res.group(1))
-            m = int(res.group(2))
-            y = int(res.group(3))
-            if d > 31:
-                d = d - 2000
-            if y > 100:
-                y = y - 190
-            return (d, m, y)
-
-
-    def numBack(self, oData):
-        if oData != (-1, -1, -1):
-            return '%d/%d/%d' %oData
-        else:
-            return 'NA'
-
-    def codeFore(self, iData):
-        if iData[0] == -1:
-            return (False, (0, 0, 0))
-        else:
-            return (True, (iData[0], iData[1], iData[2]))
-
-    def codeBack(self, oData):
-        flag, data = oData
-        if flag:
-            return data
-        else:
-            return (-1, -1, -1)
 
 #125 @all
 class dataExperimenter(dataNaturalLanguage):
     def __init__(self):
         super(dataExperimenter, self).__init__()
+        self.group = 11
         return
 
 #126 @test7
 class dataTemperatureinlab(dataPosInt):
     def __init__(self):
         super(dataTemperatureinlab, self).__init__()
+        self.group = 7
         return
 
     def numFore(self, iData):
@@ -2178,6 +2296,7 @@ class dataOrderofTasks(dataChoice):
 
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 3
+        self.group = 0
         return
 
 #128 @test6
@@ -2189,12 +2308,14 @@ class dataClipboardWeight(dataChoice):
 
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 3
+        self.group = 6
         return
 
 #129 @test6
 class dataIIResponse(dataPosInt):
     def __init__(self):
         super(dataIIResponse, self).__init__()
+        self.group = 6
         return
 
 #130 @test2
@@ -2206,6 +2327,7 @@ class dataSRCondition(dataChoice):
 
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 4
+        self.group = 2
         return
 
 #131 @test2
@@ -2218,6 +2340,7 @@ class dataSRMeetingResponse(dataChoice):
 
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 4
+        self.group = 2
         return
 
 #132 @test2
@@ -2225,6 +2348,7 @@ class dataSRConfidenceResponse(dataPosInt):
     def __init__(self):
         super(dataSRConfidenceResponse, self).__init__()
         self.numIMap = {'5': 5, '4': 4, '3': 3, '2': 2, '1': 1, '...': -1, 'NA': -1, 'N/A': -1, '4.5': 4}
+        self.group = 2
         return
 
     def numFore(self, iData):
@@ -2251,6 +2375,9 @@ class dataSRTFCorrect(dataPosInt):
                         'No, 2 wrong': 2, '': -1, 'No, 3 wrong': 3, 'No, 4 Wrong': 4, 'No, 1 Wrong': 1, 'no, all wrong': 4, 'No, 1': 1,
                         '2 wrong': 2, 'no, 2': 2, 'all wrong': 4, 'no, 1': 1, 'all but 2 wrong': 2, 'no, 4': 4, 'no, two wrong': 2}
 
+        self.group = 2
+        return
+
     def numFore(self, iData):
         return self.numIMap[iData]
 
@@ -2264,6 +2391,7 @@ class dataSRTFCorrect(dataPosInt):
 class dataNotes(dataNaturalLanguage):
     def __init__(self):
         super(dataNotes, self).__init__()
+        self.group = 11
         return
 
 #135 StartDate.x
@@ -2274,25 +2402,27 @@ class dataNotes(dataNaturalLanguage):
 #170 @test6
 class dataClipBoardMaterial(dataChoice):
     def __init__(self):
-        super(dataClipboardWeight, self).__init__()
+        super(dataClipBoardMaterial, self).__init__()
         self.numIMap = {'Plastic': 2, 'Metal': 1, 'NA': 0}
         self.numOMap = {0: 'NA', 1: 'Plastic', 2: 'Metal'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.iMapSize = 3
+        self.group = 6
         return
 
 #171 @test4
 class dataPersistence(dataPosInt):
     def __init__(self):
         super(dataPosInt, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
         if iData == 'NA':
             return -1
         else:
-            return round(iData)
+            return round(float(iData))
 
     def numBack(self, oData):
         if oData == -1:
@@ -2309,18 +2439,21 @@ class dataPersistence(dataPosInt):
 class dataMonthComputer(dataPosInt):
     def __init__(self):
         super(dataMonthComputer, self).__init__()
+        self.group = 11
         return
 
 #223 @test9
 class dataDayComputer(dataPosInt):
     def __init__(self):
         super(dataDayComputer, self).__init__()
+        self.group = 11
         return
 
 #224 @test9
 class dataYearComputer(dataPosInt):
     def __init__(self):
         super(dataYearComputer, self).__init__()
+        self.group = 11
         return
 
 #225 DaysSinceMonthComputer
@@ -2336,6 +2469,7 @@ class dataYearComputer(dataPosInt):
 class dataOpenness(dataPosInt):
     def __init__(self):
         super(dataOpenness, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2354,6 +2488,7 @@ class dataOpenness(dataPosInt):
 class dataConscientiousness(dataPosInt):
     def __init__(self):
         super(dataConscientiousness, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2372,6 +2507,7 @@ class dataConscientiousness(dataPosInt):
 class dataExtraversion(dataPosInt):
     def __init__(self):
         super(dataExtraversion, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2390,6 +2526,7 @@ class dataExtraversion(dataPosInt):
 class dataAgreeableness(dataPosInt):
     def __init__(self):
         super(dataAgreeableness, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2408,6 +2545,7 @@ class dataAgreeableness(dataPosInt):
 class dataNeuroticism(dataPosInt):
     def __init__(self):
         super(dataNeuroticism, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2426,6 +2564,7 @@ class dataNeuroticism(dataPosInt):
 class dataIntrinsic(dataPosInt):
     def __init__(self):
         super(dataIntrinsic, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2444,6 +2583,7 @@ class dataIntrinsic(dataPosInt):
 class dataMood(dataPosInt):
     def __init__(self):
         super(dataMood, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2461,7 +2601,8 @@ class dataMood(dataPosInt):
 #249 @NFC
 class dataNFC(dataPosInt):
     def __init__(self):
-        super(dataMood, self).__init__()
+        super(dataNFC, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2480,24 +2621,28 @@ class dataNFC(dataPosInt):
 class dataReportedAttention(dataPosInt):
     def __init__(self):
         super(dataReportedAttention, self).__init__()
+        self.group = 0
         return
 
 #251 @all
 class dataReportedEffort(dataPosInt):
     def __init__(self):
         super(dataReportedEffort, self).__init__()
+        self.group = 0
         return
 
 #252 @test9
 class dataSelfEsteem(dataPosInt):
     def __init__(self):
         super(dataSelfEsteem, self).__init__()
+        self.group = 0
         return
 
 #253 @all
 class dataStress(dataPosInt):
     def __init__(self):
-        super(dataMood, self).__init__()
+        super(dataStress, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
@@ -2518,12 +2663,14 @@ class dataStress(dataPosInt):
 class dataMostEndorse(dataPosInt):
     def __init__(self):
         super(dataMostEndorse, self).__init__()
+        self.group = 10
         return
 
 #256 @test10
 class dataSomeEndorse(dataPosInt):
     def __init__(self):
         super(dataSomeEndorse, self).__init__()
+        self.group = 10
         return
 
 #257 @test10
@@ -2534,6 +2681,7 @@ class dataCredCond(dataChoice):
         self.numOMap = {-1: 'NA', 0: 'NoCredentials', 1: 'Credentials'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 10
         return
 
     def codeFore(self, iData):
@@ -2557,6 +2705,7 @@ class dataGenderfactor(dataChoice):
         self.numOMap = {-1: 'NA', 0: 'Female', 1: 'Male'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
     def codeFore(self, iData):
@@ -2585,6 +2734,7 @@ class dataTempCond(dataChoice):
         self.numOMap = {-1: 'NA', 0: 'Communal', 1: 'Agentic'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
     def codeFore(self, iData):
@@ -2607,6 +2757,7 @@ class dataTargetGender(dataChoice):
         self.numOMap = {-1: 'NA', 0: 'FemaleTarget', 1: 'MaleTarget'}
 
         self.iMapSize, self.oMapSize = self._getMapSize()
+        self.group = 0
         return
 
     def codeFore(self, iData):
@@ -2626,6 +2777,7 @@ class dataTargetGender(dataChoice):
 class dataArgumentQuality(dataPosInt):
     def __init__(self):
         super(dataArgumentQuality, self).__init__()
+        self.group = 0
         return
 
     def numFore(self, iData):
