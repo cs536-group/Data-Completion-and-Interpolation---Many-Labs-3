@@ -4,7 +4,7 @@ from funcs import Sigmoid, TanH, ReLu, MSE, CrossEntropy
 
 class DenseLayer:
 
-    def __init__(self, in_size, out_size, activation = ReLu(), loss_function = CrossEntropy()):
+    def __init__(self, in_size, out_size, dropout=0, activation=ReLu(), loss_function=CrossEntropy()):
         self.in_size = in_size
         self.out_size = out_size
         self.W = np.random.randn(in_size, out_size) * np.sqrt(2.0 / in_size)  # He initialization
@@ -15,6 +15,8 @@ class DenseLayer:
         self.out = None
         self.z = None
         self.input_data = None
+        self.dropout = dropout
+        self.mask = None
 
     def __repr__(self):
         return 'dense layer: ({}, {})'.format(self.in_size, self.out_size)
@@ -22,9 +24,16 @@ class DenseLayer:
     def __str__(self):
         return 'dense layer: ({}, {})'.format(self.in_size, self.out_size)
 
+    def predict(self, input_data):
+        return self.activation(np.dot(input_data, self.W) + self.bias)
+
     def forward(self, input_data):
         # print('input_data shape: {}, self.W shape: {}'.format(input_data.shape, self.W.shape))
         self.input_data = input_data
+        self.mask = np.random.binomial(1, 1 - self.dropout, size=(1, self.in_size))
+        # print(self.mask)
+        self.input_data = self.input_data * self.mask
+        # print(self, self.input_data, self.mask, self.W)
         self.z = np.dot(self.input_data, self.W) + self.bias
         self.out = self.activation(self.z)
         # print('{} {} {}'.format(input_data, self.W, self.out))
@@ -47,7 +56,7 @@ class DenseLayer:
 
         # self.W2 = np.copy(self.W)
         self.delta = (loss  * self.activation.derivative(self.z)) @ self.W.T
-        self.W -= self.input_data.T @ (learning_rate * loss  * self.activation.derivative(self.z))
+        self.W -= self.input_data.T @ (learning_rate * loss * self.activation.derivative(self.z))
         # self.delta2 = np.zeros(self.delta.shape)
 
 
