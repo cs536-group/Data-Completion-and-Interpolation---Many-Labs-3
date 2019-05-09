@@ -65,7 +65,6 @@ class CrossEntropy:
         :return: (derivative, loss)
         """
         m = y.shape[0]
-        # print(predict, y)
         loss = -1.0 / m * (np.dot(y, np.log(predict)) + np.dot((1 - y), np.log(1 - predict)))
         derivative = -1.0 / m * ((y - predict) / (predict - predict * predict))
         return derivative, loss
