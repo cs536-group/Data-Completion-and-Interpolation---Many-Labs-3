@@ -87,8 +87,8 @@ class dataChoice(dataCol):
         else: #no valid data
             for i in range(size):
                 if flag[i]: #flag is valid
-                    print('E: ' + repr(self) + ', codeBack: invalid oData.')
-                    return None
+                    print('W: ' + repr(self) + ', codeBack: invalid oData at col %d' %self.oriCol)
+                    return 0
             else:
                 return 0
 
@@ -160,7 +160,7 @@ class dataTrueAnswer(dataCol):
     def codeBack(self, oData):
         flag, data = oData
         if flag is True:
-            return round(iData)
+            return round(data)
         else:
             return -1
 
