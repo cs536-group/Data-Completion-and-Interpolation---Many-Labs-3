@@ -22,7 +22,7 @@ class NN:
         self.layers.append(DenseLayer(50, 150, activation=ReLu()))
         self.layers.append(DenseLayer(150, 223, activation=Sigmoid()))
 
-        # # for test()
+        # # for test_bp()
         # self.layers.append(DenseLayer(2, 5, activation=ReLu()))
         # self.layers.append(DenseLayer(5, 2, activation=Sigmoid()))
 
@@ -205,6 +205,7 @@ def test_restore():
     r_predict = restore_data(predict_with_38)
     print(r_x)
     print(r_predict)
+    return 
 
 
 def train():
@@ -247,6 +248,7 @@ def train():
             exit()
 
     print('Minimum test loss: {} in epoch {}'.format(min_test_loss, min_test_loss_epoch))
+    return
 
 
 if __name__ == '__main__':
