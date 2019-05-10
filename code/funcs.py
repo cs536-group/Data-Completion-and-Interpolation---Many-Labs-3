@@ -56,6 +56,19 @@ class MSE:
         return 2 * diff, np.square(diff)
 
 
+class RMSE:
+    def __call__(self, predict, y):
+        """
+
+        :param predict:
+        :param y:
+        :return: (derivative, loss)
+        """
+        diff = predict - y
+        loss = np.abs(diff)
+        return diff / loss, loss
+
+
 class CrossEntropy:
     def __call__(self, predict, y):
         """

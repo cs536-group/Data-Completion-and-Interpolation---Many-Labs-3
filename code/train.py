@@ -3,17 +3,19 @@ import pickle
 import preprocess
 import numpy as np
 from layers import DenseLayer
-from funcs import MSE, ReLu, CrossEntropy, Sigmoid
+from funcs import MSE, ReLu, CrossEntropy, Sigmoid, RMSE
 
 path_data = '../data/'
 path_model = '../model/'
+random_seed = 1145141919
 
 class NN:
 
-    def __init__(self, learning_rate, loss_function=CrossEntropy()):
+    def __init__(self, learning_rate, loss_function_prob=CrossEntropy(), loss_function_real=RMSE()):
         self.layers = []
         self._init_layers()
-        self.loss_function = loss_function
+        self.loss_function_prob = loss_function_prob
+        self.loss_function_real = loss_function_real
         self.learning_rate = learning_rate
 
     def _init_layers(self):
@@ -45,8 +47,8 @@ class NN:
         loss_list = []
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
-            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], CrossEntropy())
-            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], MSE())
+            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
+            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
 
             derivative_ce *= flag_valid[i:i + 1]
             derivative_ce *= 1 - flag_real[i:i + 1]
@@ -84,8 +86,8 @@ class NN:
         loss_list = []
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
-            _, loss_ce = self.get_loss(prediction, y[i:i + 1], CrossEntropy())
-            _, loss_mse = self.get_loss(prediction, y[i:i + 1], MSE())
+            _, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
+            _, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
 
             loss_ce *= flag_valid[i:i + 1]
             loss_ce *= 1 - flag_real[i:i + 1]
@@ -189,15 +191,15 @@ def restore_data(x):
     return preprocess.restoreData(x.reshape(x.size), deSortMap, minDataMatrix, difDataMatrix)
 
 
-def test_restore():
-    np.random.seed(1145141919)
+def test_restore(pre_trained_model):
+    np.random.seed(random_seed)
 
     # preprocess data
     flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
         flag_real_test = load_data()
 
     # load pre-trained model
-    nn = load_model('model-epoch20-loss23.pkl')
+    nn = load_model(pre_trained_model)
     x = X_train[0:1]
     predict = nn.predict(x[:, :-38])
     predict_with_38 = np.concatenate((predict, X_train[0:1, -38:]), axis=1)
@@ -205,18 +207,23 @@ def test_restore():
     r_predict = restore_data(predict_with_38)
     print(r_x)
     print(r_predict)
-    return 
+    print(predict)
+    return
 
 
 def train():
-    np.random.seed(1145141919)
+    np.random.seed(random_seed)
 
     # preprocess data
+    flag_valid_train_raw, X_train_raw, flag_real_train_raw, flag_valid_dev_raw, X_dev_raw, flag_real_dev_raw, \
+        flag_valid_test_raw, X_test_raw, flag_real_test_raw = load_data()
     flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
-    flag_real_test = load_data()
+        flag_real_test = flag_valid_train_raw[:, :-38],  X_train_raw[:, :-38],  flag_real_train_raw[:, :-38],  \
+                         flag_valid_dev_raw[:, :-38],  X_dev_raw[:, :-38],  flag_real_dev_raw[:, :-38], \
+                         flag_valid_test_raw[:, :-38],  X_test_raw[:, :-38],  flag_real_test_raw[:, :-38]
 
     # build model
-    nn = NN(learning_rate=0.001, loss_function=CrossEntropy())
+    nn = NN(learning_rate=0.001, loss_function_prob=CrossEntropy(), loss_function_real=RMSE())
 
     # load pre-trained model
     # nn = load_model('model-epoch20-loss23.pkl')
@@ -240,11 +247,11 @@ def train():
                     min_test_loss = loss_test
                     min_test_loss_epoch = epoch
                 print('Testing loss = {}'.format(loss_test))
-                save_model(nn, 'model-epoch{}-loss{}.pkl'.format(epoch, int(loss_train)))
+                save_model(nn, 'model-epoch{}-trainloss{}-devloss{}.pkl'.format(epoch, int(loss_train), int(min_test_loss)))
 
         except KeyboardInterrupt:
             if input('\n Do you want to save current model? (y / n) ') == 'y':
-                save_model(nn, 'model-epoch{}-loss{}.pkl'.format(epoch, int(loss_train)))
+                save_model(nn, 'model-epoch{}-trainloss{}-devloss{}.pkl'.format(epoch, int(loss_train), int(min_test_loss)))
             exit()
 
     print('Minimum test loss: {} in epoch {}'.format(min_test_loss, min_test_loss_epoch))
@@ -252,5 +259,5 @@ def train():
 
 
 if __name__ == '__main__':
-    test_restore()
-    # train()
+    # test_restore('model-epoch30-trainloss32-devloss33.pkl')
+    train()
