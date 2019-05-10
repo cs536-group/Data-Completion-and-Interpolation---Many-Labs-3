@@ -188,7 +188,9 @@ def restore_data(x):
     deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
     minDataMatrix = preprocess.loadVar(path_data, 'minDataMatrix.pkl')
     difDataMatrix = preprocess.loadVar(path_data, 'difDataMatrix.pkl')
-    return preprocess.restoreData(x.reshape(x.size), deSortMap, minDataMatrix, difDataMatrix)
+    formatFun = preprocess.loadVar(path_data, 'formatFun.pkl')
+    restored = preprocess.restoreData(x.reshape(x.size), deSortMap, minDataMatrix, difDataMatrix)
+    return restored, preprocess.decodeData(restored, formatFun)
 
 
 def test_restore(pre_trained_model):
@@ -204,10 +206,10 @@ def test_restore(pre_trained_model):
     predict = nn.predict(x[:, :-38])
     predict_with_38 = np.concatenate((predict, X_train[0:1, -38:]), axis=1)
     r_x = restore_data(x)
-    r_predict = restore_data(predict_with_38)
+    r_predict, prediction_formatted = restore_data(predict_with_38)
     print(r_x)
     print(r_predict)
-    print(predict)
+    print(prediction_formatted)
     return
 
 
