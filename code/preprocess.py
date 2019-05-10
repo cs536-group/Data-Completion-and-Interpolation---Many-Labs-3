@@ -31,6 +31,7 @@ def readData(path = None, name = None):
     size = 0
 
     formatFun = []
+    realMatrix = []
     flagMatrix = []
     dataMatrix = []
 
@@ -50,35 +51,42 @@ def readData(path = None, name = None):
         else:
             flagMatrix.append([])
             dataMatrix.append([])
+            realMatrix.append([])
             rowIndex = index - 2
             for col in range(size):
                 if col <= 134 or 170 <= col <= 171 or 222 <= col <= 224 or 242 <= col <= 253 or 255 <= col <= 258 or 268 <= col <=270:
-                    flag, data = formatFun[col].formatFore(row[col])
+                    real, flag, data = formatFun[col].formatFore(row[col])
+                    realMatrix[rowIndex].append(real)
                     flagMatrix[rowIndex].append(flag)
                     dataMatrix[rowIndex].append(data)
                 else:
+                    realMatrix[rowIndex].append(None)
                     flagMatrix[rowIndex].append(None)
                     dataMatrix[rowIndex].append(None)
 
     file.close()
-    return (formatFun, flagMatrix, dataMatrix)
+    return (formatFun, flagMatrix, dataMatrix, realMatrix)
 
 #group data by test
-def sortData(formatFun, flagMatrix, dataMatrix):
+def sortData(formatFun, flagMatrix, dataMatrix, realMatrix):
     flagSortedMatrix = []
     dataSortedMatrix = []
+    realSortedMatrix = []
     posList = [0 for i in range(12)]
 
     for row in range(len(flagMatrix)):
         flagSorted = [[] for i in range(12)]
         dataSorted = [[] for i in range(12)]
+        realSorted = [[] for i in range(12)]
         flagSortedMatrix.append(flagSorted)
         dataSortedMatrix.append(dataSorted)
+        realSortedMatrix.append(realSorted)
 
         for col in range(len(formatFun)):
             tempFormatFun = formatFun[col]
             tempFlag = flagMatrix[row][col]
             tempData = dataMatrix[row][col]
+            tempReal = realMatrix[row][col]
             if tempFormatFun is None:
                 continue
 
@@ -91,6 +99,7 @@ def sortData(formatFun, flagMatrix, dataMatrix):
                     tempFormatFun.eCol = (tempGroup, posList[tempGroup])
                 flagSorted[tempGroup].extend(tempFlag)
                 dataSorted[tempGroup].extend(tempData)
+                realSorted[tempGroup].extend(tempReal)
             else:
                 if row == 0:
                     posList[tempGroup] = posList[tempGroup] + 1
@@ -103,24 +112,28 @@ def sortData(formatFun, flagMatrix, dataMatrix):
                         tempData = -1
                 flagSorted[tempGroup].append(tempFlag)
                 dataSorted[tempGroup].append(tempData)
-    return (formatFun, flagSortedMatrix, dataSortedMatrix)
+                realSorted[tempGroup].append(tempReal)
+    return (formatFun, flagSortedMatrix, dataSortedMatrix, realSortedMatrix)
 
 
 #merge row into a single list
-def mergeData(flagMatrix, dataMatrix):
+def mergeData(flagMatrix, dataMatrix, realMatrix):
     flagMergedMatrix = []
     dataMergedMatrix = []
+    realMergedMatrix = []
 
     for row in range(len(flagMatrix)):
         flagMerged = [x for group in flagMatrix[row] for x in group]
         if flagMerged.count(False) >= 100:
             continue
         dataMerged = [x for group in dataMatrix[row] for x in group]
+        realMerged = [x for group in realMatrix[row] for x in group]
         flagMergedMatrix.append(flagMerged)
         dataMergedMatrix.append(dataMerged)
-        if len(flagMerged) != len(dataMerged):
+        realMergedMatrix.append(realMerged)
+        if len(flagMerged) != len(dataMerged) or len(dataMerged) != len(realMerged):
             print('E: mergeData: size error at row: %d' %row)
-    return flagMergedMatrix, dataMergedMatrix
+    return (flagMergedMatrix, dataMergedMatrix, realMergedMatrix)
 
 
 #compute merged col to oriCol map
@@ -227,40 +240,47 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
     return reDataList
 
 
-def splitData(flagScaledMatrix, dataScaledMatrix):
-    trainFlagScaled = []
-    trainDataScaled = []
-    testFlagScaled = []
-    testDataScaled = []
-    validFlagScaled = []
-    validDataScaled = []
-    for row in range(len(flagScaledMatrix)):
+def splitData(flagMatrix, dataMatrix, realMatrix):
+    trainFlag = []
+    trainData = []
+    trainReal = []
+    testFlag = []
+    testData = []
+    testReal = []
+    validFlag = []
+    validData = []
+    validReal = []
+    for row in range(len(flagMatrix)):
         setIndex = random.random()
         if setIndex < 0.8:
-            trainFlagScaled.append(flagScaledMatrix[row])
-            trainDataScaled.append(dataScaledMatrix[row])
+            trainFlag.append(flagMatrix[row])
+            trainData.append(dataMatrix[row])
+            trainReal.append(realMatrix[row])
         elif setIndex < 0.9:
-            testFlagScaled.append(flagScaledMatrix[row])
-            testDataScaled.append(dataScaledMatrix[row])
+            testFlag.append(flagMatrix[row])
+            testData.append(dataMatrix[row])
+            testReal.append(realMatrix[row])
         else:
-            validFlagScaled.append(flagScaledMatrix[row])
-            validDataScaled.append(dataScaledMatrix[row])
-    return  (trainFlagScaled, trainDataScaled, testFlagScaled, testDataScaled, validFlagScaled, validDataScaled)
+            validFlag.append(flagMatrix[row])
+            validData.append(dataMatrix[row])
+            validReal.append(realMatrix[row])
+    return  (trainFlag, trainData, trainReal, testFlag, testData, testReal, validFlag, validData, testReal)
 
 
 if __name__ == '__main__':
-    formatFun, flagMatrix, dataMatrix = readData()
-    formatFun, flagSortedMatrix, dataSortedMatrix = sortData(formatFun, flagMatrix, dataMatrix)
+    formatFun, flagMatrix, dataMatrix, realMatrix = readData()
+    formatFun, flagSortedMatrix, dataSortedMatrix, realSortedMatrix = sortData(formatFun, flagMatrix, dataMatrix, realMatrix)
 
     formatFun, deSortMap = getPos(formatFun, flagSortedMatrix[0])
 
-    flagMergedMatrix, dataMergedMatrix = mergeData(flagSortedMatrix, dataSortedMatrix)
+    flagMergedMatrix, dataMergedMatrix, realMergedMatrix = mergeData(flagSortedMatrix, dataSortedMatrix, realSortedMatrix)
     flagScaledMatrix, dataScaledMatrix, minDataMatrix, difDataMatrix = scaleData(flagMergedMatrix, dataMergedMatrix)
-    splitedData = splitData(flagScaledMatrix, dataScaledMatrix)
+    splitedData = splitData(flagScaledMatrix, dataScaledMatrix, realMergedMatrix)
 
     saveVar(formatFun, 'D:/Users/endlesstory/Desktop/536/final/data/', 'formatFun.pkl')
     saveVar(flagScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'flagScaledMatrix.pkl')
     saveVar(dataScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'dataScaledMatrix.pkl')
+    saveVar(realSortedMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'realScaledMatrix.pkl')
     saveVar(deSortMap, 'D:/Users/endlesstory/Desktop/536/final/data/', 'deSortMap.pkl')
     saveVar(minDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'minDataMatrix.pkl')
     saveVar(difDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'difDataMatrix.pkl')
