@@ -208,7 +208,7 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
             else:
                 dataList[tempCol] = dataList[tempCol] + minDataMatrix[tempCol]
         if eCol == sCol + 1:
-            reDataList[oriCol] = dataList[tempCol]
+            reDataList[oriCol] = round(dataList[tempCol])
         else:
             maxIndex = 0
             maxData = dataList[sCol]
@@ -255,7 +255,7 @@ def decodeData(dataList, formatFun):
 
     return decodedData
 
-
+#transform restoredData to original dataset format
 def splitData(flagMatrix, dataMatrix, realMatrix):
     trainFlag = []
     trainData = []
