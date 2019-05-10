@@ -8,7 +8,7 @@ class DenseLayer:
         self.in_size = in_size
         self.out_size = out_size
         self.W = np.random.randn(in_size, out_size) * np.sqrt(2.0 / in_size)  # He initialization
-        self.bias = 1
+        self.bias = np.random.randn(1, out_size) * np.sqrt(2.0 / in_size)  # He initialization
         self.activation = activation
         self.loss_function = loss_function
         self.delta = np.zeros(self.in_size)
@@ -57,6 +57,7 @@ class DenseLayer:
         # self.W2 = np.copy(self.W)
         self.delta = (loss  * self.activation.derivative(self.z)) @ self.W.T
         self.W -= self.input_data.T @ (learning_rate * loss * self.activation.derivative(self.z))
+        self.bias -= learning_rate * loss * self.activation.derivative(self.z)
         # self.delta2 = np.zeros(self.delta.shape)
 
 

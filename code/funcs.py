@@ -67,11 +67,9 @@ class CrossEntropy:
         m = y.shape[0]
         y1 = y * np.log(predict)
         y0 = (1 - y) * np.log(1 - predict)
-        y1[np.isnan(y1)] = 0
-        y0[np.isnan(y0)] = 0
+        # t = 0 * np.log(predict)
         loss = -1.0 / m * (y1 + y0)
         derivative = -1.0 / m * ((y - predict) / (predict - predict * predict))
-        derivative[np.isnan(derivative)] = 0
         return derivative, loss
 
 
