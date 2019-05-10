@@ -6,11 +6,12 @@ class dataCol(object):
         # self.numOMap = dict()
         # self.codeIMap = dict()
         # self.codeOMap = dict()
-        self.type = 'unknown'
-        self.oriCol = None
-        self.group = None
-        self.sCol = None
-        self.eCol = None
+        self.type = 'unknown' #data type
+        self.oriCol = None #original dataset col
+        self.group = None #test group, 0 for all
+        self.sCol = None #coded dataset group start col
+        self.eCol = None #coded dataset group end col
+        self.real = None #real value flag
         return
 
     def numFore(self, iData):
@@ -20,7 +21,7 @@ class dataCol(object):
         return oData
 
     def codeFore(self, iData):
-        return (iData, iData)
+        return (iData, iData, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -49,6 +50,7 @@ class dataChoice(dataCol):
         self.iMapSize, self.oMapSize = self._getMapSize()
         self.defaultNum = 0
         self.mapLowerCase = False
+        self.real = False
         return
 
     def _getMapSize(self):
@@ -67,13 +69,14 @@ class dataChoice(dataCol):
 
     def codeFore(self, iData):
         size = self.iMapSize
-        data = [False for i in range(size)]
+        data = [self.real for i in range(size)]
+        realFlag = [False for i in range(size)]
         if iData == 0:
             flag = [False for i in range(size)]
         else:
             flag = [True for i in range(size)]
             data[iData - 1] = True
-        return (flag, data)
+        return (realFlag, flag, data)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -94,6 +97,7 @@ class dataPosInt(dataCol):
     def __init__(self):
         super(dataPosInt, self).__init__()
         self.type = 'str / int / int'
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -110,9 +114,9 @@ class dataPosInt(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -128,6 +132,8 @@ class dataTrueAnswer(dataCol):
         self.type = 'str / int / bool'
         self.iAns = ''
         self.oAns = ''
+        self.real = False
+        return
 
     def numFore(self, iData):
         if iData == 'NA':
@@ -147,22 +153,23 @@ class dataTrueAnswer(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag is True:
-            return int(iData)
+            return round(iData)
         else:
             return -1
 
 #natural language
 class dataNaturalLanguage(dataCol):
     def __init__(self):
-        super(dataCol, self).__init__()
+        super(dataNaturalLanguage, self).__init__()
         self.type = 'str / int / bool'
+        self.real = False
         return
 
     def numFore(self, iData):
@@ -176,14 +183,14 @@ class dataNaturalLanguage(dataCol):
 
     def codeFore(self, iData):
         if iData == 0:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, True)
+            return (self.real, True, True)
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return 0
 
@@ -194,6 +201,7 @@ class dataBool(dataCol):
         super(dataBool, self).__init__()
         self.type = 'str / int / bool'
         self.validStr = ''
+        self.real = False
         return
 
     def numFore(self, iData):
@@ -207,14 +215,14 @@ class dataBool(dataCol):
 
     def codeFore(self, iData):
         if iData == 0:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, True)
+            return (self.real, True, True)
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return 0
 
@@ -295,6 +303,7 @@ class dataage(dataCol):
                         '19.5': 19, '20`': 20, 'we': -1, '-2': -1, 'almost 18': 18, '17 (18 in one month)': 18}
         
         self.group = 0
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -318,9 +327,9 @@ class dataage(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -429,14 +438,14 @@ class dataattentioncorrect(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag is True:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -588,6 +597,7 @@ class databestgrade1(dataCol):
                         'winter of 2014 in high school': (2014, 3), 'Spring/Summer 2013': (2013, 8), '1 hour ago': (-1, -1), 'Fall 2013?': (2013, 12), 'an hour ago': (-1, -1)}
         
         self.group = 9
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -604,9 +614,9 @@ class databestgrade1(dataCol):
 
     def codeFore(self, iData):
         if iData == (-1, -1):
-            return (False, (0, 0))
+            return (self.real, False, (0, 0))
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -645,6 +655,7 @@ class databestgrade2(dataCol):
                         '0.905': 91, '0.97': 97, '1.02': 102, 'got an a on my voice jury.': 96}
         
         self.group = 9
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -662,9 +673,9 @@ class databestgrade2(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -868,6 +879,7 @@ class datadiv3filler(dataCol):
         self.numOMap = {-1: 'NA', 1: 'numbersDivisibleBy3', 0:'worngAnswer'}
 
         self.group = 0
+        self.real = False
         return
 
     def numFore(self, iData):
@@ -883,14 +895,14 @@ class datadiv3filler(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1142,6 +1154,7 @@ class datakratio(dataCol):
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
         
         self.group = 3
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -1160,9 +1173,9 @@ class datakratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -1202,6 +1215,7 @@ class datalratio(dataCol):
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
         
         self.group = 3
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -1220,9 +1234,9 @@ class datalratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -1419,14 +1433,14 @@ class datamcmost1(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1443,14 +1457,14 @@ class datamcmost2(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1467,14 +1481,14 @@ class datamcmost3(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1491,14 +1505,14 @@ class datamcmost4(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1515,14 +1529,14 @@ class datamcmost5(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1539,14 +1553,14 @@ class datamcsome1(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1563,14 +1577,14 @@ class datamcsome2(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1587,14 +1601,14 @@ class datamcsome3(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1611,14 +1625,14 @@ class datamcsome4(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1635,14 +1649,14 @@ class datamcsome5(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -1733,6 +1747,7 @@ class datanratio(dataCol):
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
         self.group = 0
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -1751,9 +1766,9 @@ class datanratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -1832,6 +1847,7 @@ class datarratio(dataCol):
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
         self.group = 3
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -1850,9 +1866,9 @@ class datarratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -1930,6 +1946,7 @@ class datatempest1(dataCol):
                         '60 degrees?': 60, 'THE ENVIRONMENT IS PRETTY WARM, AND STABLE.': -1, 'no idea, slightly cool though': -1}
 
         self.group = 7
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -1959,9 +1976,9 @@ class datatempest1(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -2028,6 +2045,7 @@ class datavratio(dataCol):
                         'I really dont kmow maybe 3': 3, "I don't know": -1, '1.5': 2, '6,4': -1, '8,2': -1, '7,3': -1, '3,7': -1, 'less than .5': 1, 
                         '?': -1, '1.8': 2, '1.4': 1, '1.1': 1, '0.7': 1, '0.75': 1}
         self.group = 3
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -2046,9 +2064,9 @@ class datavratio(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -2114,6 +2132,7 @@ class dataworstgrade1(dataCol):
                         'Fall, 2014 (still in session), if this means last full term: Spring, 2014': (2014, 6), 'sring 2014': (2014, 6),
                         'winter of 2014 in high school': (2014, 3), 'Spring/Summer 2013': (2013, 8), '1 hour ago': (-1, -1), 'Fall 2013?': (2013, 12), 'an hour ago': (-1, -1)}
         self.group = 9
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -2130,9 +2149,9 @@ class dataworstgrade1(dataCol):
 
     def codeFore(self, iData):
         if iData == (-1, -1):
-            return (False, (0, 0))
+            return (self.real, False, (0, 0))
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, iData = oData
@@ -2171,6 +2190,7 @@ class dataworstgrade2(dataCol):
                         '0.905': 91, '0.97': 97, '1.02': 102, 'got an a on my voice jury.': 96}
         
         self.group = 9
+        self.real = True
         return
 
     def numFore(self, iData):
@@ -2188,9 +2208,9 @@ class dataworstgrade2(dataCol):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, 0)
+            return (self.real, False, 0)
         else:
-            return (True, iData)
+            return (self.real, True, iData)
 
     def codeBack(self, oData):
         flag, data = oData
@@ -2552,7 +2572,7 @@ class dataNeuroticism(dataPosInt):
         if iData == 'NA':
             return -1
         else:
-            return int(float(iData) * 2)
+            return round(float(iData) * 2)
 
     def numBack(self, oData):
         if oData == -1:
@@ -2686,14 +2706,14 @@ class dataCredCond(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -2710,14 +2730,14 @@ class dataGenderfactor(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
@@ -2739,14 +2759,14 @@ class dataTempCond(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 #269 @all
@@ -2762,14 +2782,14 @@ class dataTargetGender(dataChoice):
 
     def codeFore(self, iData):
         if iData == -1:
-            return (False, False)
+            return (self.real, False, False)
         else:
-            return (True, bool(iData))
+            return (self.real, True, bool(iData))
 
     def codeBack(self, oData):
         flag, data = oData
         if flag:
-            return int(data)
+            return round(data)
         else:
             return -1
 
