@@ -280,7 +280,7 @@ if __name__ == '__main__':
     saveVar(formatFun, 'D:/Users/endlesstory/Desktop/536/final/data/', 'formatFun.pkl')
     saveVar(flagScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'flagScaledMatrix.pkl')
     saveVar(dataScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'dataScaledMatrix.pkl')
-    saveVar(realSortedMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'realScaledMatrix.pkl')
+    saveVar(realMergeddMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'realScaledMatrix.pkl')
     saveVar(deSortMap, 'D:/Users/endlesstory/Desktop/536/final/data/', 'deSortMap.pkl')
     saveVar(minDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'minDataMatrix.pkl')
     saveVar(difDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'difDataMatrix.pkl')
