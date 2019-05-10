@@ -12,10 +12,10 @@ class NN:
         self.learning_rate = learning_rate
 
     def _init_layers(self):
-        self.layers.append(DenseLayer(261, 150, dropout=0.1, activation=ReLu()))
+        self.layers.append(DenseLayer(223, 150, dropout=0.1, activation=ReLu()))
         self.layers.append(DenseLayer(150, 50, activation=ReLu()))
         self.layers.append(DenseLayer(50, 150, activation=ReLu()))
-        self.layers.append(DenseLayer(150, 261, activation=Sigmoid()))
+        self.layers.append(DenseLayer(150, 223, activation=Sigmoid()))
 
         # # for test()
         # self.layers.append(DenseLayer(2, 5, activation=ReLu()))
@@ -39,9 +39,9 @@ class NN:
     def epoch(self, X, y, flag_valid, flag_real):
         loss_list = []
         for i in range(len(y)):
-            prediction = self.forward(X[i:i+1])
-            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i+1], CrossEntropy())
-            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i+1], MSE())
+            prediction = self.forward(X[i:i + 1])
+            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], CrossEntropy())
+            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], MSE())
             derivative_ce *= flag_valid[i:i + 1]
             loss_ce *= flag_valid[i:i + 1]
 
@@ -114,20 +114,27 @@ def load_data_from_file(filename = '../data/splitedData.pkl'):
 def load_data(filename = '../data/splitedData.pkl'):
     data = load_data_from_file(filename)
 
-    flag_valid_train = np.array(data[0])
-    X_train = np.array(data[1], dtype=np.float)
-    flag_real_train = np.array(data[2])
+    flag_valid_train = np.array(data[0], dtype=np.bool_)[:, :-38]
+    X_train = np.array(data[1], dtype=np.float)[:, :-38]
+    flag_real_train = np.array(data[2], dtype=np.bool_)[:, :-38]
 
-    flag_valid_dev = np.array(data[3])
-    X_dev = np.array(data[4])
-    flag_real_dev = np.array(data[5])
+    flag_valid_dev = np.array(data[3], dtype=np.bool_)[:, :-38]
+    X_dev = np.array(data[4], dtype=np.float)[:, :-38]
+    flag_real_dev = np.array(data[5], dtype=np.bool_)[:, :-38]
 
-    flag_valid_test = np.array(data[6])
-    X_test = np.array(data[7])
-    flag_real_test = np.array(data[8])
+    flag_valid_test = np.array(data[6], dtype=np.bool_)[:, :-38]
+    X_test = np.array(data[7], dtype=np.float)[:, :-38]
+    flag_real_test = np.array(data[8], dtype=np.bool_)[:, :-38]
 
-    # print(flag_valid_train.shape,  X_train.shape,  flag_real_train.shape,  flag_valid_dev.shape,  X_dev.shape,
-    #       flag_real_dev.shape,  flag_valid_test.shape,  X_test.shape, flag_real_test.shape)
+    # flag_valid_train[:, -38:] = False
+    # flag_valid_dev[:, -38:] = False
+    # flag_valid_test[:, -38:] = False
+    # X_train *= flag_valid_train
+    # X_dev *= flag_valid_dev
+    # X_test *= flag_valid_test
+
+    print(flag_valid_train.shape,  X_train.shape,  flag_real_train.shape,  flag_valid_dev.shape,  X_dev.shape,
+          flag_real_dev.shape,  flag_valid_test.shape,  X_test.shape, flag_real_test.shape)
     return flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
            flag_real_test
 
@@ -150,12 +157,6 @@ if __name__ == '__main__':
     # preprocess data
     flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
         flag_real_test = load_data()
-    flag_valid_train[:, -38:] = False
-    flag_valid_dev[:, -38:] = False
-    flag_valid_test[:, -38:] = False
-    X_train *= flag_valid_train
-    X_dev *= flag_valid_dev
-    X_test *= flag_valid_test
 
     # build model
     nn = NN(learning_rate=0.01, loss_function=CrossEntropy())
