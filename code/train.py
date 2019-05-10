@@ -1,11 +1,16 @@
+import os
+import pickle
+import preprocess
 import numpy as np
 from layers import DenseLayer
 from funcs import MSE, ReLu, CrossEntropy, Sigmoid
-import pickle
+
+path_data = '../data/'
+path_model = '../model/'
 
 class NN:
 
-    def __init__(self, learning_rate=0.0001, loss_function=CrossEntropy()):
+    def __init__(self, learning_rate, loss_function=CrossEntropy()):
         self.layers = []
         self._init_layers()
         self.loss_function = loss_function
@@ -42,8 +47,11 @@ class NN:
             prediction = self.forward(X[i:i + 1])
             derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], CrossEntropy())
             derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], MSE())
+
             derivative_ce *= flag_valid[i:i + 1]
+            derivative_ce *= 1 - flag_real[i:i + 1]
             loss_ce *= flag_valid[i:i + 1]
+            loss_ce *= 1 - flag_real[i:i + 1]
 
             derivative_mse *= flag_valid[i:i + 1]
             derivative_mse *= flag_real[i:i + 1]
@@ -72,18 +80,25 @@ class NN:
             input_data = layer.predict(input_data)
         return input_data
 
-    def test(self, X, y, flag_valid):
+    def test(self, X, y, flag_valid, flag_real):
         loss_list = []
         for i in range(len(y)):
-            prediction = self.predict(X[i:i+1])
-            derivative, loss = self.get_loss(prediction, y[i:i+1])
-            derivative *= flag_valid[i:i + 1]
-            loss *= flag_valid[i:i + 1]
+            prediction = self.forward(X[i:i + 1])
+            _, loss_ce = self.get_loss(prediction, y[i:i + 1], CrossEntropy())
+            _, loss_mse = self.get_loss(prediction, y[i:i + 1], MSE())
+
+            loss_ce *= flag_valid[i:i + 1]
+            loss_ce *= 1 - flag_real[i:i + 1]
+
+            loss_mse *= flag_valid[i:i + 1]
+            loss_mse *= flag_real[i:i + 1]
+
+            loss = loss_mse + loss_ce
             loss_list.append(np.sum(loss))
         return loss_list
 
 
-def test():
+def test_bp():
     nn = NN()
 
     X = np.array(([[2.5, 1.5], [7.5, 1.5], [2.5, 2.5], [7.5, 2.5], [2.5, 3.5], [7.5, 3.5], [2.5, 4.5], [7.5, 4.5], [1.5, 2.5], [6.5, 2.5], [1.5, 3.5], [6.5, 3.5], [3.5, 2.5], [8.5, 2.5], [3.5, 3.5], [8.5, 3.5]]
@@ -104,27 +119,29 @@ def test():
     print(nn.predict(x))
 
 
-def load_data_from_file(filename = '../data/splitedData.pkl'):
+def load_data_from_file(filename = 'splitedData.pkl'):
+    filename = path_data + filename
     ret = None
     with open(filename, 'rb') as f:
         ret = pickle.load(f)
     return ret
 
 
-def load_data(filename = '../data/splitedData.pkl'):
+def load_data(filename = 'splitedData.pkl'):
+    filename = path_data + filename
     data = load_data_from_file(filename)
 
-    flag_valid_train = np.array(data[0], dtype=np.bool_)[:, :-38]
-    X_train = np.array(data[1], dtype=np.float)[:, :-38]
-    flag_real_train = np.array(data[2], dtype=np.bool_)[:, :-38]
+    flag_valid_train = np.array(data[0], dtype=np.bool_)
+    X_train = np.array(data[1], dtype=np.float)
+    flag_real_train = np.array(data[2], dtype=np.bool_)
 
-    flag_valid_dev = np.array(data[3], dtype=np.bool_)[:, :-38]
-    X_dev = np.array(data[4], dtype=np.float)[:, :-38]
-    flag_real_dev = np.array(data[5], dtype=np.bool_)[:, :-38]
+    flag_valid_dev = np.array(data[3], dtype=np.bool_)
+    X_dev = np.array(data[4], dtype=np.float)
+    flag_real_dev = np.array(data[5], dtype=np.bool_)
 
-    flag_valid_test = np.array(data[6], dtype=np.bool_)[:, :-38]
-    X_test = np.array(data[7], dtype=np.float)[:, :-38]
-    flag_real_test = np.array(data[8], dtype=np.bool_)[:, :-38]
+    flag_valid_test = np.array(data[6], dtype=np.bool_)
+    X_test = np.array(data[7], dtype=np.float)
+    flag_real_test = np.array(data[8], dtype=np.bool_)
 
     # flag_valid_train[:, -38:] = False
     # flag_valid_dev[:, -38:] = False
@@ -133,8 +150,8 @@ def load_data(filename = '../data/splitedData.pkl'):
     # X_dev *= flag_valid_dev
     # X_test *= flag_valid_test
 
-    print(flag_valid_train.shape,  X_train.shape,  flag_real_train.shape,  flag_valid_dev.shape,  X_dev.shape,
-          flag_real_dev.shape,  flag_valid_test.shape,  X_test.shape, flag_real_test.shape)
+    # print(flag_valid_train.shape,  X_train.shape,  flag_real_train.shape,  flag_valid_dev.shape,  X_dev.shape,
+    #       flag_real_dev.shape,  flag_valid_test.shape,  X_test.shape, flag_real_test.shape)
     return flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
            flag_real_test
 
@@ -151,27 +168,87 @@ def shuffle_data(a, b, c):
     return a2, b2, c2
 
 
-if __name__ == '__main__':
+def save_model(nn, filename):
+    filename = path_model + filename
+    if not os.path.isdir(path_model):
+        os.mkdir(path_model)
+    with open(filename, 'wb') as f:
+        pickle.dump(nn, f)
+
+
+def load_model(filename):
+    filename = path_model + filename
+    with open(filename, 'rb') as f:
+        return pickle.load(f)
+
+
+def restore_data(x):
+    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
+    minDataMatrix = preprocess.loadVar(path_data, 'minDataMatrix.pkl')
+    difDataMatrix = preprocess.loadVar(path_data, 'difDataMatrix.pkl')
+    return preprocess.restoreData(x.reshape(x.size), deSortMap, minDataMatrix, difDataMatrix)
+
+
+def test_restore():
     np.random.seed(1145141919)
 
     # preprocess data
     flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
         flag_real_test = load_data()
 
+    # load pre-trained model
+    nn = load_model('model-epoch20-loss23.pkl')
+    x = X_train[0:1]
+    predict = nn.predict(x[:, :-38])
+    predict_with_38 = np.concatenate((predict, X_train[0:1, -38:]), axis=1)
+    r_x = restore_data(x)
+    r_predict = restore_data(predict_with_38)
+    print(r_x)
+    print(r_predict)
+
+
+def train():
+    np.random.seed(1145141919)
+
+    # preprocess data
+    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
+    flag_real_test = load_data()
+
     # build model
-    nn = NN(learning_rate=0.01, loss_function=CrossEntropy())
+    nn = NN(learning_rate=0.001, loss_function=CrossEntropy())
+
+    # load pre-trained model
+    # nn = load_model('model-epoch20-loss23.pkl')
 
     # train
     max_epoch = 100
     min_test_loss = np.inf
+    min_test_loss_epoch = None
     for epoch in range(max_epoch):
-        X, flag_valid, flag_real = shuffle_data(X_train, flag_valid_train, flag_real_train)
-        loss_train_list = nn.epoch(X, X, flag_valid, flag_real)
-        print('Training epoch {}, training loss = {}'.format(epoch, np.average(loss_train_list)))
-        # print((loss_train_list))
-        if epoch % 10 == 0:
-            loss_dev_list = nn.test(X_dev, X_dev, flag_valid_dev)
-            loss_test = np.average(loss_dev_list)
-            min_test_loss = np.minimum(min_test_loss, loss_test)
-            print('Testing loss = {}'.format(loss_test))
-    print(min_test_loss)
+        try:
+
+            X, flag_valid, flag_real = shuffle_data(X_train, flag_valid_train, flag_real_train)
+            loss_train_list = nn.epoch(X, X, flag_valid, flag_real)
+            loss_train = np.average(loss_train_list)
+            print('Training epoch {}, training loss = {}'.format(epoch, loss_train))
+            # print((loss_train_list))
+            if epoch % 10 == 0:
+                loss_dev_list = nn.test(X_dev, X_dev, flag_valid_dev, flag_real_dev)
+                loss_test = np.average(loss_dev_list)
+                if loss_test < min_test_loss:
+                    min_test_loss = loss_test
+                    min_test_loss_epoch = epoch
+                print('Testing loss = {}'.format(loss_test))
+                save_model(nn, 'model-epoch{}-loss{}.pkl'.format(epoch, int(loss_train)))
+
+        except KeyboardInterrupt:
+            if input('\n Do you want to save current model? (y / n) ') == 'y':
+                save_model(nn, 'model-epoch{}-loss{}.pkl'.format(epoch, int(loss_train)))
+            exit()
+
+    print('Minimum test loss: {} in epoch {}'.format(min_test_loss, min_test_loss_epoch))
+
+
+if __name__ == '__main__':
+    test_restore()
+    # train()
