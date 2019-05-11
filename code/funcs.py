@@ -45,7 +45,7 @@ class Softmax:
 
 
 class MSE:
-    def __call__(self, predict, y, m):
+    def __call__(self, predict, y):
         """
 
         :param predict:
@@ -57,7 +57,7 @@ class MSE:
 
 
 class RMSE:
-    def __call__(self, predict, y, m):
+    def __call__(self, predict, y):
         """
 
         :param predict:
@@ -70,22 +70,30 @@ class RMSE:
 
 
 class CrossEntropy:
-    def __call__(self, predict, y, m):
+    def __call__(self, predict, y):
         """
 
         :param predict:
         :param y:
         :return: (derivative, loss)
         """
-        # _, __ = np.where(predict == 1)
-        # if _.size > 0:
-        #     print(_, __)
-        # t = 0 * np.log(predict)
+        m = y.shape[0]
         y1 = y * np.log(predict)
         y0 = (1 - y) * np.log(1 - predict)
 
         loss = -1.0 / m * (y1 + y0)
         derivative = -1.0 / m * ((y - predict) / (predict - predict * predict))
+        # isnan = np.isnan(loss) | np.isnan(derivative)
+        # isinf = np.isinf(loss) | np.isinf(derivative)
+        #
+        # for i in range(np.size(loss)):
+        #     if isnan[0, i] or isinf[0, i]:
+        #         if predict[0, i] == y[0, i]:
+        #             loss[0, i] = 0
+        #         else:
+        #             loss[0, i] = 1
+        #         derivative[0, i] = predict[0, i] - y[0, i]
+        #         print(predict[0, i], y[0, i], derivative[0, i])
         return derivative, loss
 
 

@@ -39,18 +39,17 @@ class NN:
         for layer in reversed(self.layers):
             loss = layer.backward(learning_rate, loss)
 
-    def get_loss(self, prediction, y, m, loss_function=None):
+    def get_loss(self, prediction, y, loss_function=None):
         if loss_function is None:
             loss_function = self.loss_function
-        return loss_function(prediction, y, m)
+        return loss_function(prediction, y)
 
     def epoch(self, X, y, flag_valid, flag_real):
         loss_list = []
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
-            m = np.count_nonzero(flag_valid[i:i + 1])
-            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_prob)
-            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_real)
+            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
+            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
 
             derivative_ce *= flag_valid[i:i + 1]
             derivative_ce *= 1 - flag_real[i:i + 1]
@@ -89,9 +88,8 @@ class NN:
         loss_list = []
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
-            m = np.count_nonzero(flag_valid[i:i + 1])
-            _, loss_ce = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_prob)
-            _, loss_mse = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_real)
+            _, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
+            _, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
 
             loss_ce *= flag_valid[i:i + 1]
             loss_ce *= 1 - flag_real[i:i + 1]
@@ -238,11 +236,11 @@ def train():
     nn = NN(learning_rate=0.001, loss_function_prob=CrossEntropy(), loss_function_real=RMSE())
 
     # load pre-trained model
-    # nn = load_model('model-epoch70-trainloss29-devloss32.pkl')
+    # nn = load_model('model-epoch126-trainloss27-devloss32.pkl')
 
     # train
     start_epoch = max(nn.epoch_trained, 1)
-    max_epoch = 100
+    max_epoch = 300
     min_test_loss = np.inf
     min_test_loss_epoch = None
     for epoch in range(start_epoch, start_epoch + max_epoch):

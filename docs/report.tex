@@ -1,4 +1,4 @@
-\documentclass[letter]{report}
+\documentclass[11pt, a4paper]{article}
 
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
@@ -68,9 +68,9 @@
 \setlength\parindent{0pt}
 \setlength{\parskip}{5pt}
 
-\title{CS 520: Assignment 4 - Colorization}
-\author{Haoyang Zhang, Han Wu, Shengjie Li, Zhichao Xu}
-\date{December 15, 2018}
+\title{CS 536 : Final Project - Data Completion and Interpolation}
+\author{Haoyang Zhang, Han Wu, Shengjie Li}
+\date{\today}
 
 \begin{document}
 \maketitle
@@ -78,22 +78,50 @@
 \section{Introduction, group members and division of workload}
 \label{sec:Introduction}
 
-In this group project, we implemented a image colorizer which can generate satisfying color images given grayscale images. \\
-\begin{tabular}{| p{2.5cm} | p{\textwidth -3.5cm} |}
+In this group project, we implemented an autocoder for interpolating missing features from features we have and achieved . \\
+\begin{tabular}{| p{2.7cm} | p{\textwidth -3.5cm} |}
 	\hline
-	\makecell[c]{Name \\ RUID} & Workload \\
+	\makecell[c]{Name \\ NetID} & Workload \\
 	\hline
-	\makecell[c]{Haoyang Zhang \\ 188008687} & {Implemented a toy CNN based on numpy. Wrote Usage.html and HowToBuildACNN.html which are two documents about the toy CNN. Wrote part of the report. Analyzed the performance of this model on images belonging to some classes that have never been trained before.} \\
+	\makecell[c]{Han Wu \\ hw436} & {Fine-tuned the parameters of our model. Did some experiments for the evaluation of our model. Wrote part of the report.} \\
 	\hline
-	\makecell[c]{Han Wu \\ 189008460} & {Wrote part of the report and participated in the discussion. Analyzed the outcome of our colorizer.} \\
+	\makecell[c]{Haoyang Zhang \\ hz333} & {Analyzed and wrote scripts to clean the data. Wrote scripts to restore human-friendly data from the output of our model. Wrote part of the report. } \\
 	\hline
-	\makecell[c]{Shengjie Li \\ 188008047} & {Implemented the colorizer. Trained the model. Wrote part of the report. Finished the format design of the report using \LaTeX. } \\
-	\hline
-	\makecell[c]{Zhichao Xu \\ 188008912} & {Wrote part of the report. Came up with the original structure of network.} \\
+	\makecell[c]{Shengjie Li \\ sl1560} & {Implemented the basics of neural networks including back-propagation and several loss functions and activation functions. Wrote part of the report.} \\
 	\hline
 \end{tabular}
 
+\section{Prerequisites}
+\label{sec:Prerequisites}
+\begin{enumerate}
+	\item {How to represent or process the data. Data features may contain a number of diverse data types (real values, integer values, categorical or binary values, ordered categorical values, open/natural language responses). How can you represent these for processing and prediction?}
+	
+	\item{How to model the problem of interpolation. What are the inputs, what are the outputs? An important if subtle question to consider here - what does it mean to predictor or interpolate a missing feature?}
+	
+	\item{Model selection. What kind of model or models do you want to consider?}
+	\begin{itemize}
+		\item {A transfer learning approach:}
+		\item {Autoencoders with RNN:}
+	\end{itemize}
+	
+	\item{Quantifying loss or error. How can you quantify how good a model is, how to measure its loss/error? This is important not only in terms of evaluating your model, but in terms of training as well - how can you refine and improve your model without a way of comparing them?}
+	\par{Because we are using an autoencoder, we are measuring the reconstruction errors. For the reason that there are many data types, we are treating the data over different loss functions. For real values and integer values, we are using mean squared error $ L(\theta) = \frac{1}{m}\sum_{i=1}^{m}(y^i - p^i)^2 $ (m denotes the number of data points) and root-mean-squared error}
+	
+	\item{Training. What kind of training algorithm can you apply to your model(s)? What design choices do you have to make here?}
+	
+	\item{Feature selection. It is frequently useful in learning problems to focus on specific features and exclude others, to try to eliminate spurious features and focus on what matters. How can that be applied here?}
+	
+	\item{Validation. How can you prevent or avoid over-fitting? Can you apply the usual training/testing/validation paradigm to this problem? How do you choose the training or testing data? Note that a record won’t need to be complete to still be useful, potentially, in interpolation. Can cross-validation be applied here? This can be especially important when the data set is not overwhelmingly large and data must be used carefully.}
+	
+	\item{Evaluation. How good is your final model? How can you evaluate this? What are the limits and strengths of your model - how many features does a new record actually need to be able to interpolate well?}
+\end{enumerate}
 
-\section{The Problem}
-\label{sec:The Problem}
+
+\section{Requirements}
+\label{sec:Requirements}
+
+
+\section{Bonus}
+\label{sec:Bonus}
+
 \end{document}

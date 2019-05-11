@@ -55,7 +55,7 @@ class DenseLayer:
         # self.W -= ((learning_rate * loss * self.out).T @ self.activation.derivative(self.z)).T
 
         # self.W2 = np.copy(self.W)
-        self.delta = (loss  * self.activation.derivative(self.z)) @ self.W.T
+        self.delta = (loss * self.activation.derivative(self.z)) @ self.W.T
         self.W -= self.input_data.T @ (learning_rate * loss * self.activation.derivative(self.z))
         self.bias -= learning_rate * loss * self.activation.derivative(self.z)
         # self.delta2 = np.zeros(self.delta.shape)
