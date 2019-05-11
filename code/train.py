@@ -218,16 +218,10 @@ def test_restore(pre_trained_model):
     print(prediction_formatted)
     return
 
-#restore loss by axis
-def test_restore_loss_axised(pre_trained_model):
-    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
-        flag_real_test = load_data()
-    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
 
-    nn = load_model(pre_trained_model)
-    x = X_dev[:, :-38]
-    loss_dev_list, loss_dev_list_axised = nn.test(x, x, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
-    loss_real_axised, loss_prob_axised = preprocess.restoreLoss(np.mean(loss_dev_list_axised, axis = 0), deSortMap, flag_real_dev[0])
+#restore loss by axis
+def restore_loss(loss_axised, deSortMap, flag_real, best_name = 'best', worst_name = 'worst'):
+    loss_real_axised, loss_prob_axised = preprocess.restoreLoss(loss_axised, deSortMap, flag_real)
     loss_real_axised = np.asarray(loss_real_axised, dtype = np.float64)
     loss_prob_axised = np.asarray(loss_prob_axised, dtype = np.float64)
     
@@ -243,18 +237,58 @@ def test_restore_loss_axised(pre_trained_model):
     loss_prob_min_index = np.argsort(loss_prob_axised)
 
 
-    print('best real values:')
+    print(best_name + ' real values:')
     for i in range(10):
         print('column %d: loss %f' %(loss_real_min_index[i], loss_real_axised[loss_real_min_index[i]]))
-    print('worst real values:')
+    print(worst_name + ' real values:')
     for i in range(10):
         print('column %d: loss %f' %(loss_real_max_index[-(i+1)], loss_real_axised[loss_real_max_index[-(i+1)]]))
-    print('best prob values:')
+    print(best_name + ' prob values:')
     for i in range(10):
         print('column %d: loss %f' %(loss_prob_min_index[i], loss_prob_axised[loss_prob_min_index[i]]))
-    print('worst prob values')
+    print(worst_name + ' prob values:')
     for i in range(10):
         print('column %d: loss %f' %(loss_prob_max_index[-(i+1)], loss_prob_axised[loss_prob_max_index[-(i+1)]]))
+    return 
+
+
+#given the model, check how much loss each feature contributes
+def test_restore_loss_axised(pre_trained_model):
+    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
+        flag_real_test = load_data()
+    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
+
+    nn = load_model(pre_trained_model)
+    x = X_dev[:, :-38]
+    loss_dev_list, loss_dev_list_axised = nn.test(x, x, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
+    loss_axised = np.average(loss_dev_list_axised, axis = 0)
+    restore_loss(loss_axised, deSortMap, flag_real_dev[0])
+    return
+
+
+#given the model, dropout each feature, check the new loss
+def test_col_importance(pre_trained_model):
+    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
+        flag_real_test = load_data()
+    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
+
+    nn = load_model(pre_trained_model)
+    x = X_dev[:, :-38]
+
+    loss_dev_list, loss_dev_list_axised = nn.test(x, x, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
+    ori_loss = np.average(loss_dev_list)
+
+    loss_list_axised = []
+    for index in range(x.shape[1]):
+        temp_x = np.copy(x)
+        temp_valid = np.copy(flag_valid_dev[:, :-38])
+        temp_valid[:, index] = False #avoid the situation that this data itself is hard to predict
+        temp_x[:, index] = 0
+        loss_dev_list, loss_dev_list_axised = nn.test(temp_x, x, temp_valid, flag_real_dev[:, :-38])
+        loss_list_axised.append(np.average(loss_dev_list))
+    loss_list_axised = np.asarray(loss_list_axised, dtype = np.float64)
+    restore_loss(loss_list_axised - ori_loss, deSortMap, flag_real_dev[0], 'least important', 'most important')
+    return
 
 
 def train():
@@ -313,5 +347,5 @@ def train():
 
 
 if __name__ == '__main__':
-    # test_restore_loss_axised('model-epoch10-trainloss54-devloss54.pkl')
-    train()
+    test_col_importance('model-epoch10-trainloss54-devloss54.pkl')
+    # train()
