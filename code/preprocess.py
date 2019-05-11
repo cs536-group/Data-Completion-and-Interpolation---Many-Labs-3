@@ -3,6 +3,7 @@ import csv
 import dataFormat as df
 import pickle as pkl
 import random
+import numpy as np
 
 def saveVar(var, path, name):
     saveFile = open(path+name, 'wb')
@@ -208,7 +209,7 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
             else:
                 dataList[tempCol] = dataList[tempCol] + minDataMatrix[tempCol]
         if eCol == sCol + 1:
-            reDataList[oriCol] = round(dataList[tempCol])
+            reDataList[oriCol] = round(dataList[sCol])
         else:
             maxIndex = 0
             maxData = dataList[sCol]
@@ -240,6 +241,7 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
     return reDataList
 
 
+#transform restoredData to original dataset format
 def decodeData(dataList, formatFun):
     size = len(formatFun)
     decodedData = [None for i in range(size)]
@@ -255,7 +257,8 @@ def decodeData(dataList, formatFun):
 
     return decodedData
 
-#transform restoredData to original dataset format
+
+#split dataset into train, test, valid
 def splitData(flagMatrix, dataMatrix, realMatrix):
     trainFlag = []
     trainData = []
@@ -283,6 +286,28 @@ def splitData(flagMatrix, dataMatrix, realMatrix):
     return  (trainFlag, trainData, trainReal, testFlag, testData, testReal, validFlag, validData, testReal)
 
 
+def restoreLoss(lossList, deSortMap, realMask):
+    reLossListProb = [None for i in range(274)]
+    reLossListReal = [None for i in range(274)]
+    size = len(lossList)
+    col = 0
+    while col < size:
+        if col >= 223:
+            continue
+        sCol = col
+        eCol, oriCol = deSortMap[col]
+        if realMask[col]:
+            tempLossList = reLossListReal
+        else:
+            tempLossList = reLossListProb
+        if eCol == sCol + 1:
+            tempLossList[oriCol] = lossList[sCol]
+        else:
+            tempLossList[oriCol] = np.average(lossList[sCol: eCol])
+        col = eCol
+    reLossProb = np.asarray(reLossListProb, dtype = np.float64)
+    reLossReal = np.asarray(reLossListReal, dtype = np.float64)
+    return (reLossReal, reLossProb)
 
 
 if __name__ == '__main__':
@@ -295,11 +320,14 @@ if __name__ == '__main__':
     flagScaledMatrix, dataScaledMatrix, minDataMatrix, difDataMatrix = scaleData(flagMergedMatrix, dataMergedMatrix)
     splitedData = splitData(flagScaledMatrix, dataScaledMatrix, realMergedMatrix)
 
-    saveVar(formatFun, 'D:/Users/endlesstory/Desktop/536/final/data/', 'formatFun.pkl')
-    saveVar(flagScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'flagScaledMatrix.pkl')
-    saveVar(dataScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'dataScaledMatrix.pkl')
-    saveVar(realMergedMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'realScaledMatrix.pkl')
-    saveVar(deSortMap, 'D:/Users/endlesstory/Desktop/536/final/data/', 'deSortMap.pkl')
-    saveVar(minDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'minDataMatrix.pkl')
-    saveVar(difDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'difDataMatrix.pkl')
-    saveVar(splitedData, 'D:/Users/endlesstory/Desktop/536/final/data/', 'splitedData.pkl')
+    print(len(flagMergedMatrix))
+    print(len(flagMergedMatrix[0]))
+
+    # saveVar(formatFun, 'D:/Users/endlesstory/Desktop/536/final/data/', 'formatFun.pkl')
+    # saveVar(flagScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'flagScaledMatrix.pkl')
+    # saveVar(dataScaledMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'dataScaledMatrix.pkl')
+    # saveVar(realMergedMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'realScaledMatrix.pkl')
+    # saveVar(deSortMap, 'D:/Users/endlesstory/Desktop/536/final/data/', 'deSortMap.pkl')
+    # saveVar(minDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'minDataMatrix.pkl')
+    # saveVar(difDataMatrix, 'D:/Users/endlesstory/Desktop/536/final/data/', 'difDataMatrix.pkl')
+    # saveVar(splitedData, 'D:/Users/endlesstory/Desktop/536/final/data/', 'splitedData.pkl')
