@@ -29,10 +29,10 @@ class NN:
         # self.layers.append(DenseLayer(2, 5, activation=ReLu()))
         # self.layers.append(DenseLayer(5, 2, activation=Sigmoid()))
 
-    def forward(self, x):
+    def forward(self, x, dropout=True):
         input_data = x
         for layer in self.layers:
-            input_data = layer.forward(input_data)
+            input_data = layer.forward(input_data, dropout)
         return input_data
 
     def backward(self, learning_rate, loss):
@@ -88,7 +88,7 @@ class NN:
         loss_list = []
         loss_list_axised = [] #store loss by axis
         for i in range(len(y)):
-            prediction = self.forward(X[i:i + 1])
+            prediction = self.forward(X[i:i + 1], dropout=False)
             _, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
             _, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
 

@@ -27,12 +27,13 @@ class DenseLayer:
     def predict(self, input_data):
         return self.activation(np.dot(input_data, self.W) + self.bias)
 
-    def forward(self, input_data):
+    def forward(self, input_data, dropout=True):
         # print('input_data shape: {}, self.W shape: {}'.format(input_data.shape, self.W.shape))
         self.input_data = input_data
-        self.mask = np.random.binomial(1, 1 - self.dropout, size=(1, self.in_size))
-        # print(self.mask)
-        self.input_data = self.input_data * self.mask
+        if dropout:
+            self.mask = np.random.binomial(1, 1 - self.dropout, size=(1, self.in_size))
+            # print(self.mask)
+            self.input_data = self.input_data * self.mask
         # print(self, self.input_data, self.mask, self.W)
         self.z = np.dot(self.input_data, self.W) + self.bias
         self.out = self.activation(self.z)

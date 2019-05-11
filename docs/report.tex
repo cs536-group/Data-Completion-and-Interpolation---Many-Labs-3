@@ -130,6 +130,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 			\par{For simplicity, we set all NA’s to 0 just like dropout. When computing error, we use the mask to set these features’ loss to 0.}
 		\end{itemize}
 		\item {\textbf{Data preprocessing}}
+		\namedlabel{preprocessing}{Data preprocessing}
 		\begin{itemize}
 			\item {Scaling to $[0, 1]$}
 			\par{Notice that the coded data can be further devided into 2 types: real values and probabilities. Notice that real values could be from negative infinity to positive infinity. (There may be some more restrictions like temperature in lab cannot be lower than -460. But in general its range is way larger than $[0, 1]$.) But for our prediction simplicity, we will linearly scale the largest value seen to $1$ and the smallest to $0$.}
@@ -161,7 +162,6 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\end{itemize}
 	
 	\item{Quantifying loss or error. How can you quantify how good a model is, how to measure its loss/error? This is important not only in terms of evaluating your model, but in terms of training as well - how can you refine and improve your model without a way of comparing them?}
-	\par{Because we are using an autoencoder, we are measuring the reconstruction errors. For the reason that there are many data types, we are treating the data over different loss functions. For real values and integer values, we are using mean squared error $ L_{MSE}(\theta) = \frac{1}{m}\sum_{i=1}^{m}(\underline{y}^i - \underline{p}^i)^2 $ (m denotes the number of data points) and root-mean-squared error $ L_{RMSE}(\theta) = \sqrt{L_{MSE}(\theta)} $. For categorical values, we first converted them to one-hot encoding, then we are treating the problem as a multi-label classification problem (for these categorical values only). Thus, for categorical values, we are using binary cross-entropy loss $ L_{MSE}(\theta) = \frac{1}{m}\sum_{i=1}^{m}[\underline{y}^i \log (\underline{p}^i) + (1 - \underline{y}^i) \log (1 - \underline{p}^i)]) $. As the data set is a combination of different types of data, we are using a combination of different loss functions.}
 	
 	\item{Training. What kind of training algorithm can you apply to your model(s)? What design choices do you have to make here?}
 	\par{We }
@@ -186,12 +186,35 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\item {\textbf{Describe your Model:} What approach did you take? What design choices did you make, and why? How
 		did you represent the data? How can you evaluate your model for goodness of fit? Did you make an effort to
 		identify and exclude irrelevant variables? How did you handle missing data?}
-	\par{Given the \ref{interpolation}, We chose to use an autoencoder as our model because it can compress and decompress the given inputs. Figure \ref{pic:model} shows the structure of our model.}
-	\begin{enumerate}
-		\item {The input}
-		\item {The output}
-		\item {Some observation}
-	\end{enumerate}
+	\par{Given the \ref{interpolation}, We chose to use an autoencoder as our model because it can compress and decompress the given inputs.} 
+	\begin{itemize}
+		\item {Structure}
+		\par{Figure \ref{pic:model} shows the structure of our model.}
+		\begin{enumerate}
+			\item {The input}
+			\par{There are 223 nodes in the input. We scaled the input to be in $ [0, 1] $. Each node could be either in a classification group or in a real value group. The activation function here is ReLU in order to make it less computationally expensive. The dropout rate of this layer is 2\%.}
+			\item {Hidden layer 1}
+			\par{There are 180 nodes in this layer. The activation function here is ReLU.}
+			\item {Hidden layer 2}
+			\par{There are 100 nodes in this layer. The activation function here is ReLU.}
+			\item {Hidden layer 3}
+			\par{There are 180 nodes in this layer. The activation function here is ReLU.}
+			\item {The output}
+			\par{There are 223 node in the output.  The activation function here is Sigmoid in order to make values lie in $ [0, 1] $.}
+		\end{enumerate}
+		
+		\item {Loss/Error}
+		\par{We are measuring the reconstruction errors. For the reason that there are many data types, we are treating the data over different loss functions.}
+		\par{For real values and integer values, we are using mean squared error (m denotes the number of data points) \[ L_{MSE}(\theta) = \frac{1}{m}\sum_{i=1}^{m}(\underline{y}^i - \underline{p}^i)^2 , \]   and root-mean-squared error \[ L_{RMSE}(\theta) = \sqrt{L_{MSE}(\theta)}. \]}
+		\par{For categorical values, we first converted them to one-hot encoding, then we are treating the problem as a multi-label classification problem (for these categorical values only). Thus, for categorical values, we are using binary cross-entropy loss \[ L_{BCE}(\theta) = \frac{1}{m}\sum_{i=1}^{m}[\underline{y}^i \log (\underline{p}^i) + (1 - \underline{y}^i) \log (1 - \underline{p}^i)]). \]}
+		\par{Because the data set is a combination of different types of data, we are using a combination of different loss functions.}
+		
+		\item {Data representation}
+		\par{This is included in \ref{preprocessing}. For real values data, we scale it into $ [0, 1] $. For categorical data, we used one-hot encoding to represent which also make the data lie in $ [0, 1] $. Basically all data are in $ [0, 1] $ and we treated all of them as float numbers. }
+		
+	
+	\item {Some observation}
+	\end{itemize}
 	
 	\item {}
 	\item {}
