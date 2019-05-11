@@ -160,17 +160,6 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\item {A transfer learning approach:}
 		\item {Autoencoders with RNN:}
 	\end{itemize}
-	
-	\item{Quantifying loss or error. How can you quantify how good a model is, how to measure its loss/error? This is important not only in terms of evaluating your model, but in terms of training as well - how can you refine and improve your model without a way of comparing them?}
-	
-	\item{Training. What kind of training algorithm can you apply to your model(s)? What design choices do you have to make here?}
-	\par{We }
-	
-	\item{Feature selection. It is frequently useful in learning problems to focus on specific features and exclude others, to try to eliminate spurious features and focus on what matters. How can that be applied here?}
-	
-	\item{Validation. How can you prevent or avoid over-fitting? Can you apply the usual training/testing/validation paradigm to this problem? How do you choose the training or testing data? Note that a record won’t need to be complete to still be useful, potentially, in interpolation. Can cross-validation be applied here? This can be especially important when the data set is not overwhelmingly large and data must be used carefully.}
-	
-	\item{Evaluation. How good is your final model? How can you evaluate this? What are the limits and strengths of your model - how many features does a new record actually need to be able to interpolate well?}
 \end{enumerate}
 
 
@@ -209,18 +198,27 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\par{For categorical values, we first converted them to one-hot encoding, then we are treating the problem as a multi-label classification problem (for these categorical values only). Thus, for categorical values, we are using binary cross-entropy loss \[ L_{BCE}(\theta) = \frac{1}{m}\sum_{i=1}^{m}[\underline{y}^i \log (\underline{p}^i) + (1 - \underline{y}^i) \log (1 - \underline{p}^i)]). \]}
 		\par{Because the data set is a combination of different types of data, we are using a combination of different loss functions.}
 		
-		\item {Data representation}
-		\par{This is included in \ref{preprocessing}. For real values data, we scale it into $ [0, 1] $. For categorical data, we used one-hot encoding to represent which also make the data lie in $ [0, 1] $. Basically all data are in $ [0, 1] $ and we treated all of them as float numbers. }
-		
+		\item {Data}
+		\par{This is included in \ref{preprocessing}. We are only training over part of the features. For real values data, we scale it into $ [0, 1] $. For categorical data, we used one-hot encoding to represent which also make the data lie in $ [0, 1] $. Basically all data are in $ [0, 1] $ and we treated all of them as float numbers. }
+		\par{We manually removed some irrelevant features such as participant ID. We don't think we are able to train over these features.}
+		\par{When dealing with missing features, we have a mask to let us know which feature is missed and then we don't need to calculate loss on this feature.}
 	
-	\item {Some observation}
+		\item {Other facts}
+		\par{Since we already grouped features, we can first encode each groups and then encode the whole data points. In this way, we can dramatically eliminate the number of weights because our first layer is not dense.}
+		\par{Notice that we encode the multiple choice columns into several features. Therefore, we can append a softmax layer to each multiple choice column. One thing to notice that for non-choice features, we have to directly output its value instead of pass it to softmax layer, or it will always return 1. (When we are writing this report, we notice that we can expend each non-choice features into 2 features $x$ and $\bar x = 1-x$. In this case, we can directly pass all features of the same column to a softmax, instead of using masks to identify non-choice features.)}
+		\par{Here is another interesting but not necessarily useful fact. Notice that we assumed the rank of this matrix is limited. Namely the transformation can actually be linear. Namely we literally can multiply 2 small matrices to get this matrix. Therefore, we can further define this problem as find 2 matrices $A$ and $B$ to minimize $||M - AB||$, which is literally an optimization problem. But the drawback is that we ignore the meaning of each feature, say sum of several features should always be $1$. But it might be not a bad start, and we can further use Ada boost to combine it with our AutoEncoder.}
 	\end{itemize}
 	
-	\item {}
-	\item {}
-	\item {}
-	\item {}
-	\item {}
+	\item {\textbf{Describe your Training Algorithm:}}
+	\par{We implemented a gradient-based optimizer--stochastic gradient descent with back-propagation for the training part. Comparing with other types of gradient descent, stochastic gradient descent uses one data point at a time, which is computationally friendly. We are only training over 223 features. Our training process was actually quite fast, so we didn't do any compromises.}
+	
+	\item {\textbf{Describe your Model Validation:}}
+	\par{We divided the whole data set into 3 data sets: train set, dev set and test set. During the training process, we measure loss on train set and dev set. Dev set is an indicator of fitness and has been used in fine-tuning of the hyperparameters. If dev loss starts to climb up, we could know it is overfitting. After we finish the training of the model, we evaluate loss on test set.}
+	\par{For the prevention of overfitting, we added drop-out rates on layers to enable the model to `disable' some neurons for some probabilities. Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data. Since the dataset isn't massive, drop-out `creates' many incomplete data point, which boosts the size of the dataset.}
+	
+	\item {\textbf{Evaluate your Model:}}
+	\item {\textbf{Analyze the Data:}}
+	\item {\textbf{Generate Data:}}
 \end{enumerate}
 
 
