@@ -220,6 +220,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\par{After the training, our model achieved a low loss of 20-ish.}
 	
 	\item {\textbf{Evaluate your Model:}}
+	
 	\includepdf[pages=-,pagecommand={},width=\textwidth]{hanwu.pdf}
 	
 	
@@ -230,11 +231,28 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\label{easyToPredict}
 	\end{figure}
 	\item {\textbf{Analyze the Data:}}
+	\par{Are there some features it is really good at predicting and some it is really poor at predicting? Why do you think that is?}
 	\par{In order to answer this question, we traced the loss of each feature to the original data, and the result is shown in Figure \ref{easyToPredict}: }
 	\par{Notice that the best real-value feature we predict is L ratio (column 69), and it is really diverse. A plausible explanation is that this effect is ``strong'' enough, and it is true according to the original study (ML3). Actually, the best 3 features (L, K, R ratio) all belong to this effect.}
 	\par{The worst real-value feature is sarcasm (column 103). Notice that this effect includes a number of natural language response which we preprocessed roughly, and this effect is also not that significant. Therefore, it is reasonable we cannot predict this feature well.}
 	\par{Column 7 and 8 are anagrams 3 and 4, which we encode any word into ``correct answer''. Therefore, it should be the best 2 features because it can literally always predict ``correct answer''. Except these 2 feature, the best probability feature is clipboard weight (column 128), it is interesting because there is no directly related feature except the participant answers. (Note that the clipboard material is independent to its weight.) Namely, we do find that the weight of clipboard will influence participant’s response.}
 	\par{The worst probability feature is persistence. (It is a bug actually because I preprocessed it into a probability feature but it actually is a real value. It is my fault. But a good story is it shows we should not use cross entropy to measure the loss of a real-value feature.) The worst feature except for that bugged one is anagrams 1 (column 5). A plausible explanation is that this feature is sort of coincident because we may either happen to have the ``Eureka'' time instantly or be puzzled for a long time and quit this question.}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.4\linewidth]{2.png}
+		\caption{feature importance}
+		\label{2}
+	\end{figure}
+	
+	\par{What features were particularly valuable in predicting/interpolating? What features weren’t particularly useful at all?}
+	
+	\par{In order to answer this question, we dropout each feature and calculating the loss after we dropout it. In case of the situation that this feature itself is hard to predict, when we calculating the loss, we will also ignore this feature. The result is in Figure \ref{2}. )
+		
+		Notice that most of the most important real-value features are aggregated features like NFC, Mood and Agreeableness. It is reasonable because they tell us a whole aspect of this participant, and the response of this participant can be consider as a function of all aspects. (Refer to our transfer learning thought.) Similarly, we can find that most of the least important real-value features are the actual response of each aggregated feature, like intrinsic\_01, selfesteem\_01 and soon. Since they have been aggregated into another features, they do tell us less.
+		
+		Notice that order of tasks (column 127) does important. It corresponds to the original study design. Some other important features are N position and V position. It is also reasonable because it will determine whether the next response will be greater than 10 or less than 10.
+		
+		Again, because of my fault, persistence (column 171) become the least important feature. Except for this, the back count features are generally less important. A justification is most participant will correctly answer this question.}
 	
 	\item {\textbf{Generate Data:}}
 	\par{There are two approaches:}
