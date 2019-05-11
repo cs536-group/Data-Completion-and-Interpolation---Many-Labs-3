@@ -20,10 +20,10 @@ class NN:
         self.epoch_trained = 0
 
     def _init_layers(self):
-        self.layers.append(DenseLayer(223, 120, dropout=0.1, activation=ReLu()))
-        self.layers.append(DenseLayer(120, 50, activation=ReLu()))
-        self.layers.append(DenseLayer(50, 120, activation=ReLu()))
-        self.layers.append(DenseLayer(120, 223, activation=Sigmoid()))
+        self.layers.append(DenseLayer(223, 180, dropout=0.1, activation=ReLu()))
+        self.layers.append(DenseLayer(180, 100, activation=ReLu()))
+        self.layers.append(DenseLayer(100, 180, activation=ReLu()))
+        self.layers.append(DenseLayer(180, 223, activation=Sigmoid()))
 
         # # for test_bp()
         # self.layers.append(DenseLayer(2, 5, activation=ReLu()))
@@ -86,6 +86,7 @@ class NN:
 
     def test(self, X, y, flag_valid, flag_real):
         loss_list = []
+        loss_list_axised = [] #store loss by axis
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
             _, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
@@ -99,7 +100,8 @@ class NN:
 
             loss = loss_mse + loss_ce
             loss_list.append(np.sum(loss))
-        return loss_list
+            loss_list_axised.append(loss[0]) #store loss by axis, shpe = (len(y), 223)
+        return loss_list, loss_list_axised
 
 
 def test_bp():
@@ -214,8 +216,47 @@ def test_restore(pre_trained_model):
     print(prediction_formatted)
     return
 
+#restore loss by axis
+def test_restore_loss_axised(pre_trained_model):
+    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
+        flag_real_test = load_data()
+    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
+
+    nn = load_model(pre_trained_model)
+    x = X_dev[:, :-38]
+    loss_dev_list, loss_dev_list_axised = nn.test(x, x, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
+    loss_real_axised, loss_prob_axised = preprocess.restoreLoss(np.mean(loss_dev_list_axised, axis = 0), deSortMap, flag_real_dev[0])
+    loss_real_axised = np.asarray(loss_real_axised, dtype = np.float64)
+    loss_prob_axised = np.asarray(loss_prob_axised, dtype = np.float64)
+    
+    loss_real_nan_index = np.isnan(loss_real_axised)
+    loss_prob_nan_index = np.isnan(loss_prob_axised)
+    loss_real_axised[loss_real_nan_index] = -np.inf
+    loss_real_max_index = np.argsort(loss_real_axised)
+    loss_real_axised[loss_real_nan_index] = np.inf
+    loss_real_min_index = np.argsort(loss_real_axised)
+    loss_prob_axised[loss_prob_nan_index] = -np.inf
+    loss_prob_max_index = np.argsort(loss_prob_axised)
+    loss_prob_axised[loss_prob_nan_index] = np.inf
+    loss_prob_min_index = np.argsort(loss_prob_axised)
+
+
+    print('best real values:')
+    for i in range(10):
+        print('column %d: loss %f' %(loss_real_min_index[i], loss_real_axised[loss_real_min_index[i]]))
+    print('worst real values:')
+    for i in range(10):
+        print('column %d: loss %f' %(loss_real_max_index[-(i+1)], loss_real_axised[loss_real_max_index[-(i+1)]]))
+    print('best prob values:')
+    for i in range(10):
+        print('column %d: loss %f' %(loss_prob_min_index[i], loss_prob_axised[loss_prob_min_index[i]]))
+    print('worst prob values')
+    for i in range(10):
+        print('column %d: loss %f' %(loss_prob_max_index[-(i+1)], loss_prob_axised[loss_prob_max_index[-(i+1)]]))
+
 
 def train():
+    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
     np.random.seed(random_seed)
 
     # preprocess data
@@ -252,8 +293,7 @@ def train():
             print('Training epoch {}, training loss = {}'.format(epoch, loss_train))
             # print((loss_train_list))
             if epoch % 10 == 0:
-                loss_dev_list = nn.test(X_dev, X_dev, flag_valid_dev, flag_real_dev)
-                loss_test = np.average(loss_dev_list)
+                loss_dev_list, loss_dev_list_axised = nn.test(X_dev, X_dev, flag_valid_dev, flag_real_dev)
                 if loss_test < min_test_loss:
                     min_test_loss = loss_test
                     min_test_loss_epoch = epoch
@@ -270,5 +310,5 @@ def train():
 
 
 if __name__ == '__main__':
-    # test_restore('model-epoch30-trainloss32-devloss33.pkl')
+    # test_restore_loss_axised('model-epoch10-trainloss54-devloss54.pkl')
     train()
