@@ -113,11 +113,11 @@ In this group project, we implemented an autocoder for interpolating missing fea
 			A detailed codebook is available in Appendix \ref{appendix:codebook}, and further reference is in \colorbox{lightgray}{/code/dataFormat.py}, which is organized in the order of original dataset.}
 		\begin{itemize}
 			\item {(Postive) Integers}
-			\par{Many columns belong to this type, for examples, best grade 1 (column 21), mcdv1 (column 71), temperature in lab (column 126) and intrinsic (column 247). If the choices are exactly ordered, say “1” is “unhappy”, and “10” is “happy”, we consider this column as this type. Tough “2” may not be twice happier than “1”, nevertheless, 2 is indeed happier. Note that some columns may include float numbers, say intrinsic, but we can multiply a factor to scale all responses to integers. Also, some responses could be negative values, say mcdv1, but we still can add a number to shift all of them to non-negative values.}
+			\par{Many columns belong to this type, for examples, best grade 1 (column 21), mcdv1 (column 71), temperature in lab (column 126) and intrinsic (column 247). If the choices are exactly ordered, say ``1'' is ``unhappy'', and ``10'' is ``happy'', we consider this column as this type. Tough ``2'' may not be twice happier than ``1'', nevertheless, 2 is indeed happier. Note that some columns may include float numbers, say intrinsic, but we can multiply a factor to scale all responses to integers. Also, some responses could be negative values, say mcdv1, but we still can add a number to shift all of them to non-negative values.}
 			\par{Each value in these columns is the real value instead of probability.}
 			\item {Unordered Multiple Choices}
 			\par{Many columns belong to this type, for examples, ethnicity (column 42), gender (column 44), major (column 70) and V position (column 115). Note that these columns may include natural language response, say major, but we have classified all responses into several choices.}
-			\par{Each choice of these columns are exclusive and unordered. Therefore, we cannot just simply encode them into integers. Or we will have to face the explanatory problem: If we encode “computer science” into “1” and “mathematics” into “2”, do we mean a “mathematics” is equal to 2 “computer science”? Therefore, we choose one-hot encoding to use the same number as choices of Boolean values to represent the participant’s choice. In this case, we can consider each value as the probability that this participant will choose this response. }
+			\par{Each choice of these columns are exclusive and unordered. Therefore, we cannot just simply encode them into integers. Or we will have to face the explanatory problem: If we encode ``computer science'' into ``1'' and ``mathematics'' into ``2'', do we mean a ``mathematics'' is equal to 2 ``computer science''? Therefore, we choose one-hot encoding to use the same number as choices of Boolean values to represent the participant’s choice. In this case, we can consider each value as the probability that this participant will choose this response. }
 			\item {Boolean-like Values}
 			\par{A few columns belong to this type. Some are natural language responses but there is a true answer, say anagrams (column 5 and 6) and attention correct (column 10), and the test is highly concerning about whether the participant correct or not instead of what they answered. Others are multiple choices with exactly 2 possible answers like mcmost (column 76 to 80), and for simplicity we prefer to use 1 Boolean value to represent his/her choice.}
 			\par{In general, we can consider this type as a special multiple choice type. Namely, each value in this column is a probability.}
@@ -158,7 +158,9 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\item {Autoencoders}
 		\par{It can compress and decompress the given inputs into smaller representations, and these representations contain key information of the inputs. Thus, we can make use of these representations to classify data and generate data, which makes autoencoders handy in this situation.}
 		\item {A transfer learning approach:}
+		\par{First, we can train an autoencoder to compress information from the inputs, minimize the reconstruction loss. After we finish the training of the autoencoder, we discard the decoder, and use the encoder to get representations of data points. Then, we train a classifier on top of the representations.}
 		\item {Autoencoders with RNN:}
+		\par{Since the data contains natural language data, we could use RNN to deal with this kind of data.}
 	\end{itemize}
 \end{enumerate}
 
@@ -175,13 +177,13 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\item {\textbf{Describe your Model:} What approach did you take? What design choices did you make, and why? How
 		did you represent the data? How can you evaluate your model for goodness of fit? Did you make an effort to
 		identify and exclude irrelevant variables? How did you handle missing data?}
-	\par{Given the \ref{interpolation}, We chose to use an autoencoder as our model because it can compress and decompress the given inputs.} 
+	\par{Given the \ref{interpolation}, we eventually chose to use an autoencoder as our model because it can compress and decompress the given inputs and it is not complicated to build.} 
 	\begin{itemize}
 		\item {Structure}
 		\par{Figure \ref{pic:model} shows the structure of our model.}
 		\begin{enumerate}
 			\item {The input}
-			\par{There are 223 nodes in the input. We scaled the input to be in $ [0, 1] $. Each node could be either in a classification group or in a real value group. The activation function here is ReLU in order to make it less computationally expensive. The dropout rate of this layer is 2\%.}
+			\par{There are 223 nodes in the input. We scaled the input to be in $ [0, 1] $. Each node could be either in a classification group or in a real value group. The activation function here is ReLU in order to make it less computationally expensive. The dropout rate of this layer is 10\%.}
 			\item {Hidden layer 1}
 			\par{There are 180 nodes in this layer. The activation function here is ReLU.}
 			\item {Hidden layer 2}
@@ -204,7 +206,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\par{When dealing with missing features, we have a mask to let us know which feature is missed and then we don't need to calculate loss on this feature.}
 	
 		\item {Other facts}
-		\par{Since we already grouped features, we can first encode each groups and then encode the whole data points. In this way, we can dramatically eliminate the number of weights because our first layer is not dense.}
+		\par{Since we already grouped features as Figure \ref{pic:model} shows, we can first encode each groups and then encode the whole data points. In this way, we can dramatically eliminate the number of weights because our first layer is not dense.}
 		\par{Notice that we encode the multiple choice columns into several features. Therefore, we can append a softmax layer to each multiple choice column. One thing to notice that for non-choice features, we have to directly output its value instead of pass it to softmax layer, or it will always return 1. (When we are writing this report, we notice that we can expend each non-choice features into 2 features $x$ and $\bar x = 1-x$. In this case, we can directly pass all features of the same column to a softmax, instead of using masks to identify non-choice features.)}
 		\par{Here is another interesting but not necessarily useful fact. Notice that we assumed the rank of this matrix is limited. Namely the transformation can actually be linear. Namely we literally can multiply 2 small matrices to get this matrix. Therefore, we can further define this problem as find 2 matrices $A$ and $B$ to minimize $||M - AB||$, which is literally an optimization problem. But the drawback is that we ignore the meaning of each feature, say sum of several features should always be $1$. But it might be not a bad start, and we can further use Ada boost to combine it with our AutoEncoder.}
 	\end{itemize}
@@ -214,11 +216,37 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	
 	\item {\textbf{Describe your Model Validation:}}
 	\par{We divided the whole data set into 3 data sets: train set, dev set and test set. During the training process, we measure loss on train set and dev set. Dev set is an indicator of fitness and has been used in fine-tuning of the hyperparameters. If dev loss starts to climb up, we could know it is overfitting. After we finish the training of the model, we evaluate loss on test set.}
-	\par{For the prevention of overfitting, we added drop-out rates on layers to enable the model to `disable' some neurons for some probabilities. Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data. Since the dataset isn't massive, drop-out `creates' many incomplete data point, which boosts the size of the dataset.}
+	\par{For the prevention of overfitting, we are using a simple architecture, and we added drop-out rates on layers to enable the model to `disable' some neurons for some probabilities. Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data. Since the dataset isn't massive, drop-out `creates' many incomplete data point, which boosts the size of the dataset.}
+	\par{After the training, our model achieved a low loss of 20-ish.}
 	
 	\item {\textbf{Evaluate your Model:}}
+	\includepdf[pages=-,pagecommand={},width=\textwidth]{wuhan.pdf}
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.4\linewidth]{ana.png}
+		\caption{Loss of each feature to the original data}
+		\label{easyToPredict}
+	\end{figure}
 	\item {\textbf{Analyze the Data:}}
+	\par{In order to answer this question, we traced the loss of each feature to the original data, and the result is shown in Figure \ref{easyToPredict}: }
+	\par{Notice that the best real-value feature we predict is L ratio (column 69), and it is really diverse. A plausible explanation is that this effect is ``strong'' enough, and it is true according to the original study (ML3). Actually, the best 3 features (L, K, R ratio) all belong to this effect.}
+	\par{The worst real-value feature is sarcasm (column 103). Notice that this effect includes a number of natural language response which we preprocessed roughly, and this effect is also not that significant. Therefore, it is reasonable we cannot predict this feature well.}
+	\par{Column 7 and 8 are anagrams 3 and 4, which we encode any word into ``correct answer''. Therefore, it should be the best 2 features because it can literally always predict ``correct answer''. Except these 2 feature, the best probability feature is clipboard weight (column 128), it is interesting because there is no directly related feature except the participant answers. (Note that the clipboard material is independent to its weight.) Namely, we do find that the weight of clipboard will influence participant’s response.}
+	\par{The worst probability feature is persistence. (It is a bug actually because I preprocessed it into a probability feature but it actually is a real value. It is my fault. But a good story is it shows we should not use cross entropy to measure the loss of a real-value feature.) The worst feature except for that bugged one is anagrams 1 (column 5). A plausible explanation is that this feature is sort of coincident because we may either happen to have the ``Eureka'' time instantly or be puzzled for a long time and quit this question.}
+	
 	\item {\textbf{Generate Data:}}
+	\par{There are two approaches:}
+	\begin{enumerate}
+		\item {}
+		\par{We picked a complete datapoint and removed part of it, used this to predict the removed features. Then we compared the predicted features and the original features. If they are similar, then we say it's a successful generation. }
+		\par{Our model was quite good at this job.}
+		\item {}
+		\par{To generate a new data point, first we picked a complete data point, then we removed part of it and use the removed data point to predict the removed part. Then we combined the removed data point and the prediction and repeat this process. At last all data from the original data point was removed. }
+		\par{To determine whether it's good, we compare the new data point with the original data point. If they are similar, then we say it's a successful generation.}
+		\par{Our model was doing alright at this job.}
+	\end{enumerate}
 \end{enumerate}
 
 

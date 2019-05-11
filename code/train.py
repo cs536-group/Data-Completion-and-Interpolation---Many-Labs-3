@@ -317,7 +317,7 @@ def train():
 
     # train
     start_epoch = max(nn.epoch_trained, 1)
-    max_epoch = 300
+    max_epoch = 80
     min_test_loss = np.inf
     min_test_loss_epoch = None
     for epoch in range(start_epoch, start_epoch + max_epoch):
@@ -347,5 +347,5 @@ def train():
 
 
 if __name__ == '__main__':
-    test_col_importance('model-epoch10-trainloss54-devloss54.pkl')
-    # train()
+    # test_col_importance('model-epoch10-trainloss54-devloss54.pkl')
+    train()
