@@ -162,16 +162,18 @@ def load_data(filename = 'splitedData.pkl'):
            flag_real_test
 
 
-def shuffle_data(a, b, c):
-    assert len(a) == len(b) == len(c)
-    d = np.c_[a.reshape(len(a), -1), b.reshape(len(b), -1), c.reshape(len(c), -1)]
-    np.random.shuffle(d)
+def shuffle_data(a, b, c, d):
+    assert len(a) == len(b) == len(c) == len(d)
+    _ = np.c_[a.reshape(len(a), -1), b.reshape(len(b), -1), c.reshape(len(c), -1), d.reshape(len(d), -1)]
+    np.random.shuffle(_)
     end_a = a.size // len(a)
     end_b = end_a + (b.size // len(b))
-    a2 = d[:, :end_a].reshape(a.shape)
-    b2 = d[:, end_a:end_b].reshape(b.shape)
-    c2 = d[:, end_b:].reshape(c.shape)
-    return a2, b2, c2
+    end_c = end_b + (c.size // len(c))
+    a2 = _[:, :end_a].reshape(a.shape)
+    b2 = _[:, end_a:end_b].reshape(b.shape)
+    c2 = _[:, end_b:end_c].reshape(c.shape)
+    d2 = _[:, end_c:].reshape(d.shape)
+    return a2, b2, c2, d2
 
 
 def save_model(nn, filename):
@@ -263,14 +265,14 @@ def train():
     flag_valid_train_raw, X_train_raw, flag_real_train_raw, flag_valid_dev_raw, X_dev_raw, flag_real_dev_raw, \
         flag_valid_test_raw, X_test_raw, flag_real_test_raw = load_data()
     flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
-        flag_real_test = flag_valid_train_raw[:, :-38],  X_train_raw[:, :-38],  flag_real_train_raw[:, :-38],  \
-                         flag_valid_dev_raw[:, :-38],  X_dev_raw[:, :-38],  flag_real_dev_raw[:, :-38], \
-                         flag_valid_test_raw[:, :-38],  X_test_raw[:, :-38],  flag_real_test_raw[:, :-38]
+        flag_real_test = np.copy(flag_valid_train_raw[:, :-38]),  np.copy(X_train_raw[:, :-38]),  np.copy(flag_real_train_raw[:, :-38]),  \
+                         np.copy(flag_valid_dev_raw[:, :-38]),  np.copy(X_dev_raw[:, :-38]),  np.copy(flag_real_dev_raw[:, :-38]), \
+                         np.copy(flag_valid_test_raw[:, :-38]),  np.copy(X_test_raw[:, :-38]),  np.copy(flag_real_test_raw[:, :-38])
     # flag_valid_train[164:170] = False
     # flag_valid_dev[164:170] = False
     # flag_valid_test[164:170] = False
-    # X_train[164:170] = 0
-    # X_dev[164:170] = 0
+    # X_train[:, 120:170] = 0
+    # X_dev[:, 120:170] = 0
     # X_test[164:170] = 0
 
     # build model
@@ -287,13 +289,14 @@ def train():
     for epoch in range(start_epoch, start_epoch + max_epoch):
         try:
 
-            X, flag_valid, flag_real = shuffle_data(X_train, flag_valid_train, flag_real_train)
-            loss_train_list = nn.epoch(X, X, flag_valid, flag_real)
+            X, X_raw, flag_valid, flag_real = shuffle_data(X_train, X_train_raw[:, :-38], flag_valid_train, flag_real_train)
+            loss_train_list = nn.epoch(X, X_raw, flag_valid, flag_real)
             loss_train = np.average(loss_train_list)
             print('Training epoch {}, training loss = {}'.format(epoch, loss_train))
             # print((loss_train_list))
             if epoch % 10 == 0:
-                loss_dev_list, loss_dev_list_axised = nn.test(X_dev, X_dev, flag_valid_dev, flag_real_dev)
+                loss_dev_list, loss_dev_list_axised = nn.test(X_dev, X_dev_raw[:, :-38], flag_valid_dev, flag_real_dev)
+                loss_test = np.average(loss_dev_list)
                 if loss_test < min_test_loss:
                     min_test_loss = loss_test
                     min_test_loss_epoch = epoch
