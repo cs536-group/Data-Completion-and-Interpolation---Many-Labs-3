@@ -17,12 +17,13 @@ class NN:
         self.loss_function_prob = loss_function_prob
         self.loss_function_real = loss_function_real
         self.learning_rate = learning_rate
+        self.epoch_trained = 0
 
     def _init_layers(self):
-        self.layers.append(DenseLayer(223, 150, dropout=0.1, activation=ReLu()))
-        self.layers.append(DenseLayer(150, 50, activation=ReLu()))
-        self.layers.append(DenseLayer(50, 150, activation=ReLu()))
-        self.layers.append(DenseLayer(150, 223, activation=Sigmoid()))
+        self.layers.append(DenseLayer(223, 120, dropout=0.1, activation=ReLu()))
+        self.layers.append(DenseLayer(120, 50, activation=ReLu()))
+        self.layers.append(DenseLayer(50, 120, activation=ReLu()))
+        self.layers.append(DenseLayer(120, 223, activation=Sigmoid()))
 
         # # for test_bp()
         # self.layers.append(DenseLayer(2, 5, activation=ReLu()))
@@ -38,17 +39,18 @@ class NN:
         for layer in reversed(self.layers):
             loss = layer.backward(learning_rate, loss)
 
-    def get_loss(self, prediction, y, loss_function=None):
+    def get_loss(self, prediction, y, m, loss_function=None):
         if loss_function is None:
             loss_function = self.loss_function
-        return loss_function(prediction, y)
+        return loss_function(prediction, y, m)
 
     def epoch(self, X, y, flag_valid, flag_real):
         loss_list = []
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
-            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
-            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
+            m = np.count_nonzero(flag_valid[i:i + 1])
+            derivative_ce, loss_ce = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_prob)
+            derivative_mse, loss_mse = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_real)
 
             derivative_ce *= flag_valid[i:i + 1]
             derivative_ce *= 1 - flag_real[i:i + 1]
@@ -65,6 +67,7 @@ class NN:
 
             self.backward(self.learning_rate, derivative)
             loss_list.append(np.sum(loss))
+        self.epoch_trained += 1
         return loss_list
 
     def epoch1(self, X, y):
@@ -86,8 +89,9 @@ class NN:
         loss_list = []
         for i in range(len(y)):
             prediction = self.forward(X[i:i + 1])
-            _, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
-            _, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
+            m = np.count_nonzero(flag_valid[i:i + 1])
+            _, loss_ce = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_prob)
+            _, loss_mse = self.get_loss(prediction, y[i:i + 1], m, self.loss_function_real)
 
             loss_ce *= flag_valid[i:i + 1]
             loss_ce *= 1 - flag_real[i:i + 1]
@@ -223,18 +227,25 @@ def train():
         flag_real_test = flag_valid_train_raw[:, :-38],  X_train_raw[:, :-38],  flag_real_train_raw[:, :-38],  \
                          flag_valid_dev_raw[:, :-38],  X_dev_raw[:, :-38],  flag_real_dev_raw[:, :-38], \
                          flag_valid_test_raw[:, :-38],  X_test_raw[:, :-38],  flag_real_test_raw[:, :-38]
+    # flag_valid_train[164:170] = False
+    # flag_valid_dev[164:170] = False
+    # flag_valid_test[164:170] = False
+    # X_train[164:170] = 0
+    # X_dev[164:170] = 0
+    # X_test[164:170] = 0
 
     # build model
     nn = NN(learning_rate=0.001, loss_function_prob=CrossEntropy(), loss_function_real=RMSE())
 
     # load pre-trained model
-    # nn = load_model('model-epoch20-loss23.pkl')
+    # nn = load_model('model-epoch70-trainloss29-devloss32.pkl')
 
     # train
+    start_epoch = max(nn.epoch_trained, 1)
     max_epoch = 100
     min_test_loss = np.inf
     min_test_loss_epoch = None
-    for epoch in range(max_epoch):
+    for epoch in range(start_epoch, start_epoch + max_epoch):
         try:
 
             X, flag_valid, flag_real = shuffle_data(X_train, flag_valid_train, flag_real_train)
