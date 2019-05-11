@@ -37,7 +37,7 @@ class dataCol(object):
         return self.__class__.__name__
 
     def __repr__(self):
-        return self.__class__.__name__ + ': ' + self.type
+        return 'column %d (%d: %d): ' %(self.oriCol, self.sCol, self.eCol) + self.__class__.__name__ + ': ' + self.type
 
 #multiple choice
 class dataChoice(dataCol):
@@ -400,6 +400,7 @@ class dataattention(dataChoice):
 class dataattentioncorrect(dataChoice):
     def __init__(self):
         super(dataattentioncorrect, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, 'I read the instructions': 1, 'I read the instructions!': 1, 'i read the instructions': 1, 'I read instructions': 1,
                         'Ice Skating': 0, 'I read the instructions.': 1, 'go out for walk and hang out with my friends': 0, 'I read the Instructions': 1,
                         'Spend time with friends': 0, 'going out': 0, 'i read the intstructions': 1, 'all of the above': 0, 'I read the instuctions': 1,
@@ -1424,6 +1425,7 @@ class datamcfiller3(dataPosInt):
 class datamcmost1(dataChoice):
     def __init__(self):
         super(datamcmost1, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1448,6 +1450,7 @@ class datamcmost1(dataChoice):
 class datamcmost2(dataChoice):
     def __init__(self):
         super(datamcmost2, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1472,6 +1475,7 @@ class datamcmost2(dataChoice):
 class datamcmost3(dataChoice):
     def __init__(self):
         super(datamcmost3, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1496,6 +1500,7 @@ class datamcmost3(dataChoice):
 class datamcmost4(dataChoice):
     def __init__(self):
         super(datamcmost4, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1520,6 +1525,7 @@ class datamcmost4(dataChoice):
 class datamcmost5(dataChoice):
     def __init__(self):
         super(datamcmost5, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1544,6 +1550,7 @@ class datamcmost5(dataChoice):
 class datamcsome1(dataChoice):
     def __init__(self):
         super(datamcsome1, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1568,6 +1575,7 @@ class datamcsome1(dataChoice):
 class datamcsome2(dataChoice):
     def __init__(self):
         super(datamcsome2, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1592,6 +1600,7 @@ class datamcsome2(dataChoice):
 class datamcsome3(dataChoice):
     def __init__(self):
         super(datamcsome3, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1616,6 +1625,7 @@ class datamcsome3(dataChoice):
 class datamcsome4(dataChoice):
     def __init__(self):
         super(datamcsome4, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -1640,6 +1650,7 @@ class datamcsome4(dataChoice):
 class datamcsome5(dataChoice):
     def __init__(self):
         super(datamcsome5, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, '1': 0, '2': 1}
         self.numOMap = {-1: 'NA', 0: '1', 1: '2'}
 
@@ -2423,6 +2434,7 @@ class dataNotes(dataNaturalLanguage):
 class dataClipBoardMaterial(dataChoice):
     def __init__(self):
         super(dataClipBoardMaterial, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'Plastic': 2, 'Metal': 1, 'NA': 0}
         self.numOMap = {0: 'NA', 1: 'Plastic', 2: 'Metal'}
 
@@ -2434,7 +2446,7 @@ class dataClipBoardMaterial(dataChoice):
 #171 @test4
 class dataPersistence(dataPosInt):
     def __init__(self):
-        super(dataPosInt, self).__init__()
+        super(dataPersistence, self).__init__()
         self.group = 0
         return
 
@@ -2697,6 +2709,7 @@ class dataSomeEndorse(dataPosInt):
 class dataCredCond(dataChoice):
     def __init__(self):
         super(dataCredCond, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, 'NoCredentials': 0, 'Credentials': 1}
         self.numOMap = {-1: 'NA', 0: 'NoCredentials', 1: 'Credentials'}
 
@@ -2721,6 +2734,7 @@ class dataCredCond(dataChoice):
 class dataGenderfactor(dataChoice):
     def __init__(self):
         super(dataGenderfactor, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, 'Female': 0, 'Male': 1}
         self.numOMap = {-1: 'NA', 0: 'Female', 1: 'Male'}
 
@@ -2750,6 +2764,7 @@ class dataGenderfactor(dataChoice):
 class dataTempCond(dataChoice):
     def __init__(self):
         super(dataTempCond, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, 'Communal': 0, 'Agentic': 1}
         self.numOMap = {-1: 'NA', 0: 'Communal', 1: 'Agentic'}
 
@@ -2773,6 +2788,7 @@ class dataTempCond(dataChoice):
 class dataTargetGender(dataChoice):
     def __init__(self):
         super(dataTargetGender, self).__init__()
+        self.type = 'str / int / bool'
         self.numIMap = {'NA': -1, 'FemaleTarget': 0, 'MaleTarget': 1}
         self.numOMap = {-1: 'NA', 0: 'FemaleTarget', 1: 'MaleTarget'}
 
