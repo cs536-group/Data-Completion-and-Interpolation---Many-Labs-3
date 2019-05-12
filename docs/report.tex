@@ -217,7 +217,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\par{We implemented a gradient-based optimizer--stochastic gradient descent with back-propagation for the training part. Comparing with other types of gradient descent, stochastic gradient descent uses one data point at a time, which is computationally friendly. We are only training over 223 features. Our training process was actually quite fast, so we didn't do any compromises.}
 	
 	\item {\textbf{Describe your Model Validation:}}
-	\par{Though there are only about 2400 data points, and it is relatively too small in terms of sample complexity, we can still apply cross-validation. The main idea is here: our goal is predicting blanks given an incomplete data points, and we do have much more incomplete data points if we further randomly set some features to blank. In this way, we can inflate the size of our dataset. Therefore, we randomly divide these 2400 points into train, dev and test set with the ratio 8:1:1. Then we apply dropout method to inflate the train set to meet the requirement of sample complexity. Note that we will not inflate dev and test set because training set is the only set related to building our model. Notice that another advantage of dropout is: Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data.}
+	\par{Though there are only about 2400 data points, and it is relatively too small in terms of sample complexity, we can still apply cross-validation. The main idea is here: our goal is to predict blanks given an incomplete data points, and we do have much more incomplete data points if we further randomly set some features to blank. In this way, we can inflate the size of our dataset. Therefore, we randomly divide these 2400 points into train, dev and test set with the ratio 8:1:1. Then we apply dropout method to inflate the train set to meet the requirement of sample complexity. Note that we will not inflate dev and test set because training set is the only set related to building our model. Notice that another advantage of dropout is: Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data.}
 	\par{During the training process, we measure loss on train set and dev set. Dev set is an indicator of fitness and has been used in fine-tuning of the hyperparameters. If dev loss starts to climb up, we could know it is overfitting. After we finish the training of the model, we evaluate loss on test set.}
 	\par{After the training, our model achieved a low loss of 20.525512.}
 	
@@ -259,7 +259,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\item {Does it need a certain amount of features in order to interpolate well?}
 		\par{In order to answer this question, we apply dropout method when predicting data points in test set. Generally, as dropout rate goes up, less and less features remain, and we can focus on the relationship between prediction loss and dropout rate. The result is shown in Figure \ref{fig:dropout}. 
 			
-			Notice that when dropout rate is less than 0.4, the curve is basically linear. Namely if there are more than 60\% features are not blanks, we can predict them not bad. Once the dropout rate is higher than 0.4, the loss increases faster. Namely, we cannot predict them properly. A possible justification for this scenario is that when dropout rate is larger than 0.4, many features in group 0 is missed, and it is much harder to predict features crossing different test instead of based on “personality” information (group 0).
+			Notice that when dropout rate is less than 0.4, the curve is basically linear. Namely if there are more than 60\% features are not blanks, we can predict them not bad. Once the dropout rate is higher than 0.4, the loss increases faster. Namely, we cannot predict them properly. A possible justification for this scenario is that when dropout rate is larger than 0.4, many features in group 0 is missed, and it is much harder to predict features crossing different test instead of based on ``personality'' information (group 0).
 		}
 		
 		
@@ -300,7 +300,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\item {What features were particularly valuable in predicting/interpolating? What features weren’t particularly useful at all?}
 		\par{In order to answer this question, we dropout each feature and calculating the loss after we dropout it. In case of the situation that this feature itself is hard to predict, when we calculating the loss, we will also ignore this feature. The result is in Table \ref{table2}. )
 			
-			Notice that most of the most important real-value features are aggregated features like NFC, Mood and Agreeableness. It is reasonable because they tell us a whole aspect of this participant, and the response of this participant can be consider as a function of all aspects. (Refer to our transfer learning thought.) Similarly, we can find that most of the least important real-value features are the actual response of each aggregated feature, like intrinsic\_01, selfesteem\_01 and soon. Since they have been aggregated into another features, they do tell us less.
+			Notice that most of the most important real-value features are aggregated features like NFC, Mood and Agreeableness. It is reasonable because they tell us a whole aspect of this participant, and the response of this participant can be consider as a function of all aspects. (Refer to our transfer learning thought.) Similarly, we can find that most of the least important real-value features are the actual response of each aggregated feature, like intrinsic\_01, selfesteem\_01 and so on. Since they have been aggregated into another features, they do tell us less.
 			
 			Notice that order of tasks (column 127) does important. It corresponds to the original study design. Some other important features are N position and V position. It is also reasonable because it will determine whether the next response will be greater than 10 or less than 10.
 			
@@ -363,16 +363,16 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\par{Also, we can use our prediction to tell whether the participant would answer correct or not if this feature was blank.}
 	
 	\item {attentioncorrect}
-	\par{It is a trap question to identify whether the participant read the instructions. Generally the other answers will not include the word "instructions". Therefore, we encode any response including "instruction" or similar word into `True`, and further correct some misclassified response manually.}
-	\par{In this way, we can predict whether the user inputs "I read the instructions" (or its variants) or missed this check by predicting `True` or `False`}
+	\par{It is a trap question to identify whether the participant read the instructions. Generally the other answers will not include the word ``instructions''. Therefore, we encode any response including ``instruction'' or similar word into \colorbox{lightgray}{True}, and further correct some misclassified response manually.}
+	\par{In this way, we can predict whether the user inputs ``I read the instructions'' (or its variants) or missed this check by predicting \colorbox{lightgray}{True} or \colorbox{lightgray}{False}}
 	
 	\item {K L N R V ratio}
 	\par{Generally, the response should be a number. Therefore, we checked whether it is a number using Regular Expression, and further rounded these numbers into a nearest integer for our simplicity. For some non-numerical response, we further encode it into numbers or NA manually}
 	\par{Once we have the predicted value, we can scale it back to get the ratio that the participant might answer.}
 	
 	\item {grade 1}
-	\par{This question is strongly related to the time participants answer it. More specifically, what this question actually asked is how long it is since the last term. We can get the "current" time in column 222 to 224. Therefore, for this column, we can just encode it into `(month, year)` tuple, and preprocess it into a non-negative integer later. We use regular expression to identify years and seasons and further encode each season into a month. For some irregular response, we encode them manually.}
-	\par{When we predicting this column, we first predict the number of months since the last term, and then use "current" time to minus these months and round it into seasons.
+	\par{This question is strongly related to the time participants answer it. More specifically, what this question actually asked is how long it is since the last term. We can get the ``current'' time in column 222 to 224. Therefore, for this column, we can just encode it into `(month, year)` tuple, and preprocess it into a non-negative integer later. We use regular expression to identify years and seasons and further encode each season into a month. For some irregular response, we encode them manually.}
+	\par{When we predicting this column, we first predict the number of months since the last term, and then use ``current'' time to minus these months and round it into seasons.
 	}
 	
 	\item {grade 2}
@@ -384,11 +384,11 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\par{Also, we can predict it just like predicting other positive integers.}
 	
 	\item {major}
-	\par{Since this si a demographical question, what it concerns most is the education background. Therefore, we classify all majors into 8 groups according to \href{https://www.ets.org/s/gre/pdf/dept_major_field_codes.pdf}{ETS}. Though regular expression does not work well in this case, we can discard the prefix "pre-" and sort all responses. In this case, most typos will be aggregated, and we can easily edit their classification using some text editor like sublime text.}
+	\par{Since this si a demographical question, what it concerns most is the education background. Therefore, we classify all majors into 8 groups according to \href{https://www.ets.org/s/gre/pdf/dept_major_field_codes.pdf}{ETS}. Though regular expression does not work well in this case, we can discard the prefix ``pre-'' and sort all responses. In this case, most typos will be aggregated, and we can easily edit their classification using some text editor like sublime text.}
 	\par{Generally, this question can be considered as a multiple choice, and we can predict it like other one-hot coding prediction.}
 	
 	\item {div3filler}
-	\par{Actually it is a question to take a period of time. But it actually reflects the mathematical background of this participant. Therefore, we encode it to `True` if all inputs is divisible by 3. Note that there is a $B$ in the question, therefore participant might consider this question is hexadecimal. But it does not matter because $10 = 16 = 1 \mod 3$. We can directly replace $B$ with $2$ and check the sum of all the individual digits. Some irregular responses are coded manually.}
+	\par{Actually it is a question to take a period of time. But it actually reflects the mathematical background of this participant. Therefore, we encode it to \colorbox{lightgray}{True} if all inputs is divisible by 3. Note that there is a $B$ in the question, therefore participant might consider this question is hexadecimal. But it does not matter because $10 = 16 = 1 \mod 3$. We can directly replace $B$ with $2$ and check the sum of all the individual digits. Some irregular responses are coded manually.}
 	
 	\item {backcount}
 	\par{It is similar to div3filler, and we can directly check whether it is correct or not.}
