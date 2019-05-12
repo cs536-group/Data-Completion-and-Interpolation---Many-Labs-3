@@ -283,7 +283,7 @@ def splitData(flagMatrix, dataMatrix, realMatrix):
             validFlag.append(flagMatrix[row])
             validData.append(dataMatrix[row])
             validReal.append(realMatrix[row])
-    return  (trainFlag, trainData, trainReal, testFlag, testData, testReal, validFlag, validData, testReal)
+    return  (trainFlag, trainData, trainReal, testFlag, testData, testReal, validFlag, validData, validReal)
 
 
 def restoreLoss(lossList, deSortMap, realMask):
