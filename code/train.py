@@ -29,17 +29,32 @@ class NN:
         # self.layers.append(DenseLayer(2, 5, activation=ReLu()))
         # self.layers.append(DenseLayer(5, 2, activation=Sigmoid()))
 
+    #compute next output
     def forward(self, x, dropout=True):
+        #in:
+        #x: data point
+        #dropout: bool, indicator of using dropout
         input_data = x
         for layer in self.layers:
             input_data = layer.forward(input_data, dropout)
         return input_data
 
+    #compute previous derivative of loss
     def backward(self, learning_rate, loss):
+        #in:
+        #learning_rate:
+        #loss: derivative of loss
         for layer in reversed(self.layers):
             loss = layer.backward(learning_rate, loss)
 
     def get_loss(self, prediction, y, loss_function=None):
+        #in:
+        #prediction: output of nn
+        #y: object
+        #loss_function:
+        #out: (a, b)
+        #a: derivative of loss
+        #b: loss
         if loss_function is None:
             loss_function = self.loss_function
         return loss_function(prediction, y)
@@ -78,6 +93,7 @@ class NN:
             loss_list.append(np.sum(loss))
         return loss_list
 
+    #forward(dropout = False)
     def predict(self, x):
         input_data = x
         for layer in self.layers:
@@ -85,6 +101,15 @@ class NN:
         return input_data
 
     def test(self, X, y, flag_valid, flag_real, dropout=False):
+        #in:
+        #X: data matrix
+        #y: object
+        #flag_valid: NA mask
+        #flag_real: real/prob mask
+        #dropout: bool, decide whether to use dropout
+        #out:
+        #loss_list: list, len = len(y), overall loss
+        #loss_list_axised: list of list, shape = (len(y), 223), loss on each feature
         loss_list = []
         loss_list_axised = [] #store loss by axis
         for i in range(len(y)):
