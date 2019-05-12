@@ -291,6 +291,33 @@ def test_col_importance(pre_trained_model):
     return
 
 
+def test_temperature(pre_trained_model):
+    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
+        flag_real_test = load_data()
+    deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
+
+    nn = load_model(pre_trained_model)
+    x = X_dev[:, :-38]
+
+    lo_x = np.copy(x)
+    x[:, 188] = 0.01
+
+    hi_x = np.copy(x)
+    x[:, 188] = 0.99
+
+    flag_valid_dev[:, 182: 189] = False #avoid test 7 itself
+    lo_predict = []
+    for i in range(len(lo_x)):
+        lo_predict.append(nn.forward(lo_x[i:i + 1], dropout=False)[0])
+    lo_predict = np.asarray(lo_predict, dtype = np.float64)
+
+    loss_dev_list, loss_dev_list_axised = nn.test(hi_x, lo_predict, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
+    loss_axised = np.average(loss_dev_list_axised, axis = 0)
+    restore_loss(loss_axised, deSortMap, flag_real_dev[0], 'least different', 'most different')
+    return
+
+
+
 def train():
     deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
     np.random.seed(random_seed)
@@ -317,7 +344,7 @@ def train():
 
     # train
     start_epoch = max(nn.epoch_trained, 1)
-    max_epoch = 80
+    max_epoch = 100
     min_test_loss = np.inf
     min_test_loss_epoch = None
     for epoch in range(start_epoch, start_epoch + max_epoch):
@@ -347,5 +374,5 @@ def train():
 
 
 if __name__ == '__main__':
-    # test_col_importance('model-epoch10-trainloss54-devloss54.pkl')
-    train()
+    test_temperature('model-epoch30-trainloss22-devloss20.pkl')
+    # train()
