@@ -95,9 +95,9 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\hline
 	\makecell[c]{Han Wu \\ hw436} & {Fine-tuned the parameters of our model. Did some experiments for the evaluation of our model. Wrote part of the report.} \\
 	\hline
-	\makecell[c]{Haoyang Zhang \\ hz333} & {Analyzed and wrote scripts to clean the data. Wrote scripts to restore human-friendly data from the output of our model. Wrote part of the report. } \\
+	\makecell[c]{Haoyang Zhang \\ hz333} & {Analyzed and wrote scripts to clean the data. Wrote scripts to restore human-friendly data from the output of our model. Wrote scripts for experiments. Wrote part of the report. } \\
 	\hline
-	\makecell[c]{Shengjie Li \\ sl1560} & {Implemented the basics of neural networks including back-propagation and several loss functions and activation functions. Wrote part of the report.} \\
+	\makecell[c]{Shengjie Li \\ sl1560} & {Implemented the basics of neural networks including back-propagation and several loss functions and activation functions. Wrote scripts for experiments. Wrote part of the report.} \\
 	\hline
 \end{tabular}
 
@@ -217,8 +217,8 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\par{We implemented a gradient-based optimizer--stochastic gradient descent with back-propagation for the training part. Comparing with other types of gradient descent, stochastic gradient descent uses one data point at a time, which is computationally friendly. We are only training over 223 features. Our training process was actually quite fast, so we didn't do any compromises.}
 	
 	\item {\textbf{Describe your Model Validation:}}
-	\par{We divided the whole data set into 3 data sets: train set, dev set and test set. During the training process, we measure loss on train set and dev set. Dev set is an indicator of fitness and has been used in fine-tuning of the hyperparameters. If dev loss starts to climb up, we could know it is overfitting. After we finish the training of the model, we evaluate loss on test set.}
-	\par{For the prevention of overfitting, we are using a simple architecture, and we added drop-out rates on layers to enable the model to `disable' some neurons for some probabilities. Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data. Since the dataset isn't massive, drop-out `creates' many incomplete data point, which boosts the size of the dataset.}
+	\par{Though there are only about 2400 data points, and it is relatively too small in terms of sample complexity, we can still apply cross-validation. The main idea is here: our goal is predicting blanks given an incomplete data points, and we do have much more incomplete data points if we further randomly set some features to blank. In this way, we can inflate the size of our dataset. Therefore, we randomly divide these 2400 points into train, dev and test set with the ratio 8:1:1. Then we apply dropout method to inflate the train set to meet the requirement of sample complexity. Note that we will not inflate dev and test set because training set is the only set related to building our model. Notice that another advantage of dropout is: Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data.}
+	\par{During the training process, we measure loss on train set and dev set. Dev set is an indicator of fitness and has been used in fine-tuning of the hyperparameters. If dev loss starts to climb up, we could know it is overfitting. After we finish the training of the model, we evaluate loss on test set.}
 	\par{After the training, our model achieved a low loss of 20.525512.}
 	
 	\begin{table}[H]
@@ -354,7 +354,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 
 \section{Bonus}
 \label{sec:Bonus}
-\par{\textbf{Dealing with natural language data}}
+\subsection{Dealing with natural language data}
 \par{In the dataset, there are several open response columns. Notice that they serve as different functions in the original dataset. In order to try our best to utilize the dataset, we choose to encode them based on their intention in original study.}
 
 \begin{itemize}
@@ -400,6 +400,24 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\par{Generally, its responses are positive integers. But some people may answer this quesion in Celsius. Therefore, any value that is less than 40 will be considered as Celsius degree and transformed to Fahrenheit. Furthermore, any value that is greater than 105 or less than 65 will be consider as NA's because it is unlikely to be that hot or cold in labs. Some irregualr responses are coded manually.}
 	\par{We can predict this feature like other positive integers.}
 \end{itemize}
+
+\subsection{Bonus 2}
+
+\par{Based on available
+	features, what can you predict about a person’s answers to natural language questions (if not the actual answers
+	themselves)? How can you assess the quality of these predictions?}
+\par{We have a thought on this but we don't get the time to implement it.}
+\par{Since we already have an autoencoder, we can make use of the encoder to encode non-natural-language data and get the representations. Then we train a neural network to try to predict next word. The input at each time step contains the representations and a word. This word can be encoded using Byte-Pair Encoding or Word Embeddings. The architecture is shown in Figure \ref{rnn}.}
+\par{After we finish the training and are going to predict natural language data, we can put representations and <start> into the model. Then we put the first predicted word into the model again. Repeat this process until we get an <end>. This sequence of words is the prediction.}
+\par{The quality of prediction can be measured using cross-entropy loss between the prediction and the original sentence. }
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{rnn.pdf}
+	\caption{Imaginary architecture of our RNN model}
+	\label{rnn}
+\end{figure}
+
 
 \begin{appendices}
 	\section{Codebook}

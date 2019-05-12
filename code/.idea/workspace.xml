@@ -3,11 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="89c4d71a-123b-40e8-a949-792aed79747d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../docs/report.aux" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.aux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/report.out" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.out" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../docs/report.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.pdf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../docs/report.synctex.gz" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.synctex.gz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../docs/report.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../temp/.doc.md.swp" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,11 +22,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="304">
-              <caret line="346" lean-forward="true" selection-start-line="346" selection-end-line="346" />
+            <state relative-caret-position="169">
+              <caret line="124" column="20" selection-start-line="124" selection-start-column="10" selection-end-line="124" selection-end-column="20" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -33,11 +34,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/layers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="20" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="20" />
+            <state relative-caret-position="345">
+              <caret line="38" column="42" lean-forward="true" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <marker date="1557601655887" expanded="true" signature="2244:2380" ph="..." />
@@ -76,12 +77,13 @@
       <find>1145141919</find>
       <find>],</find>
       <find>shuffle</find>
+      <find>nn.predict</find>
     </findStrings>
     <replaceStrings>
       <replace>i + 5</replace>
       <replace>_</replace>
-      <replace>flag_valid_</replace>
       <replace>]),</replace>
+      <replace>flag_valid_</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -97,7 +99,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="1148" />
     <option name="y" value="389" />
     <option name="width" value="1846" />
@@ -207,15 +209,15 @@
       <workItem from="1557124065234" duration="779000" />
       <workItem from="1557125304812" duration="96000" />
       <workItem from="1557125419729" duration="897000" />
-      <workItem from="1557166570331" duration="96386000" />
+      <workItem from="1557166570331" duration="97114000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105951000" />
+    <option name="totallyTimeSpent" value="106679000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1148" y="389" width="1852" height="1015" extended-state="6" />
+    <frame x="1148" y="389" width="1852" height="1015" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12735327" />
@@ -279,24 +281,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/funcs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="778">
-          <caret line="99" lean-forward="true" selection-start-line="99" selection-end-line="99" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/layers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="20" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1557601655887" expanded="true" signature="2244:2380" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/anaconda3/lib/python3.7/site-packages/numpy/core/numeric.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -306,10 +290,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="346" lean-forward="true" selection-start-line="346" selection-end-line="346" />
+        <state relative-caret-position="169">
+          <caret line="124" column="20" selection-start-line="124" selection-start-column="10" selection-end-line="124" selection-end-column="20" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/funcs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="778">
+          <caret line="99" lean-forward="true" selection-start-line="99" selection-end-line="99" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/layers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="38" column="42" lean-forward="true" selection-start-line="38" selection-start-column="42" selection-end-line="38" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1557601655887" expanded="true" signature="2244:2380" ph="..." />
           </folding>
         </state>
       </provider>
