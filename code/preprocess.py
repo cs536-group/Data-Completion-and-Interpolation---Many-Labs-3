@@ -5,6 +5,7 @@ import pickle as pkl
 import random
 import numpy as np
 
+#save and load variables
 def saveVar(var, path, name):
     saveFile = open(path+name, 'wb')
     pkl.dump(var, saveFile)
@@ -17,6 +18,7 @@ def loadVar(path, name):
     loadFile.close()
     return var
 
+
 #code data by col
 def readData(path = None, name = None):
     if path is None:
@@ -27,28 +29,28 @@ def readData(path = None, name = None):
     file = codecs.open(path + name, 'rb', 'cp850')
     csvR = csv.reader(file, delimiter = ',')
 
-    index = 0
-    name = []
-    size = 0
+    index = 0 #row index
+    name = [] #col name
+    size = 0 #col num
 
-    formatFun = []
-    realMatrix = []
-    flagMatrix = []
-    dataMatrix = []
+    formatFun = [] #dataFormat functions
+    realMatrix = [] #real / prob mask
+    flagMatrix = [] #NA mask
+    dataMatrix = [] #real data
 
     for row in csvR:
         index = index + 1
-        if index == 1:
-            name = row
+        if index == 1: #first row
+            name = row #get col name
             size = len(name)
             for col in range(size):
                 if col <= 134 or 170 <= col <= 171 or 222 <= col <= 224 or 242 <= col <= 253 or 255 <= col <= 258 or 268 <= col <=270:
                     funName = 'df.data' + name[col].replace('.', '_') + '()'
-                    dataFormatFun = eval(funName)
-                    dataFormatFun.oriCol = col
+                    dataFormatFun = eval(funName) #init dataFormat functions
+                    dataFormatFun.oriCol = col #store oriCol
                     formatFun.append(dataFormatFun)
                 else:
-                    formatFun.append(None)
+                    formatFun.append(None) #placeholder
         else:
             flagMatrix.append([])
             dataMatrix.append([])
@@ -56,7 +58,7 @@ def readData(path = None, name = None):
             rowIndex = index - 2
             for col in range(size):
                 if col <= 134 or 170 <= col <= 171 or 222 <= col <= 224 or 242 <= col <= 253 or 255 <= col <= 258 or 268 <= col <=270:
-                    real, flag, data = formatFun[col].formatFore(row[col])
+                    real, flag, data = formatFun[col].formatFore(row[col]) #encode
                     realMatrix[rowIndex].append(real)
                     flagMatrix[rowIndex].append(flag)
                     dataMatrix[rowIndex].append(data)
@@ -73,7 +75,7 @@ def sortData(formatFun, flagMatrix, dataMatrix, realMatrix):
     flagSortedMatrix = []
     dataSortedMatrix = []
     realSortedMatrix = []
-    posList = [0 for i in range(12)]
+    posList = [0 for i in range(12)] #size of each group
 
     for row in range(len(flagMatrix)):
         flagSorted = [[] for i in range(12)]
@@ -88,26 +90,26 @@ def sortData(formatFun, flagMatrix, dataMatrix, realMatrix):
             tempFlag = flagMatrix[row][col]
             tempData = dataMatrix[row][col]
             tempReal = realMatrix[row][col]
-            if tempFormatFun is None:
+            if tempFormatFun is None: #uncoded col
                 continue
 
-            tempGroup = tempFormatFun.group
+            tempGroup = tempFormatFun.group #find group
             if row == 0:
-                tempFormatFun.sCol = (tempGroup, posList[tempGroup])
+                tempFormatFun.sCol = (tempGroup, posList[tempGroup]) #update sCol based on posList
             if isinstance(tempFlag, list):
                 if row == 0:
-                    posList[tempGroup] = posList[tempGroup] + len(tempFlag)
-                    tempFormatFun.eCol = (tempGroup, posList[tempGroup])
+                    posList[tempGroup] = posList[tempGroup] + len(tempFlag) #update posList based on feature size
+                    tempFormatFun.eCol = (tempGroup, posList[tempGroup]) #update eCol based on posList
                 flagSorted[tempGroup].extend(tempFlag)
                 dataSorted[tempGroup].extend(tempData)
                 realSorted[tempGroup].extend(tempReal)
             else:
                 if row == 0:
-                    posList[tempGroup] = posList[tempGroup] + 1
-                    tempFormatFun.eCol = (tempGroup, posList[tempGroup])
+                    posList[tempGroup] = posList[tempGroup] + 1 #update posList based on feature size
+                    tempFormatFun.eCol = (tempGroup, posList[tempGroup]) #update eCol based on posList
                 if col == 21 or col == 117: #(year, month)
                     if tempFlag and flagMatrix[row][244] and flagMatrix[row][222]: #YearComputer #MonthComputer
-                        tempData = max(0, (dataMatrix[row][224] - tempData[0] + 2000) * 12 + (dataMatrix[row][222] - tempData[1]))
+                        tempData = max(0, (dataMatrix[row][224] - tempData[0] + 2000) * 12 + (dataMatrix[row][222] - tempData[1])) #max(0, current - last term)
                     else:
                         tempFlag = False
                         tempData = -1
@@ -125,7 +127,7 @@ def mergeData(flagMatrix, dataMatrix, realMatrix):
 
     for row in range(len(flagMatrix)):
         flagMerged = [x for group in flagMatrix[row] for x in group]
-        if flagMerged.count(False) >= 100:
+        if flagMerged.count(False) >= 100: #too many NA, discard
             continue
         dataMerged = [x for group in dataMatrix[row] for x in group]
         realMerged = [x for group in realMatrix[row] for x in group]
@@ -141,16 +143,16 @@ def mergeData(flagMatrix, dataMatrix, realMatrix):
 def getPos(formatFun, flagList):
     posList = [len(group) for group in flagList]
     accPosList = [sum(posList[:i]) for i in range(len(posList))]
-    deSortMap = dict()
+    deSortMap = dict() #sCol: (eCol, oriCol)
 
     for i in range(len(formatFun)):
         tempFormatFun = formatFun[i]
         if tempFormatFun is None:
             continue
         group, shift = tempFormatFun.sCol
-        tempFormatFun.sCol = accPosList[group] + shift
+        tempFormatFun.sCol = accPosList[group] + shift #map (group, shift) to real col index
         group, shift = tempFormatFun.eCol
-        tempFormatFun.eCol = accPosList[group] + shift
+        tempFormatFun.eCol = accPosList[group] + shift #map (group, shift) to real col index
 
         deSortMap[tempFormatFun.sCol] = (tempFormatFun.eCol, tempFormatFun.oriCol)
 
@@ -165,25 +167,25 @@ def scaleData(flagMatrix, dataMatrix):
     for row in range(len(flagMatrix)):
         for col in range(len(flagMatrix[row])):
             tempFlag = flagMatrix[row][col]
-            if tempFlag:
+            if tempFlag: #NA mask
                 tempData = float(dataMatrix[row][col])
                 dataMatrix[row][col] = tempData
-                if tempData > maxDataMatrix[col]:
+                if tempData > maxDataMatrix[col]: #update max
                     maxDataMatrix[col] = tempData
-                if tempData < minDataMatrix[col]:
+                if tempData < minDataMatrix[col]: #update min
                     minDataMatrix[col] = tempData
             else:
-                dataMatrix[row][col] = 0
+                dataMatrix[row][col] = 0 #set NA values to 0
 
-    difDataMatrix = [maxDataMatrix[i] - minDataMatrix[i] for i in range(len(minDataMatrix))]
+    difDataMatrix = [maxDataMatrix[i] - minDataMatrix[i] for i in range(len(minDataMatrix))] #dif = max - min
 
     for row in range(len(flagMatrix)):
         for col in range(len(flagMatrix[row])):
             tempFlag = flagMatrix[row][col]
             if tempFlag:
-                if difDataMatrix[col] == 0:
+                if difDataMatrix[col] == 0: #only 1 possible value
                     if minDataMatrix[col] == 0 or minDataMatrix[col] == 1:
-                        minDataMatrix[col] = 0
+                        minDataMatrix[col] = 0 #use real value
                     else:
                         if col == 260: #col 224 YearComputer
                             dataMatrix[row][col] = 0
@@ -191,7 +193,7 @@ def scaleData(flagMatrix, dataMatrix):
                             print(minDataMatrix[col])
                             print('W: scaleData: unnecessary data at col %d' %col)
                 else:
-                    dataMatrix[row][col] = (dataMatrix[row][col] - minDataMatrix[col]) / difDataMatrix[col]
+                    dataMatrix[row][col] = (dataMatrix[row][col] - minDataMatrix[col]) / difDataMatrix[col] # (x - min) / (max - min)
     return flagMatrix, dataMatrix, minDataMatrix, difDataMatrix
 
 
@@ -203,21 +205,21 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
     while col < size:
         sCol = col
         eCol, oriCol = deSortMap[col]
-        for tempCol in range(sCol, eCol):
+        for tempCol in range(sCol, eCol): #reSacle
             if difDataMatrix[tempCol] != 0:
                 dataList[tempCol] = dataList[tempCol] * difDataMatrix[tempCol] + minDataMatrix[tempCol]
             else:
                 dataList[tempCol] = dataList[tempCol] + minDataMatrix[tempCol]
-        if eCol == sCol + 1:
+        if eCol == sCol + 1: #single feature, directly map to oriCol
             reDataList[oriCol] = round(dataList[sCol])
-        else:
+        else: #list ont-hot coded
             maxIndex = 0
             maxData = dataList[sCol]
-            for i in range(0, eCol - sCol):
+            for i in range(0, eCol - sCol): #find argmax
                 if dataList[sCol + i] >= maxData:
                     maxIndex = i
                     maxData = dataList[sCol + i]
-            if dataList[sCol + maxIndex] == 0:
+            if dataList[sCol + maxIndex] == 0: #max(argmax) == 0: failed to predict
                 reDataList[oriCol] = [False for i in range(eCol - sCol)]
             else:
                 for i in range(0, eCol - sCol):
@@ -225,6 +227,7 @@ def restoreData(dataList, deSortMap, minDataMatrix, difDataMatrix):
                     reDataList[oriCol][maxIndex] = True
         col = eCol
 
+    #encode col 21 and 117
     month = reDataList[222] - reDataList[21] % 12
     if month < 0:
         month = month + 12
@@ -249,11 +252,11 @@ def decodeData(dataList, formatFun):
         tempFormatFun = formatFun[col]
         if tempFormatFun is None:
             continue
-        if isinstance(dataList[col], list):
-            flag = [True for i in range(len(dataList[col]))]
+        if isinstance(dataList[col], list): #one-hot coded
+            flag = [True for i in range(len(dataList[col]))] #construct the same length NA mask
         else:
             flag = True
-        decodedData[col] = tempFormatFun.formatBack((flag, dataList[col]))
+        decodedData[col] = tempFormatFun.formatBack((flag, dataList[col])) #decode
 
     return decodedData
 
@@ -287,12 +290,13 @@ def splitData(flagMatrix, dataMatrix, realMatrix):
 
 
 def restoreLoss(lossList, deSortMap, realMask):
+    #real / prob are not comparable
     reLossListProb = [None for i in range(274)]
     reLossListReal = [None for i in range(274)]
     size = len(lossList)
     col = 0
     while col < size:
-        if col >= 223:
+        if col >= 223: #discared features
             continue
         sCol = col
         eCol, oriCol = deSortMap[col]
@@ -300,9 +304,9 @@ def restoreLoss(lossList, deSortMap, realMask):
             tempLossList = reLossListReal
         else:
             tempLossList = reLossListProb
-        if eCol == sCol + 1:
+        if eCol == sCol + 1: #single feature
             tempLossList[oriCol] = lossList[sCol]
-        else:
+        else: #one-hot, averge over all coded digits
             tempLossList[oriCol] = np.average(lossList[sCol: eCol])
         col = eCol
     reLossProb = np.asarray(reLossListProb, dtype = np.float64)
