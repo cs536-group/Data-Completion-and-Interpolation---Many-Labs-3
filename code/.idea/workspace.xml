@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="89c4d71a-123b-40e8-a949-792aed79747d" name="Default Changelist" comment="" />
+    <list default="true" id="89c4d71a-123b-40e8-a949-792aed79747d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/report.aux" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.aux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/report.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/report.synctex.gz" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.synctex.gz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/report.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/report.tex" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,15 +17,15 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/code$layers.coverage" NAME="layers Coverage Results" MODIFIED="1557207859447" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/code$model.coverage" NAME="model Coverage Results" MODIFIED="1557606158763" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/code$model.coverage" NAME="model Coverage Results" MODIFIED="1557621898889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="320" column="26" lean-forward="true" selection-start-line="320" selection-start-column="26" selection-end-line="320" selection-end-column="26" />
+            <state relative-caret-position="304">
+              <caret line="346" lean-forward="true" selection-start-line="346" selection-end-line="346" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -29,8 +36,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/layers.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="29" column="37" lean-forward="true" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
+            <state relative-caret-position="255">
+              <caret line="17" column="20" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="20" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <marker date="1557601655887" expanded="true" signature="2244:2380" ph="..." />
@@ -200,15 +207,15 @@
       <workItem from="1557124065234" duration="779000" />
       <workItem from="1557125304812" duration="96000" />
       <workItem from="1557125419729" duration="897000" />
-      <workItem from="1557166570331" duration="92921000" />
+      <workItem from="1557166570331" duration="96386000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="102486000" />
+    <option name="totallyTimeSpent" value="105951000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1148" y="389" width="1852" height="1015" extended-state="7" />
+    <frame x="1148" y="389" width="1852" height="1015" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.12735327" />
@@ -281,8 +288,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/layers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="29" column="37" lean-forward="true" selection-start-line="29" selection-start-column="37" selection-end-line="29" selection-end-column="37" />
+        <state relative-caret-position="255">
+          <caret line="17" column="20" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="20" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <marker date="1557601655887" expanded="true" signature="2244:2380" ph="..." />
@@ -290,10 +297,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.7/site-packages/numpy/core/numeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="552" selection-start-line="552" selection-end-line="552" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="320" column="26" lean-forward="true" selection-start-line="320" selection-start-column="26" selection-end-line="320" selection-end-column="26" />
+        <state relative-caret-position="304">
+          <caret line="346" lean-forward="true" selection-start-line="346" selection-end-line="346" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

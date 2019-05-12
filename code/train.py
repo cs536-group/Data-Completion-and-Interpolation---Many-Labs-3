@@ -84,11 +84,11 @@ class NN:
             input_data = layer.predict(input_data)
         return input_data
 
-    def test(self, X, y, flag_valid, flag_real):
+    def test(self, X, y, flag_valid, flag_real, dropout=False):
         loss_list = []
         loss_list_axised = [] #store loss by axis
         for i in range(len(y)):
-            prediction = self.forward(X[i:i + 1], dropout=False)
+            prediction = self.forward(X[i:i + 1], dropout=dropout)
             _, loss_ce = self.get_loss(prediction, y[i:i + 1], self.loss_function_prob)
             _, loss_mse = self.get_loss(prediction, y[i:i + 1], self.loss_function_real)
 
@@ -317,6 +317,33 @@ def test_temperature(pre_trained_model):
     return
 
 
+def test_num_of_features():
+    """
+    for question: Does it need a certain amount of features in order to interpolate well?
+    :return:
+    """
+    np.random.seed(random_seed)
+    # preprocess data
+    flag_valid_train_raw, X_train_raw, flag_real_train_raw, flag_valid_dev_raw, X_dev_raw, flag_real_dev_raw, \
+        flag_valid_test_raw, X_test_raw, flag_real_test_raw = load_data()
+    flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
+    flag_real_test = np.copy(flag_valid_train_raw[:, :-38]), np.copy(X_train_raw[:, :-38]), \
+                     np.copy(flag_real_train_raw[:, :-38]), np.copy(flag_valid_dev_raw[:, :-38]), \
+                     np.copy(X_dev_raw[:, :-38]), np.copy(flag_real_dev_raw[:, :-38]), \
+                     np.copy(flag_valid_test_raw[:, :-38]), np.copy(X_test_raw[:, :-38]), \
+                     np.copy(flag_real_test_raw[:, :-38])
+
+    # load pre-trained model
+    nn = load_model('model-epoch30-trainloss22-devloss20.pkl')
+
+    # evaluate
+    dropout_rates = np.arange(0, 1, 0.05, dtype=np.float)
+    for dropout in dropout_rates:
+        nn.layers[0].dropout = dropout
+        loss_list, _ = nn.test(X_test, X_test_raw[:, :-38], flag_valid_test, flag_real_test, dropout=True)
+        print('dropout={}, \tloss={}'.format(dropout, np.average(loss_list)))
+    return
+
 
 def train():
     deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
@@ -374,5 +401,6 @@ def train():
 
 
 if __name__ == '__main__':
-    test_temperature('model-epoch30-trainloss22-devloss20.pkl')
+    # test_temperature('model-epoch30-trainloss22-devloss20.pkl')
+    test_num_of_features()
     # train()

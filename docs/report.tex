@@ -22,6 +22,7 @@
 \usepackage{amsthm,amssymb}
 \usepackage{listings}
 \usepackage{pdfpages}
+\usepackage{changepage}
 \usepackage[title]{appendix}
 
 \newlist{questions}{enumerate}{1}
@@ -134,7 +135,7 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\begin{itemize}
 			\item {Scaling to $[0, 1]$}
 			\par{Notice that the coded data can be further devided into 2 types: real values and probabilities. Notice that real values could be from negative infinity to positive infinity. (There may be some more restrictions like temperature in lab cannot be lower than -460. But in general its range is way larger than $[0, 1]$.) But for our prediction simplicity, we will linearly scale the largest value seen to $1$ and the smallest to $0$.}
-			\par{Here are some more things we can do, but because of time limit, we skipped them. The straightforward problem for this naïve scaling is we might be trapped by outliers. For example, (this example is already fixed.) some participant claimed his/her/its age is about 150. If we directly apply the scaling, most 20-ish responses will be scaled into about $0.007$, and the only response that is greater than $0.3$ is that 150, which will make this feature hard to predict precisely. Therefore, we should throw out these outliers.}
+			\par{Here are some more things we can do, but because of time limit, we skipped them. The straightforward problem for this naïve scaling is we might be trapped by outliers. For example, (this example is already fixed.) some participant claimed his/her/its age is about 150. If we directly apply the scaling, most  responses will be scaled into about $0.007$, and the only response that is greater than $0.3$ is that 150, which will make this feature hard to predict precisely. Therefore, we should throw out these outliers.}
 			\par{But a further thought is that this situation can also happen when the response distributed unevenly. For example, many people answer either about 1 to 2 or 8 to 9. In this case, we use a lot of space to encode unlikely values, which leads to the same result. In this case, a nonlinear scale method will be helpful. A rudimentary thought is we sort all values in the dataset and linearly scale first 10\% values to the range $[0, 0.1)$, second 10\% to $[0.1, 0.2)$, and so on.}
 			\par{Another problem is that we cannot predict any larger or smaller values than values in the dataset. A plausible justification could be that it is generally unlikely to see an extreme small or large value. But if we adopt the nonlinear scale method, we can map negative infinity (or the smallest valid value) to the smallest value in dataset into $[0, 0.1)$, and all values in dataset to $[0.1, 0.9)$, and so on.}
 			\item {Grouping Features}
@@ -217,42 +218,86 @@ In this group project, we implemented an autocoder for interpolating missing fea
 	\item {\textbf{Describe your Model Validation:}}
 	\par{We divided the whole data set into 3 data sets: train set, dev set and test set. During the training process, we measure loss on train set and dev set. Dev set is an indicator of fitness and has been used in fine-tuning of the hyperparameters. If dev loss starts to climb up, we could know it is overfitting. After we finish the training of the model, we evaluate loss on test set.}
 	\par{For the prevention of overfitting, we are using a simple architecture, and we added drop-out rates on layers to enable the model to `disable' some neurons for some probabilities. Because we are dealing with missing data and trying to interpolate missing data, drop-out makes the model be used to incomplete input data. Since the dataset isn't massive, drop-out `creates' many incomplete data point, which boosts the size of the dataset.}
-	\par{After the training, our model achieved a low loss of 20-ish.}
+	\par{After the training, our model achieved a low loss of 20.525512.}
 	
+	\begin{table}[H]
+		\centering
+		\begin{adjustwidth}{-1.35cm}{0cm}
+			\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|}
+				\hline
+				\multicolumn{11}{|c|}{Real-value features our model is good at predicting}  \\ \hline
+				Avg. Loss     &      0.00092 &  0.00290 &   0.00776 &   0.01832 &  0.02193 &  0.02628 & 0.02976 &  0.03920 &   0.04213 &   0.04819    \\ \hline
+				Column           &     69  & 66  & 102 & 117 & 21  & 22  & 4   & 95  & 255 & 116    \\ \hline
+				\multicolumn{11}{|c|}{Probability features our model is good at predicting} \\ \hline
+				Avg. Loss     &     0.00003 & 0.00007 &   0.00989 &   0.01377 &  0.01505 &   0.01529 &  0.01724 &   0.01738 &  0.01812 &   0.02385    \\ \hline
+				Column           &     7   & 8   & 128 & 101 & 68  & 115 & 94  & 127 & 14  & 170   \\ \hline
+				\multicolumn{11}{|c|}{Real-value features our model is bad at predicting}   \\ \hline
+				Avg. Loss     &     0.27996 & 0.24402 & 0.23568 & 0.22732 & 0.22094 & 0.21548 & 0.21410 & 0.20914 & 0.20474 & 0.20456   \\ \hline
+				Column           &     103 & 63  & 58  & 61  & 111 & 27  & 60  & 90  & 62  & 55     \\ \hline
+				\multicolumn{11}{|c|}{Probability features our model is bad at predicting}  \\ \hline
+				Avg. Loss     &     0.63081 & 0.24859 & 0.23935 & 0.23137 & 0.16039 & 0.15684 & 0.15087 & 0.14045 & 0.14010 & 0.13857    \\ \hline
+				Column           &     171 & 5   & 36  & 85  & 82  & 269 & 83  & 76  & 78  & 81     \\ \hline
+			\end{tabular}
+			\caption{Model performance}
+			\label{table1}
+		\end{adjustwidth}
+	\end{table}
 	\item {\textbf{Evaluate your Model:}}
 	
 	\includepdf[pages=-,pagecommand={},width=\textwidth]{hanwu.pdf}
 	
+	\begin{itemize}
+		\item {Are there some features it is really good at predicting and some it is really poor at predicting? Why do you think that is?}
+		\par{In order to answer this question, we traced the loss of each feature to the original data, and the result is shown in Table \ref{table1}: }
+		\par{Notice that the best real-value feature we predict is L ratio (column 69), and it is really diverse. A plausible explanation is that this effect is ``strong'' enough, and it is true according to the original study (ML3). Actually, the best 3 features (L, K, R ratio) all belong to this effect.}
+		\par{The worst real-value feature is sarcasm (column 103). Notice that this effect includes a number of natural language response which we preprocessed roughly, and this effect is also not that significant. Therefore, it is reasonable we cannot predict this feature well.}
+		\par{Column 7 and 8 are anagrams 3 and 4, which we encode any word into ``correct answer''. Therefore, it should be the best 2 features because it can literally always predict ``correct answer''. Except these 2 feature, the best probability feature is clipboard weight (column 128), it is interesting because there is no directly related feature except the participant answers. (Note that the clipboard material is independent to its weight.) Namely, we do find that the weight of clipboard will influence participant’s response.}
+		\par{The worst probability feature is persistence. (It is a bug actually because I preprocessed it into a probability feature but it actually is a real value. It is my fault. But a good story is it shows we should not use cross entropy to measure the loss of a real-value feature.) The worst feature except for that bugged one is anagrams 1 (column 5). A plausible explanation is that this feature is sort of coincident because we may either happen to have the ``Eureka'' time instantly or be puzzled for a long time and quit this question.}
+	\end{itemize}
 	
-	\begin{figure}[H]
+	
+	\begin{table}[H]
 		\centering
-		\includegraphics[width=0.4\linewidth]{ana.png}
-		\caption{Loss of each feature to the original data}
-		\label{easyToPredict}
-	\end{figure}
+		\begin{adjustwidth}{-1.8cm}{0cm}
+			\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|}
+				\hline
+				\multicolumn{11}{|c|}{Most valuable real-value features}   \\ \hline
+				Loss diff.    &    0.04869 &  0.04125 &  0.02439 &  0.01700 &  0.01400 &  0.01388 &  0.00923 & -0.00087 & -0.00190 & -0.00317   \\ \hline
+				Column             &   255 & 72  & 249 & 248 & 245 & 29  & 253 & 69  & 66  & 246   \\ \hline
+				\multicolumn{11}{|c|}{Most valuable probability features}  \\ \hline
+				Loss diff.    &   0.29560 & 0.27611 & 0.23960 & 0.23905 & 0.23539 & 0.23360 & 0.22759 & 0.16655 & 0.16586 & 0.09897   \\ \hline
+				Column             &   94  & 127 & 115 & 101 & 68  & 65  & 128 & 170 & 36  & 131  \\ \hline
+				\multicolumn{11}{|c|}{Least valuable real-value features}  \\ \hline
+				Loss diff.    &   -0.29604 & -0.28113 & -0.27959 & -0.25495 & -0.22280 & -0.20728 & -0.20524 & -0.20345 & -0.20235 & -0.19229   \\ \hline
+				Column             &   61  & 54  & 104 & 111 & 38  & 27  & 88  & 92  & 252 & 73    \\ \hline
+				\multicolumn{11}{|c|}{Least valuable probability features} \\ \hline
+				Loss diff.    &   -0.59560 & -0.33963 & -0.22017 & -0.20269 & -0.19237 & -0.19064 & -0.18626 & -0.16885 & -0.16259 & -0.14025   \\ \hline
+				Column             &   171 & 85  & 81  & 17  & 19  & 6   & 18  & 84  & 5   & 83    \\ \hline
+			\end{tabular}
+			\caption{Model performance}
+			\label{table2}
+		\end{adjustwidth}
+	\end{table}
+
 	\item {\textbf{Analyze the Data:}}
-	\par{Are there some features it is really good at predicting and some it is really poor at predicting? Why do you think that is?}
-	\par{In order to answer this question, we traced the loss of each feature to the original data, and the result is shown in Figure \ref{easyToPredict}: }
-	\par{Notice that the best real-value feature we predict is L ratio (column 69), and it is really diverse. A plausible explanation is that this effect is ``strong'' enough, and it is true according to the original study (ML3). Actually, the best 3 features (L, K, R ratio) all belong to this effect.}
-	\par{The worst real-value feature is sarcasm (column 103). Notice that this effect includes a number of natural language response which we preprocessed roughly, and this effect is also not that significant. Therefore, it is reasonable we cannot predict this feature well.}
-	\par{Column 7 and 8 are anagrams 3 and 4, which we encode any word into ``correct answer''. Therefore, it should be the best 2 features because it can literally always predict ``correct answer''. Except these 2 feature, the best probability feature is clipboard weight (column 128), it is interesting because there is no directly related feature except the participant answers. (Note that the clipboard material is independent to its weight.) Namely, we do find that the weight of clipboard will influence participant’s response.}
-	\par{The worst probability feature is persistence. (It is a bug actually because I preprocessed it into a probability feature but it actually is a real value. It is my fault. But a good story is it shows we should not use cross entropy to measure the loss of a real-value feature.) The worst feature except for that bugged one is anagrams 1 (column 5). A plausible explanation is that this feature is sort of coincident because we may either happen to have the ``Eureka'' time instantly or be puzzled for a long time and quit this question.}
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=0.4\linewidth]{2.png}
-		\caption{feature importance}
-		\label{2}
-	\end{figure}
+	\begin{itemize}
+		\item {What features were particularly valuable in predicting/interpolating? What features weren’t particularly useful at all?}
+		\par{In order to answer this question, we dropout each feature and calculating the loss after we dropout it. In case of the situation that this feature itself is hard to predict, when we calculating the loss, we will also ignore this feature. The result is in Table \ref{table2}. )
+			
+			Notice that most of the most important real-value features are aggregated features like NFC, Mood and Agreeableness. It is reasonable because they tell us a whole aspect of this participant, and the response of this participant can be consider as a function of all aspects. (Refer to our transfer learning thought.) Similarly, we can find that most of the least important real-value features are the actual response of each aggregated feature, like intrinsic\_01, selfesteem\_01 and soon. Since they have been aggregated into another features, they do tell us less.
+			
+			Notice that order of tasks (column 127) does important. It corresponds to the original study design. Some other important features are N position and V position. It is also reasonable because it will determine whether the next response will be greater than 10 or less than 10.
+			
+			Again, because of my fault, persistence (column 171) become the least important feature. Except for this, the back count features are generally less important. A justification is most participant will correctly answer this question.}
+		
+		\item {Were there any features about the researcher/experimental environment that were particularly relevant to predicting answers - and if so, what conclusions can you draw about the replicability of those effects?}
+		
+		\par{In order to answer this question, we choose temperature in lab (column 126) to be coldest or hottest in the given dataset, and compare the predictions. Notice that there is an effect related to temperature (effect 7), and therefore we will ignore all responds in this group. Here is the result. (Fig. temperature)
+			
+			Notice that many columns does not change much, but there are still some columns changed. Sarcasm is changed most in real values, However, since its loss is also relatively high, we cannot conclude that it matters.}
+	\end{itemize}
 	
-	\par{What features were particularly valuable in predicting/interpolating? What features weren’t particularly useful at all?}
 	
-	\par{In order to answer this question, we dropout each feature and calculating the loss after we dropout it. In case of the situation that this feature itself is hard to predict, when we calculating the loss, we will also ignore this feature. The result is in Figure \ref{2}. )
-		
-		Notice that most of the most important real-value features are aggregated features like NFC, Mood and Agreeableness. It is reasonable because they tell us a whole aspect of this participant, and the response of this participant can be consider as a function of all aspects. (Refer to our transfer learning thought.) Similarly, we can find that most of the least important real-value features are the actual response of each aggregated feature, like intrinsic\_01, selfesteem\_01 and soon. Since they have been aggregated into another features, they do tell us less.
-		
-		Notice that order of tasks (column 127) does important. It corresponds to the original study design. Some other important features are N position and V position. It is also reasonable because it will determine whether the next response will be greater than 10 or less than 10.
-		
-		Again, because of my fault, persistence (column 171) become the least important feature. Except for this, the back count features are generally less important. A justification is most participant will correctly answer this question.}
 	
 	\item {\textbf{Generate Data:}}
 	\par{There are two approaches:}
