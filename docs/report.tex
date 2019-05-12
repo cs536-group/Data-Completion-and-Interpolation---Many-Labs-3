@@ -159,7 +159,8 @@ In this group project, we implemented an autocoder for interpolating missing fea
 		\item {Autoencoders}
 		\par{It can compress and decompress the given inputs into smaller representations, and these representations contain key information of the inputs. Thus, we can make use of these representations to classify data and generate data, which makes autoencoders handy in this situation.}
 		\item {A transfer learning approach:}
-		\par{First, we can train an autoencoder to compress information from the inputs, minimize the reconstruction loss. After we finish the training of the autoencoder, we discard the decoder, and use the encoder to get representations of data points. Then, we train a classifier on top of the representations.}
+		\par{The basic idea is, all the responds are function of the participants’ personality, which is the compressed matrix. In order to further utilize this assumption, we can use group 0 to reconstruct participants’ personality, and based on the personality to predict blanks. In order to reconstruct personality, we can use (Variational) Auto Encoder to compress the features in group 0 to a personality feature space, and discard its decoder part. Then the problem reduced to given an input vector, how can we predict another output vector, which is literally a common regression or classification problem. A possible drawback is that once the personality is not describable just by group 0 because we missed some important aspect, we cannot reconstruct personality properly, and it will ruin our result.}
+		
 		\item {Autoencoders with RNN:}
 		\par{Since the data contains natural language data, we could use RNN to deal with this kind of data.}
 	\end{itemize}
@@ -242,11 +243,26 @@ In this group project, we implemented an autocoder for interpolating missing fea
 			\label{table1}
 		\end{adjustwidth}
 	\end{table}
+	
 	\item {\textbf{Evaluate your Model:}}
 	
-	\includepdf[pages=-,pagecommand={},width=\textwidth]{hanwu.pdf}
-	
 	\begin{itemize}
+		\item {Where is your model particularly successful, where does it lack?}
+		\par{Generally, our model predicts probability values well, and we can find that most multiple choice responses correspond to the original data point (if any). However, some real value differs much. It is partially because of our linear scaling. Another justification for this is generally continuous regression is harder than multiple classification because of the diversity of possible values. If we have more time, we may consider to further encode some real values into multiple choices by grouping possible values.}
+		
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=.5\linewidth]{dropout.png}
+			\caption{Loss versus dropout rate}
+			\label{fig:dropout}
+		\end{figure}
+		\item {Does it need a certain amount of features in order to interpolate well?}
+		\par{In order to answer this question, we apply dropout method when predicting data points in test set. Generally, as dropout rate goes up, less and less features remain, and we can focus on the relationship between prediction loss and dropout rate. The result is shown in Figure \ref{fig:dropout}. 
+			
+			Notice that when dropout rate is less than 0.4, the curve is basically linear. Namely if there are more than 60\% features are not blanks, we can predict them not bad. Once the dropout rate is higher than 0.4, the loss increases faster. Namely, we cannot predict them properly. A possible justification for this scenario is that when dropout rate is larger than 0.4, many features in group 0 is missed, and it is much harder to predict features crossing different test instead of based on “personality” information (group 0).
+		}
+		
+		
 		\item {Are there some features it is really good at predicting and some it is really poor at predicting? Why do you think that is?}
 		\par{In order to answer this question, we traced the loss of each feature to the original data, and the result is shown in Table \ref{table1}: }
 		\par{Notice that the best real-value feature we predict is L ratio (column 69), and it is really diverse. A plausible explanation is that this effect is ``strong'' enough, and it is true according to the original study (ML3). Actually, the best 3 features (L, K, R ratio) all belong to this effect.}
@@ -290,9 +306,32 @@ In this group project, we implemented an autocoder for interpolating missing fea
 			
 			Again, because of my fault, persistence (column 171) become the least important feature. Except for this, the back count features are generally less important. A justification is most participant will correctly answer this question.}
 		
+		\begin{table}[H]
+			\centering
+			\begin{adjustwidth}{-1.35cm}{0cm}
+				\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|}
+					\hline
+					\multicolumn{11}{|c|}{Real-value features that were changed the least}  \\ \hline
+					Difference     &      0.00000 & 0.00000 & 0.00000 & 0.00000 & 0.00000 & 0.00000 & 0.00000 & 0.00000 & 0.00001 & 0.00001    \\ \hline
+					Column           &     110	 & 126	 & 109	 & 111	 & 112	 & 113	 & 114	 & 133	 & 75	 & 25	    \\ \hline
+					\multicolumn{11}{|c|}{Probability that were changed the least} \\ \hline
+					Avg. Loss     &     0.00031 & 0.00056 & 0.02461 & 0.02494 & 0.02606 & 0.02995 & 0.03090 & 0.03194 & 0.03472 & 0.03597    \\ \hline
+					Column           &     7	 & 8	 & 20 & 13 & 80 & 18 & 14 & 19 & 11 & 44   \\ \hline
+					\multicolumn{11}{|c|}{Real-value that were changed the most}   \\ \hline
+					Avg. Loss     &     0.01592 & 0.01004 & 0.00845 & 0.00759 & 0.00745 & 0.00727 & 0.00712 & 0.00653 & 0.00637 & 0.00629   \\ \hline
+					Column           &     103	 & 61	 & 54	 & 31	 & 244	 & 60	 & 26	 & 58	 & 35	 & 92	     \\ \hline
+					\multicolumn{11}{|c|}{Probability features that were changed the most}  \\ \hline
+					Avg. Loss     &     0.63791 & 0.29699 & 0.27964 & 0.26404 & 0.23084 & 0.16518 & 0.14973 & 0.14875 & 0.14656 & 0.14486    \\ \hline
+					Column           &     171	 & 36	 & 5	 & 269	 & 268	 & 81	 & 76	 & 82	 & 77	 & 78	     \\ \hline
+				\end{tabular}
+				\caption{How features change after setting the temperature}
+				\label{table3}
+			\end{adjustwidth}
+		\end{table}
+	
 		\item {Were there any features about the researcher/experimental environment that were particularly relevant to predicting answers - and if so, what conclusions can you draw about the replicability of those effects?}
 		
-		\par{In order to answer this question, we choose temperature in lab (column 126) to be coldest or hottest in the given dataset, and compare the predictions. Notice that there is an effect related to temperature (effect 7), and therefore we will ignore all responds in this group. Here is the result. (Fig. temperature)
+		\par{In order to answer this question, we choose temperature in lab (column 126) to be coldest or hottest in the given dataset, and compare the predictions. Notice that there is an effect related to temperature (effect 7), and therefore we will ignore all responds in this group. The result is in Table \ref{table3}.
 			
 			Notice that many columns does not change much, but there are still some columns changed. Sarcasm is changed most in real values, However, since its loss is also relatively high, we cannot conclude that it matters.}
 	\end{itemize}
@@ -315,6 +354,52 @@ In this group project, we implemented an autocoder for interpolating missing fea
 
 \section{Bonus}
 \label{sec:Bonus}
+\par{\textbf{Dealing with natural language data}}
+\par{In the dataset, there are several open response columns. Notice that they serve as different functions in the original dataset. In order to try our best to utilize the dataset, we choose to encode them based on their intention in original study.}
+
+\begin{itemize}
+	\item {anagrams}
+	\par{the first 2 anagram questions have a correct answer, and the other 2 are impossible missions. These 4 questions are used to measure participant's persistence. More specifically, we recorded the time participants spend on these 4 questions. Notice that it is no use to stay at the question have already perfectly answered. Therefore, whether first 2 answers are correct is important. Namely, we encode these features into a Boolean value to indicate whether the answer is correct.}
+	\par{Also, we can use our prediction to tell whether the participant would answer correct or not if this feature was blank.}
+	
+	\item {attentioncorrect}
+	\par{It is a trap question to identify whether the participant read the instructions. Generally the other answers will not include the word "instructions". Therefore, we encode any response including "instruction" or similar word into `True`, and further correct some misclassified response manually.}
+	\par{In this way, we can predict whether the user inputs "I read the instructions" (or its variants) or missed this check by predicting `True` or `False`}
+	
+	\item {K L N R V ratio}
+	\par{Generally, the response should be a number. Therefore, we checked whether it is a number using Regular Expression, and further rounded these numbers into a nearest integer for our simplicity. For some non-numerical response, we further encode it into numbers or NA manually}
+	\par{Once we have the predicted value, we can scale it back to get the ratio that the participant might answer.}
+	
+	\item {grade 1}
+	\par{This question is strongly related to the time participants answer it. More specifically, what this question actually asked is how long it is since the last term. We can get the "current" time in column 222 to 224. Therefore, for this column, we can just encode it into `(month, year)` tuple, and preprocess it into a non-negative integer later. We use regular expression to identify years and seasons and further encode each season into a month. For some irregular response, we encode them manually.}
+	\par{When we predicting this column, we first predict the number of months since the last term, and then use "current" time to minus these months and round it into seasons.
+	}
+	
+	\item {grade 2}
+	\par{Responses for this question can be consider as a positive number. But generally, there are 3 possible answer types, grades, grade points and percentages. We first use regular expression to identify the type, and then scale all of them into percentages according to \href{https://www.rapidtables.com/calc/grade/gpa-to-letter-grade-calculator.html}{rapidtables}. For some abnormal replies, we encode it manually.}
+	\par{Since this column can literally be considered as positive integers, we can directly apply the method of predicting positive integers.}
+	
+	\item {age}
+	\par{(Actually I am wondering why this is an open response question. But anyway,) we can consider this feature as positive integers. We use regular expression to round all numerical responses to nearest integers. Note that any responses are larger than 100 or less than 10 will be consider as NA's. Some non-numerical responses are encoded manually}
+	\par{Also, we can predict it just like predicting other positive integers.}
+	
+	\item {major}
+	\par{Since this si a demographical question, what it concerns most is the education background. Therefore, we classify all majors into 8 groups according to \href{https://www.ets.org/s/gre/pdf/dept_major_field_codes.pdf}{ETS}. Though regular expression does not work well in this case, we can discard the prefix "pre-" and sort all responses. In this case, most typos will be aggregated, and we can easily edit their classification using some text editor like sublime text.}
+	\par{Generally, this question can be considered as a multiple choice, and we can predict it like other one-hot coding prediction.}
+	
+	\item {div3filler}
+	\par{Actually it is a question to take a period of time. But it actually reflects the mathematical background of this participant. Therefore, we encode it to `True` if all inputs is divisible by 3. Note that there is a $B$ in the question, therefore participant might consider this question is hexadecimal. But it does not matter because $10 = 16 = 1 \mod 3$. We can directly replace $B$ with $2$ and check the sum of all the individual digits. Some irregular responses are coded manually.}
+	
+	\item {backcount}
+	\par{It is similar to div3filler, and we can directly check whether it is correct or not.}
+	
+	\item {highpower \& lowpower}
+	\par{They are long texts, for simplicity, we skipped them.}
+
+	\item {tempest1}
+	\par{Generally, its responses are positive integers. But some people may answer this quesion in Celsius. Therefore, any value that is less than 40 will be considered as Celsius degree and transformed to Fahrenheit. Furthermore, any value that is greater than 105 or less than 65 will be consider as NA's because it is unlikely to be that hot or cold in labs. Some irregualr responses are coded manually.}
+	\par{We can predict this feature like other positive integers.}
+\end{itemize}
 
 \begin{appendices}
 	\section{Codebook}
