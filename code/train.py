@@ -125,6 +125,7 @@ def test_bp():
     print(nn.predict(x))
 
 
+#from /data/filename load data
 def load_data_from_file(filename = 'splitedData.pkl'):
     filename = path_data + filename
     ret = None
@@ -133,7 +134,12 @@ def load_data_from_file(filename = 'splitedData.pkl'):
     return ret
 
 
+#load splited dataset
 def load_data(filename = 'splitedData.pkl'):
+    #out:
+    #valid: bool mask for each feature, indicate not NA
+    #_: actual data, NA is replaced with 0
+    #real: bool mask for each feature, indicate real value (True) / prob value (False)
     filename = path_data + filename
     data = load_data_from_file(filename)
 
@@ -162,6 +168,7 @@ def load_data(filename = 'splitedData.pkl'):
            flag_real_test
 
 
+#shuffle 4 array using the same index order
 def shuffle_data(a, b, c, d):
     assert len(a) == len(b) == len(c) == len(d)
     _ = np.c_[a.reshape(len(a), -1), b.reshape(len(b), -1), c.reshape(len(c), -1), d.reshape(len(d), -1)]
@@ -176,6 +183,7 @@ def shuffle_data(a, b, c, d):
     return a2, b2, c2, d2
 
 
+#dump nn to /model/
 def save_model(nn, filename):
     filename = path_model + filename
     if not os.path.isdir(path_model):
@@ -184,13 +192,20 @@ def save_model(nn, filename):
         pickle.dump(nn, f)
 
 
+#load nn from /model/
 def load_model(filename):
     filename = path_model + filename
     with open(filename, 'rb') as f:
         return pickle.load(f)
 
 
+#given the predicted vector, reconstuct data point with the same format in ML3AllSites
 def restore_data(x):
+    #in: 
+    #x: nn output
+    #out: (a, b)
+    #a: data point with the same format as encoded dataset
+    #b: data point with the same format as ML3AllSites
     deSortMap = preprocess.loadVar(path_data, 'deSortMap.pkl')
     minDataMatrix = preprocess.loadVar(path_data, 'minDataMatrix.pkl')
     difDataMatrix = preprocess.loadVar(path_data, 'difDataMatrix.pkl')
@@ -199,7 +214,10 @@ def restore_data(x):
     return restored, preprocess.decodeData(restored, formatFun)
 
 
+#print original data point and predicted data point
 def test_restore(pre_trained_model):
+    #in:
+    #pre_trained_model: str, model file name
     np.random.seed(random_seed)
 
     # preprocess data
@@ -219,8 +237,14 @@ def test_restore(pre_trained_model):
     return
 
 
-#restore loss by axis
+#trace loss to the original feature space
 def restore_loss(loss_axised, deSortMap, flag_real, best_name = 'best', worst_name = 'worst'):
+    #in:
+    #loss_axised: np.array, shape = (1, len(data point))
+    #deSortMap: dict, sCol: (eCol, oriCol)
+    #flag_real: real / prob mask, shape = (1, len(data point))
+    #best_name: str
+    #worst_name: str
     loss_real_axised, loss_prob_axised = preprocess.restoreLoss(loss_axised, deSortMap, flag_real)
     loss_real_axised = np.asarray(loss_real_axised, dtype = np.float64)
     loss_prob_axised = np.asarray(loss_prob_axised, dtype = np.float64)
@@ -276,7 +300,7 @@ def test_col_importance(pre_trained_model):
     x = X_dev[:, :-38]
 
     loss_dev_list, loss_dev_list_axised = nn.test(x, x, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
-    ori_loss = np.average(loss_dev_list)
+    ori_loss = np.average(loss_dev_list) #baseline loss
 
     loss_list_axised = []
     for index in range(x.shape[1]):
@@ -287,10 +311,11 @@ def test_col_importance(pre_trained_model):
         loss_dev_list, loss_dev_list_axised = nn.test(temp_x, x, temp_valid, flag_real_dev[:, :-38])
         loss_list_axised.append(np.average(loss_dev_list))
     loss_list_axised = np.asarray(loss_list_axised, dtype = np.float64)
-    restore_loss(loss_list_axised - ori_loss, deSortMap, flag_real_dev[0], 'least important', 'most important')
+    restore_loss(loss_list_axised - ori_loss, deSortMap, flag_real_dev[0], 'least important', 'most important') #minus baseline
     return
 
 
+#given the model, compare the prediction in hottest and coldest lab
 def test_temperature(pre_trained_model):
     flag_valid_train, X_train, flag_real_train, flag_valid_dev, X_dev, flag_real_dev, flag_valid_test, X_test, \
         flag_real_test = load_data()
@@ -300,18 +325,18 @@ def test_temperature(pre_trained_model):
     x = X_dev[:, :-38]
 
     lo_x = np.copy(x)
-    x[:, 188] = 0.01
+    x[:, 188] = 0.01 #coldest
 
     hi_x = np.copy(x)
-    x[:, 188] = 0.99
+    x[:, 188] = 0.99 #hottest
 
     flag_valid_dev[:, 182: 189] = False #avoid test 7 itself
     lo_predict = []
     for i in range(len(lo_x)):
         lo_predict.append(nn.forward(lo_x[i:i + 1], dropout=False)[0])
-    lo_predict = np.asarray(lo_predict, dtype = np.float64)
+    lo_predict = np.asarray(lo_predict, dtype = np.float64) #prediction in coldest
 
-    loss_dev_list, loss_dev_list_axised = nn.test(hi_x, lo_predict, flag_valid_dev[:, :-38], flag_real_dev[:, :-38])
+    loss_dev_list, loss_dev_list_axised = nn.test(hi_x, lo_predict, flag_valid_dev[:, :-38], flag_real_dev[:, :-38]) #use coldest as object, computing hottest loss
     loss_axised = np.average(loss_dev_list_axised, axis = 0)
     restore_loss(loss_axised, deSortMap, flag_real_dev[0], 'least different', 'most different')
     return
